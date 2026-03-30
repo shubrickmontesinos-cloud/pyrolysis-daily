@@ -23,11 +23,34 @@
       --cat-catalyst: #a855f7;
       --cat-sci: #ec4899;
     }
+    [data-theme="light"] {
+      --bg: #f4f6fb;
+      --surface: #ffffff;
+      --surface2: #eef1f8;
+      --border: #d0d7e8;
+      --accent: #3a6fd8;
+      --accent2: #6b3fad;
+      --accent3: #1fa888;
+      --warn: #d4820a;
+      --text: #1a1d2e;
+      --text-muted: #6b718f;
+      --tag-bg: #e8ecf8;
+      --cat-plastic: #3a6fd8;
+      --cat-biomass: #1fa888;
+      --cat-catalytic: #d4820a;
+      --cat-catalyst: #8b3fd4;
+      --cat-sci: #c4326a;
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'SF Pro Display','PingFang SC','Helvetica Neue',system-ui,sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
+    /* Theme toggle */
+    .theme-toggle { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s; }
+    .theme-toggle:hover { border-color: var(--accent); background: var(--surface2); }
+
     /* Header */
     header { background: linear-gradient(135deg,#0d1b3e 0%,#1a1d27 60%,#0d2330 100%); border-bottom: 1px solid var(--border); padding: 20px 0 16px; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px); }
+    [data-theme="light"] header { background: linear-gradient(135deg,#dce8ff 0%,#f4f6fb 60%,#d8f0ea 100%); }
     .header-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
     .logo { display: flex; align-items: center; gap: 12px; }
     .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg,var(--accent),var(--accent2)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
@@ -138,6 +161,7 @@
     <div class="header-right">
       <div id="date-display">—</div>
       <div class="update-badge"><div class="dot-live"></div>每日更新</div>
+      <button class="theme-toggle" id="theme-toggle" title="切换白天/夜间模式">🌙</button>
     </div>
   </div>
 </header>
@@ -301,6 +325,28 @@ function closeModal() { document.getElementById('modal-overlay').classList.remov
 
 document.getElementById('modal-overlay').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeModal(); });
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+
+// ── Theme toggle ─────────────────────────────────────────────────
+(function() {
+  const root = document.documentElement;
+  const btn  = document.getElementById('theme-toggle');
+  const saved = localStorage.getItem('pyro-theme') || 'dark';
+  function applyTheme(theme) {
+    if (theme === 'light') {
+      root.setAttribute('data-theme', 'light');
+      btn.textContent = '☀️';
+    } else {
+      root.removeAttribute('data-theme');
+      btn.textContent = '🌙';
+    }
+    localStorage.setItem('pyro-theme', theme);
+  }
+  applyTheme(saved);
+  btn.addEventListener('click', () => {
+    const current = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    applyTheme(current);
+  });
+})();
 
 init();
 </script>
