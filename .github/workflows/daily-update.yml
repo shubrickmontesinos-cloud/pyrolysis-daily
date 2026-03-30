@@ -34,3 +34,13 @@ jobs:
           git add data/ index.html
           git diff --cached --quiet || git commit -m "chore: daily update $(date +'%Y-%m-%d')"
           git push
+
+      # ==================== 新增：自动同步到Gitee ====================
+      - name: Sync to Gitee
+        uses: wearerequired/git-mirror-action@v1
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.GITEE_PRIVATE_KEY }}
+        with:
+          source-repo: "git@github.com:shubrickmontesinos-cloud/pyrolysis-daily
+.git"
+          destination-repo: "git@gitee.com:张子怡/pyrolysis-daily.git"
