@@ -63,6 +63,18 @@ BLACKLIST_PATTERNS = [
 BLACKLIST_RE = re.compile("|".join(BLACKLIST_PATTERNS), re.IGNORECASE)
 
 # ──────────────────────────────────────────
+# 期刊白名单关键词（CrossRef 结果的 container-title 必须含其中之一）
+# 确保只收化工/能源/环境/材料类学术期刊
+# ──────────────────────────────────────────
+JOURNAL_WHITELIST_RE = re.compile(
+    r"pyrolysis|fuel|energy|bioresource|biomass|chemical|catalysis|"
+    r"environmental|waste|polymer|material|analytical|applied|"
+    r"journal of analytical|renewable|sustainable|chemistry|"
+    r"industrial|engineering|green|carbon",
+    re.IGNORECASE,
+)
+
+# ──────────────────────────────────────────
 # 热解核心关键词（标题必须包含其中之一才入库）
 # ──────────────────────────────────────────
 CORE_KEYWORDS = [
@@ -79,63 +91,79 @@ CORE_KEYWORDS = [
 CORE_KW_RE = re.compile("|".join(CORE_KEYWORDS), re.IGNORECASE)
 
 # ──────────────────────────────────────────
-# 分类配置（按用户要求）
-# 塑料热解8 / 生物质热解3 / 催化热解5 / 科研圈4  合计20
+# 分类配置
+# 塑料热解6 / 生物质热解3 / 催化热解4 / 创新催化剂4 / 科研圈3  合计20
 # ──────────────────────────────────────────
 CATEGORY_QUOTA = {
-    "塑料热解":   8,
+    "塑料热解":   6,
     "生物质热解": 3,
-    "催化热解":   5,
-    "科研圈":     4,
+    "催化热解":   4,
+    "创新催化剂": 4,
+    "科研圈":     3,
+}
+
+# 每个分类期刊/预印本来源的目标条数（剩余用微信公众号补足）
+# 约各占一半：期刊3/微信3、期刊2/微信1、期刊2/微信2、期刊2/微信2、期刊2/微信1
+JOURNAL_QUOTA = {
+    "塑料热解":   3,
+    "生物质热解": 2,
+    "催化热解":   2,
+    "创新催化剂": 2,
+    "科研圈":     2,
 }
 
 CAT_ICONS = {
     "塑料热解":   "♻️",
     "生物质热解": "🌿",
     "催化热解":   "⚗️",
+    "创新催化剂": "✨",
     "科研圈":     "🎓",
 }
 
 # ──────────────────────────────────────────
-# 搜狗微信搜索词配置（中文行业/科研资讯）
-# ──────────────────────────────────────────
-WEIXIN_TASKS = [
-    # (关键词,             目标分类,      最多取条数)
-    ("废塑料 热解",         "塑料热解",    8),
-    ("塑料热解 产业化",     "塑料热解",    6),
-    ("废塑料 化学回收",     "塑料热解",    6),
-    ("生物质热解 生物炭",   "生物质热解",  6),
-    ("秸秆热解 生物油",     "生物质热解",  5),
-    ("催化热解 机理",       "催化热解",    6),
-    ("共热解 反应器",       "催化热解",    6),
-    ("热解 课题组 进展",    "科研圈",      6),
-    ("热解 论文 期刊",      "科研圈",      6),
-]
-
-# ──────────────────────────────────────────
-# CrossRef 学术期刊查询配置（英文期刊论文）
+# CrossRef 学术期刊查询配置（英文期刊论文，先跑）
 # ──────────────────────────────────────────
 # 查最近90天内的论文
 CROSSREF_START_DATE = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d")
 
 CROSSREF_TASKS = [
-    # (查询词,                                          目标分类,    取条数)
-    ("catalytic pyrolysis plastic polyethylene",        "塑料热解",  5),
-    ("plastic waste pyrolysis oil product",             "塑料热解",  5),
-    ("biomass pyrolysis biochar bio-oil",               "生物质热解",5),
-    ("catalytic pyrolysis mechanism zeolite",           "催化热解",  5),
-    ("co-pyrolysis synergy catalyst",                   "催化热解",  4),
-    ("pyrolysis review progress",                       "科研圈",    4),
+    # (查询词,                                              目标分类,      多取倍数)
+    ("plastic waste pyrolysis fuel oil product",           "塑料热解",    8),
+    ("catalytic pyrolysis polyethylene polypropylene",     "塑料热解",    6),
+    ("biomass pyrolysis biochar bio-oil lignocellulosic",  "生物质热解",  8),
+    ("catalytic pyrolysis mechanism product selectivity",  "催化热解",    6),
+    ("co-pyrolysis plastic biomass thermal",               "催化热解",    6),
+    ("zeolite catalyst pyrolysis hydrocarbon",             "创新催化剂",  8),
+    ("novel catalyst thermal cracking plastic",            "创新催化剂",  6),
+    ("pyrolysis progress review renewable",                "科研圈",      8),
+    ("pyrolysis energy conversion sustainability",         "科研圈",      6),
 ]
 
 # ──────────────────────────────────────────
-# arXiv 查询配置（预印本，补充用）
+# arXiv 查询配置（预印本，补期刊不足时使用）
 # ──────────────────────────────────────────
 ARXIV_TASKS = [
-    # (arXiv 搜索词,                                    目标分类,    取条数)
-    ("ti:pyrolysis AND ti:plastic",                     "塑料热解",  3),
-    ("ti:pyrolysis AND (ti:biomass OR ti:biochar)",     "生物质热解",3),
-    ("ti:pyrolysis AND ti:catalytic",                   "催化热解",  3),
+    # (arXiv 搜索词,                                        目标分类,    取条数)
+    ("ti:pyrolysis AND ti:plastic",                         "塑料热解",  4),
+    ("ti:pyrolysis AND (ti:biomass OR ti:biochar)",         "生物质热解",4),
+    ("ti:catalytic AND ti:pyrolysis",                       "催化热解",  4),
+    ("ti:pyrolysis AND ti:catalyst",                        "创新催化剂",4),
+    ("ti:pyrolysis AND ti:review",                          "科研圈",    4),
+]
+
+# ──────────────────────────────────────────
+# 搜狗微信搜索词配置（中文公众号，后跑补足）
+# ──────────────────────────────────────────
+WEIXIN_TASKS = [
+    # (关键词,               目标分类,      最多取条数)
+    ("废塑料 热解 产业化",   "塑料热解",    6),
+    ("塑料热解 化学回收",    "塑料热解",    6),
+    ("生物质热解 生物炭",    "生物质热解",  5),
+    ("催化热解 机理 选择性", "催化热解",    6),
+    ("共热解 协同效应",      "催化热解",    5),
+    ("沸石催化剂 热解",      "创新催化剂",  6),
+    ("新型催化剂 热解",      "创新催化剂",  5),
+    ("热解 论文 课题组",     "科研圈",      6),
 ]
 
 # ──────────────────────────────────────────
@@ -282,6 +310,10 @@ def fetch_crossref(query: str, max_results: int = 5) -> list[dict]:
             title   = title_list[0].strip()
             journal = (w.get("container-title") or [""])[0]
             url     = w.get("URL", "").strip()
+            # 期刊白名单过滤：只收化工/能源/环境/材料类期刊
+            if journal and not JOURNAL_WHITELIST_RE.search(journal):
+                log.debug(f"  [期刊白名单] 丢弃 {journal}: {title[:40]}")
+                continue
             # abstract 可能是 jats XML 格式，简单清洗
             abstract_raw = w.get("abstract", "")
             body = re.sub(r"<[^>]+>", "", abstract_raw).strip()[:200]
@@ -305,7 +337,7 @@ def fetch_crossref(query: str, max_results: int = 5) -> list[dict]:
             })
     except Exception as e:
         log.warning(f"  CrossRef 解析失败: {e}")
-    log.info(f"  CrossRef「{query[:35]}」→ 原始 {len(items)} 条")
+    log.info(f"  CrossRef「{query[:35]}」→ 原始 {len(items)} 条（期刊白名单过滤后）")
     return items
 
 
@@ -389,34 +421,57 @@ def collect_news() -> list[dict]:
             "tags":     extract_tags(title, category),
         })
 
-    # ── A: 搜狗微信（中文公众号，行业资讯）──
-    log.info("=== 阶段A：搜狗微信公众号 ===")
+    # ── 阶段A: CrossRef 学术期刊（先跑，按 JOURNAL_QUOTA 严格上限）──
+    log.info("=== 阶段A：CrossRef 学术期刊 ===")
+    journal_counts: dict[str, int] = {k: 0 for k in CATEGORY_QUOTA}
+    for query, category, num in CROSSREF_TASKS:
+        jq = JOURNAL_QUOTA.get(category, 2)
+        if journal_counts[category] >= jq:
+            log.info(f"  「{category}」期刊已达上限{jq}，跳过")
+            continue
+        before = len(category_pool[category])
+        results = fetch_crossref(query, max_results=num)
+        for item in results:
+            if journal_counts[category] < jq:
+                prev = len(category_pool[category])
+                try_add(item, category)
+                if len(category_pool[category]) > prev:
+                    journal_counts[category] += 1
+        log.info(f"  池「{category}」: {len(category_pool[category])} 条（期刊 {journal_counts[category]}/{jq}）")
+        time.sleep(random.uniform(1.0, 2.5))
+
+    # ── 阶段B: arXiv 预印本（期刊不足时补，同样受 JOURNAL_QUOTA 约束）──
+    log.info("=== 阶段B：arXiv 预印本 ===")
+    for query, category, num in ARXIV_TASKS:
+        jq = JOURNAL_QUOTA.get(category, 2)
+        if journal_counts[category] >= jq:
+            continue
+        results = fetch_arxiv(query, max_results=num)
+        for item in results:
+            if journal_counts[category] < jq:
+                prev = len(category_pool[category])
+                try_add(item, category)
+                if len(category_pool[category]) > prev:
+                    journal_counts[category] += 1
+        log.info(f"  池「{category}」: {len(category_pool[category])} 条（期刊 {journal_counts[category]}/{jq}）")
+        time.sleep(random.uniform(0.5, 1.5))
+
+    log.info("期刊/预印本阶段完成：" + "  ".join(
+        f"{c} 期刊{journal_counts[c]}条" for c in CATEGORY_QUOTA
+    ))
+
+    # ── 阶段C: 搜狗微信公众号（补足总配额，不受期刊限制）──
+    log.info("=== 阶段C：搜狗微信公众号（补足剩余配额）===")
     for keyword, category, num in WEIXIN_TASKS:
+        quota = CATEGORY_QUOTA.get(category, 4)
+        if len(category_pool[category]) >= quota:
+            log.info(f"  「{category}」已满 {quota} 条，跳过")
+            continue
         results = fetch_weixin(keyword, max_results=num)
         for item in results:
             try_add(item, category)
-        log.info(f"  池「{category}」: {len(category_pool[category])} 条")
+        log.info(f"  池「{category}」: {len(category_pool[category])} / {quota} 条")
         time.sleep(random.uniform(2.0, 4.0))
-
-    # ── B: CrossRef（英文学术期刊，补充深度）──
-    log.info("=== 阶段B：CrossRef 学术期刊 ===")
-    for query, category, num in CROSSREF_TASKS:
-        results = fetch_crossref(query, max_results=num)
-        for item in results:
-            try_add(item, category)
-        log.info(f"  池「{category}」: {len(category_pool[category])} 条")
-        time.sleep(random.uniform(1.0, 2.5))
-
-    # ── C: arXiv（预印本，补不足用）──
-    log.info("=== 阶段C：arXiv 预印本 ===")
-    for query, category, num in ARXIV_TASKS:
-        # 只在该分类还未达到配额时才补充
-        if len(category_pool[category]) < CATEGORY_QUOTA[category]:
-            results = fetch_arxiv(query, max_results=num)
-            for item in results:
-                try_add(item, category)
-            log.info(f"  池「{category}」: {len(category_pool[category])} 条")
-        time.sleep(random.uniform(0.5, 1.5))
 
     # ── 按配额拼装 ──
     news_list = []
