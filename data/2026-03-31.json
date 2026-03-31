@@ -1,27 +1,24 @@
 {
   "date": "2026-03-31",
-  "generated_at": "2026-03-31T17:12:50",
+  "generated_at": "2026-03-31T17:33:10",
   "news": [
     {
       "category": "塑料热解",
-      "title": "【Environmental Surfac】 Co-pyrolysis of biomass with phosphate additives: Linking phosphorus transformations to nutrient release for tailor-made biochar-based fertilizers",
-      "summary": "发表于 Environmental Surfaces and Interfaces，点击原文查看摘要。",
+      "title": "【Fuel】 Study on particle fragmentation characteristics during rapid pyrolysis of coal based on the structural characteristics of coal macerals",
+      "summary": "发表于 Fuel，点击原文查看摘要。",
       "source": "doi.org",
-      "url": "https://doi.org/10.1016/j.esi.2026.03.001",
+      "url": "https://doi.org/10.1016/j.fuel.2026.139246",
       "tags": [
-        "塑料热解",
-        "生物质",
-        "生物炭",
-        "共热解"
+        "塑料热解"
       ],
       "id": 1
     },
     {
       "category": "塑料热解",
-      "title": "【Environmental Pollut】 Catalytic photodegradation of organic dye using polyaniline modified Ni-CdO nanocomposite",
-      "summary": "发表于 Environmental Pollution and Management，点击原文查看摘要。",
+      "title": "【Fuel】 High-pressure in-situ upgrading of coal pyrolysis tar vapors over Ni–Re/G-SiO2 alloy catalysts: Performance and product evolution",
+      "summary": "发表于 Fuel，点击原文查看摘要。",
       "source": "doi.org",
-      "url": "https://doi.org/10.1016/j.epm.2026.01.001",
+      "url": "https://doi.org/10.1016/j.fuel.2026.139243",
       "tags": [
         "塑料热解"
       ],
@@ -29,21 +26,22 @@
     },
     {
       "category": "塑料热解",
-      "title": "【Journal of Materials】 Inverse vulcanized polysulfides for catalytic silanization and interfacial coupling in silica-filled rubber: A pathway to energy-saving composites",
-      "summary": "发表于 Journal of Materials Science &amp; Technology，点击原文查看摘要。",
-      "source": "doi.org",
-      "url": "https://doi.org/10.1016/j.jmst.2026.03.020",
+      "title": "【微信公众号】 行业观察 |废塑料热解油化项目正成为下一个风口",
+      "summary": "并已着手对废塑料热解油化技术及大产能连续化生产装置进行产业化研发,国内外一些环保科技企业也取得了实质性的技术突破,废塑...",
+      "source": "weixin.qq.com",
+      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSy-EVlB1AAMXY52AFmIRP0z2G8J6nOrITFqXa8Fplpd9OHMQdUUUifGxINCRE1o6qUuvgAKLtEtcGg7tqg5YuoLybxmqaErYaJ9zhhwVViqUQ2O8LuoMuMmni_3Nll406Srdk80iJ3wpS4n9tR1juP7fJjbV161zy9a4lau79GgXPGFZRTK-ciAY23hV6Y4sRfbv4SYp1pAVVULJm7t__y05eBgmN3LoYQ..&type=2&query=%E5%BA%9F%E5%A1%91%E6%96%99 %E7%83%AD%E8%A7%A3 %E4%BA%A7%E4%B8%9A%E5%8C%96&token=224EFA69AE7DA9C01B1D5552B3B7A3541C3031A369CB94E4",
       "tags": [
-        "塑料热解"
+        "塑料热解",
+        "废塑料"
       ],
       "id": 3
     },
     {
       "category": "塑料热解",
-      "title": "【微信公众号】 行业观察 |废塑料热解油化项目正成为下一个风口",
-      "summary": "并已着手对废塑料热解油化技术及大产能连续化生产装置进行产业化研发,国内外一些环保科技企业也取得了实质性的技术突破,废塑...",
+      "title": "【微信公众号】 技术对接 |废塑料固体载热体催化热解制油技术",
+      "summary": "促进新技术、新产品的产业化应用,推动环保产业高质量发展.废塑料固体载热体催化热解制油技术技术/产品简介废塑料污染防治是国...",
       "source": "weixin.qq.com",
-      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSy-EVlB1AAMXA9hPRs4CEMt13z3MyRNs4FqXa8Fplpd9RQKTt_Bo4ZoAYGNaPHKFm-cCr6zJ0-krNbCTjmxMBLa7JbznwrBfnwKBqTC7wiJJ8ckG6L349p8whOo0E3-Ioy0aeM-mZo_zvfGvn4Wl-jDq51L4YbhavaJ9s2MSYPeh1U7GPapvUF7SxmV2_Af4F1DXNBpcxiDucNYOaeJZ1cHdrgozfSg6bw..&type=2&query=%E5%BA%9F%E5%A1%91%E6%96%99 %E7%83%AD%E8%A7%A3 %E4%BA%A7%E4%B8%9A%E5%8C%96&token=222ED8BFFD2FFD94484F070616F126D849C1469A69CB901C",
+      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSy-EVlB1AAMXY52AFmIRP0z2G8J6nOrITFqXa8Fplpd9ibWEly07t1sN0yK3A9xWf4Nx1zWnwIFiIW19uJu7q3f-yi5uOl4u0R32d6dgqZTKmDCFOfONflFtexJmPPDE9xFjOhtW2lgoEQKnaUUXx8KogDzDwOnV1G55uKW1L0x1rEiV2Gr84hBHXuPlkOfJvzhEvJoKe9E6FOciLKCdgBxCy6umSSPEsg..&type=2&query=%E5%BA%9F%E5%A1%91%E6%96%99 %E7%83%AD%E8%A7%A3 %E4%BA%A7%E4%B8%9A%E5%8C%96&token=224EFA69AE7DA9C01B1D5552B3B7A3541C3031A369CB94E4",
       "tags": [
         "塑料热解",
         "废塑料"
@@ -52,10 +50,10 @@
     },
     {
       "category": "塑料热解",
-      "title": "【微信公众号】 技术对接 |废塑料固体载热体催化热解制油技术",
-      "summary": "促进新技术、新产品的产业化应用,推动环保产业高质量发展.废塑料固体载热体催化热解制油技术技术/产品简介废塑料污染防治是国...",
+      "title": "【微信公众号】 大连物化所废塑料热解中试环评公示",
+      "summary": "通过预处理及非原位催化热解中试工艺,获得中试产物热解油及炭... “废塑料热化学催化升级技术产业化落地合作协议”.双方建立战...",
       "source": "weixin.qq.com",
-      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSy-EVlB1AAMXA9hPRs4CEMt13z3MyRNs4FqXa8Fplpd9WEGLJSV9c2EgPwCVLVkUBbXNbrcFX26p0qQ8j1-PIMdnyEjl1VEhDLNfQq7A2jf9hlR24n7pz1npMBh3L-bRbk7f9HncFk3Z_NdVnSa05i4tWVHupaqaRCRqHUcbyV4glkULZ41C3BzDhXF8GCYIc4GZNXTAWP-VIt1r9-pldQe54z_tGSZTqA..&type=2&query=%E5%BA%9F%E5%A1%91%E6%96%99 %E7%83%AD%E8%A7%A3 %E4%BA%A7%E4%B8%9A%E5%8C%96&token=222ED8BFFD2FFD94484F070616F126D849C1469A69CB901C",
+      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSy-EVlB1AAMXY52AFmIRP0z2G8J6nOrITFqXa8Fplpd9iMYxLp7IoVYfNWtj7k4VyExjUM05SxqbEmLg5p486MWpOrn-ovYa0F1ezvhJz8nRHR5vgiRcmU6VqMm26vDMxAXFiOmXRFQl04bzt9HGBQgajP-v39TjR5hrF8_MjcAFeZL77DI1eJ73Ln0vNjOIF_GkEv6SzNiH0EZE64yU7L-54z_tGSZTqA..&type=2&query=%E5%BA%9F%E5%A1%91%E6%96%99 %E7%83%AD%E8%A7%A3 %E4%BA%A7%E4%B8%9A%E5%8C%96&token=224EFA69AE7DA9C01B1D5552B3B7A3541C3031A369CB94E4",
       "tags": [
         "塑料热解",
         "废塑料"
@@ -64,10 +62,10 @@
     },
     {
       "category": "塑料热解",
-      "title": "【微信公众号】 大连物化所废塑料热解中试环评公示",
-      "summary": "通过预处理及非原位催化热解中试工艺,获得中试产物热解油及炭... “废塑料热化学催化升级技术产业化落地合作协议”.双方建立战...",
+      "title": "【微信公众号】 氮及其他杂原子对粗废塑料热解油催化裂化制轻质烯烃的影响",
+      "summary": "背景塑料循环经济:废塑料热解油(WPPO)被视为替代原油的可... 有助于加速塑料化学回收技术的产业化.方法学示范:将机器学习...",
       "source": "weixin.qq.com",
-      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSy-EVlB1AAMXA9hPRs4CEMt13z3MyRNs4FqXa8Fplpd9JNasW5MArHZfsvhRfeGXQF2z7SSYOgl7ng9Gh6wd-ciwL6LpQpwfE2bKCjBsIqM5kfxXBzMo2C-Km4mvbTcb_PlhD3DffI0pW-JBxavQp3v0oVT6CkTnaSZquVb41UydMEvgn1zmohe7JK5Hh5yzdF_yztFyFBuEKWgoKpGqDEVj32-j2KiwUw..&type=2&query=%E5%BA%9F%E5%A1%91%E6%96%99 %E7%83%AD%E8%A7%A3 %E4%BA%A7%E4%B8%9A%E5%8C%96&token=222ED8BFFD2FFD94484F070616F126D849C1469A69CB901C",
+      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSy-EVlB1AAMXY52AFmIRP0z2G8J6nOrITFqXa8Fplpd9VowdndUQAIjk42eXG5A5f-A1LU-inmuI8FfLRmIsDG0oeD2A0YW0XrYUGiuBpMC_o6IUTIiXraAdH8pR8tKgcmXy4LVgRh-kWYmSL-djEM4FwpDCVtlqtfIGkS8QYG2H9h6t0liC--adjzMidIN60Bj5knK3Q6Lp1HLJOxSDFQvuL0unUdKkuw..&type=2&query=%E5%BA%9F%E5%A1%91%E6%96%99 %E7%83%AD%E8%A7%A3 %E4%BA%A7%E4%B8%9A%E5%8C%96&token=224EFA69AE7DA9C01B1D5552B3B7A3541C3031A369CB94E4",
       "tags": [
         "塑料热解",
         "废塑料"
@@ -103,7 +101,7 @@
       "title": "【微信公众号】 ACS ES&T Engineering | 复旦朱向东团队:塑料生物质共热解降低生物炭生物可利用硅含量及其Cd植物毒性缓解潜力",
       "summary": "目前,未发现塑料生物质共热解对生物炭中硅形态影响的研究报导.含硅生物炭常被用于固定土壤重金属和缓解植物毒性.已有报道指...",
       "source": "weixin.qq.com",
-      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSy-EVlB1AAMXvzUU7k1zk1x13z3MyRNs4FqXa8Fplpd9_hMKwsCUAziq4lbjtd4N5FKr9dSVAs-TYY31aE1wZ0O7CWuGmfEDp07FJpip8U5wkaA1kCETiDWROnEBKqcBtum4SWv61XBFbgf9gPvwZgSUZdDToqUsdMW1A1d-EJFAYtXeNByWTGFzerrHt4k5rciFfgg_pL485XnD0GohSFLYl_Q5RRZQjg..&type=2&query=%E7%94%9F%E7%89%A9%E8%B4%A8%E7%83%AD%E8%A7%A3 %E7%94%9F%E7%89%A9%E7%82%AD&token=222EF85963B06009D5D3989B8A2DEAF5D66CC29069CB9020",
+      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSy-EVlB1AAMXgcxck5PpazT2G8J6nOrITFqXa8Fplpd991vvmfWK06x_srtv7Wu5NgwS9tLsDQfMZGebIbXJjXBUiNwEGW0_1onReYz-5noIOZnBhsk-IBT0R-Ho_7DSLMPYwY9s-lXVZTDjjxIN0bHbIXlhH5wsEj_rfk7SWJOM7SMScMcEsK1yIdi1adkURAzNybSpLM2Xjol3RoWjuhLuL0unUdKkuw..&type=2&query=%E7%94%9F%E7%89%A9%E8%B4%A8%E7%83%AD%E8%A7%A3 %E7%94%9F%E7%89%A9%E7%82%AD&token=224F10564695412FF3F5BDBD5B2D012BF40820A369CB94E7",
       "tags": [
         "生物质热解",
         "生物质",
@@ -128,7 +126,7 @@
       "title": "【微信公众号】 轮胎半焦中的纳米Zn和S对生物质热解的选择性催化机理研究",
       "summary": "从而促使生物质选择性转化为高纯度的糠醛.当轮胎半焦与生物质... 生物质和煤炭催化热解机理研究.研究成果在Fuel,Applied ...",
       "source": "weixin.qq.com",
-      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSy-EVlB1AAMXtl5vf_c-aeJ13z3MyRNs4FqXa8Fplpd9wajWWleB_TvvOYZCpPWxy7xBOy_roiTWdUnQo614ooEha8wIu0Uru7Tqh10paOov7uVHFTjsGC6xdFnTNrCDZw54yqVoG8v62tNcfesKK3UBJfI5bWbbw2Ll6ZrJ13FBEZbY3xkRia59OhK2QJQVBezYO85eC6ESOHX4KBcyv-nyPfCoem7FzA..&type=2&query=%E5%82%AC%E5%8C%96%E7%83%AD%E8%A7%A3 %E6%9C%BA%E7%90%86 %E9%80%89%E6%8B%A9%E6%80%A7&token=222F15D7AE7DAEC71A1C55547B2541A21BC5F28D69CB9025",
+      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSy-EVlB1AAMX9jkz7wCFco32G8J6nOrITFqXa8Fplpd9vVxH9VklrIBsdKyvUffGZyt2sjUx2oc9y86OwMAGtAWxvILg0m-ekSjaKtIUTE3kF_DExqGSnZadwkpNN2sfvyD1doSsX-1g687eQKwLL3vM0LZC6gEHb9GjBs8c4OfM8LUgXTSPVrNSi3g-YcG_fU0z2qdvkqU1cpvF6uRcGAgNGbbB75bUeA..&type=2&query=%E5%82%AC%E5%8C%96%E7%83%AD%E8%A7%A3 %E6%9C%BA%E7%90%86 %E9%80%89%E6%8B%A9%E6%80%A7&token=224F260B3AE83B528E88C0C1279F16468F65812769CB94EB",
       "tags": [
         "催化热解",
         "生物质",
@@ -141,7 +139,7 @@
       "title": "【微信公众号】 【计算】钒催化木质素模型化合物选择性C−O和C−C键裂解反应的机理研究",
       "summary": "报道了钒催化木质素模型化合物选择性C−O和C−C键裂解反应的机理研究,以澄清前人研究中存疑的催化过程和未解的配体调控键裂...",
       "source": "weixin.qq.com",
-      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6ft3wfAVofsP5Peu-UiA4DE5YBYO4ACo7D0JLGLCOPpyVgrFeYQugDhD6j6bbqbUQ-j-yLWLz1YP0aYZZiCBIWbspSbTwUaIw0vNn7bw7Hvko0h_8Ysc7ud1-COsj72H8BL_EYhZE8ma_-826TloYKs_96GO1thXtMZcTiDvplzzg5q8agQSk_26FLh6F83S6Z1MDWKosRPytQW7-vcVJ0FIphQR-tUNrxS4NamjUBlK4T1uKp-eScVWBRV0LyDnBS9J_XqbGNo0krob0CCETU1oGEItvTS2BiZqwg0yoRFw.&type=2&query=%E5%82%AC%E5%8C%96%E7%83%AD%E8%A7%A3 %E6%9C%BA%E7%90%86 %E9%80%89%E6%8B%A9%E6%80%A7&token=222F15D7AE7DAEC71A1C55547B2541A21BC5F28D69CB9025",
+      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6ft3wfAVofsP5Peu-UiA4DE5YBYO4ACo7r6IK6bIRrBiVgrFeYQugDhD6j6bbqbUQ-j-yLWLz1YP0aYZZiCBIWbspSbTwUaIw0vNn7bw7Hvko0h_8Ysc7ud1-COsj72H8BL_EYhZE8ma_-826TloYKs_96GO1thXtMZcTiDvplzzg5q8agQSk_26FLh6F83S6Z1MDWKosRPytQW7-vcVJ0FIphQR-tUNrmCLCEuqSfounu5yQ3WMPJXFfvWjmD4t9Hbk2yB1IM-ix4WlDWDQfzHmCY-gptsHAiZqwg0yoRFw.&type=2&query=%E5%82%AC%E5%8C%96%E7%83%AD%E8%A7%A3 %E6%9C%BA%E7%90%86 %E9%80%89%E6%8B%A9%E6%80%A7&token=224F260B3AE83B528E88C0C1279F16468F65812769CB94EB",
       "tags": [
         "催化热解",
         "反应机理"
@@ -153,7 +151,7 @@
       "title": "【微信公众号】 他山之石——废轮胎热解技术经验总结从机理到商业化的全面洞察",
       "summary": "(涉及热解机理、装置开发及产物高值化利用),结合本公司在热... 显著提高BTEX选择性.在原料比例1:1、非原位催化下,BTEX产...",
       "source": "weixin.qq.com",
-      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSy-EVlB1AAMXtl5vf_c-aeJ13z3MyRNs4FqXa8Fplpd9FZMVuZ80BWx6ipXQlrWEKj-dG_EbhgFMbUZhew-u4biCZJGkuSEstBsTECFR5yK7IirhZHGMnWTO0zRD5N9CYmDNqaFwnoS1Ihq0ZVbgeea-MJnOloOCYQxAeN5Zh5tjg19gLzLiFPXJhVocKzU7HiknPHV-VH7Rj5iipZH9xfoY-UZGbO56rA..&type=2&query=%E5%82%AC%E5%8C%96%E7%83%AD%E8%A7%A3 %E6%9C%BA%E7%90%86 %E9%80%89%E6%8B%A9%E6%80%A7&token=222F15D7AE7DAEC71A1C55547B2541A21BC5F28D69CB9025",
+      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSy-EVlB1AAMX9jkz7wCFco32G8J6nOrITFqXa8Fplpd9hovQMPI4m-L7MXZLjsNHx-IbkCTn43mp7_CHEYNZ8ta9yFk1QMbjnWWAf7Dof1ElT-BXazN5jOngUjnsdL3kraw8KhRvt5sBxQmOgRaZJXgK47bUe42i_BdxGovMjZBhxorsUzXwsqUCcZEwHuwtyVLgbHCtrionyBGqg_z9ZsT6zvkPgoArRQ..&type=2&query=%E5%82%AC%E5%8C%96%E7%83%AD%E8%A7%A3 %E6%9C%BA%E7%90%86 %E9%80%89%E6%8B%A9%E6%80%A7&token=224F260B3AE83B528E88C0C1279F16468F65812769CB94EB",
       "tags": [
         "催化热解",
         "反应机理"
@@ -162,32 +160,35 @@
     },
     {
       "category": "创新催化剂",
-      "title": "【Total Chemistry】 Exploring spray pyrolysis deposited NiS thin films as promising materials for photoactivated gas sensor",
-      "summary": "发表于 Total Chemistry，点击原文查看摘要。",
-      "source": "doi.org",
-      "url": "https://doi.org/10.1016/j.totche.2025.100023",
+      "title": "【微信公众号】 四川大学张帆课题组:理解沸石基催化剂在催化升级转化聚烯烃反应中的构效关系",
+      "summary": "就已有关于废弃塑料的回收处理研究,早期主要是基于纯热解得到复杂的混合油品产物.之后随着商用沸石催化剂的问世,废弃聚烯烃...",
+      "source": "weixin.qq.com",
+      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSy-EVlB1AAMXEwi34IWeQwL2G8J6nOrITFqXa8Fplpd9vVxH9VklrIBsdKyvUffGZyt2sjUx2oc9y86OwMAGtAWxvILg0m-ekacFbXty4hRYKMHjI98Sj88N6PziJ4GhuGQHStm63HcSzrJLbJRBj3eLXbS-2IERpMeg-IkGUfEcPFhCFNWXBQ22E08KbfeXhMD-k7mY-M5GINNYu9pavpnuL0unUdKkuw..&type=2&query=%E6%B2%B8%E7%9F%B3%E5%82%AC%E5%8C%96%E5%89%82 %E7%83%AD%E8%A7%A3&token=224F3E8F66B4660FD2D49D9D7A955A9BD392B34D69CB94EE",
       "tags": [
-        "创新催化剂"
+        "创新催化剂",
+        "沸石"
       ],
       "id": 14
     },
     {
       "category": "创新催化剂",
-      "title": "【Fuel】 Study on particle fragmentation characteristics during rapid pyrolysis of coal based on the structural characteristics of coal macerals",
-      "summary": "发表于 Fuel，点击原文查看摘要。",
-      "source": "doi.org",
-      "url": "https://doi.org/10.1016/j.fuel.2026.139246",
+      "title": "【微信公众号】 天然粘土纳米管合成ZSM-5沸石微介孔催化剂的制备及其在C-8芳烃异构化反应中的应用",
+      "summary": "图1A显示了两种功能性沸石催化剂的合成程序.之后采用H2PtCl6·6H2O溶液湿法浸渍载体合成Pt催化剂,获得Pt/ZSM-5(t):HNT/Al2O...",
+      "source": "weixin.qq.com",
+      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSy-EVlB1AAMXEwi34IWeQwL2G8J6nOrITFqXa8Fplpd9be332z5KnH9fHkhxcdFODH9aBOZpo9rUbZbBnXguzRYa0SVdtRnkmOYmURIbobu7rfkvruTelZoDk6HqPHjpc7arPu_QzE-08QuhNg5XZdP8-xrHmeOPY95AjQOjhaxoND3pM8jVwLmu0G1T6e4I_4ybGkX3BzrS7Z1HcJlX6pJhWLv6O878UA..&type=2&query=%E6%B2%B8%E7%9F%B3%E5%82%AC%E5%8C%96%E5%89%82 %E7%83%AD%E8%A7%A3&token=224F3E8F66B4660FD2D49D9D7A955A9BD392B34D69CB94EE",
       "tags": [
-        "创新催化剂"
+        "创新催化剂",
+        "沸石",
+        "ZSM-5"
       ],
       "id": 15
     },
     {
       "category": "创新催化剂",
-      "title": "【微信公众号】 四川大学张帆课题组:理解沸石基催化剂在催化升级转化聚烯烃反应中的构效关系",
-      "summary": "就已有关于废弃塑料的回收处理研究,早期主要是基于纯热解得到复杂的混合油品产物.之后随着商用沸石催化剂的问世,废弃聚烯烃...",
+      "title": "【微信公众号】 【文献解读】印度石油学会/科学与创新研究院BT:沸石结构和硅铝比对棉秆加氢裂解的影响",
+      "summary": "当热解蒸汽通过酸性沸石催化剂时,它们通过同时脱水和脱羧化过程来脱氧.在沸石上发生的HDO反应或任何其他反应都是有形状选择...",
       "source": "weixin.qq.com",
-      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSy-EVlB1AAMXvFzPjrDm_0d13z3MyRNs4FqXa8Fplpd9wajWWleB_TvvOYZCpPWxy7xBOy_roiTWdUnQo614ooEha8wIu0Uru4RI1ZU0JCP_CRUuyFGt9HcJr65uPZk40p1bppT2-ufYxVZK1voDLpVsRQQ1LYV7c-95zMnwP2aldvIo4jEQ1tKXwpXUH1rRXwgXAf_0JshfUh_ywR6Cr8NflztgI7RZ1g..&type=2&query=%E6%B2%B8%E7%9F%B3%E5%82%AC%E5%8C%96%E5%89%82 %E7%83%AD%E8%A7%A3&token=222F32F63EEA39508B8AC2C5EC0E03538CC0761269CB9029",
+      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSy-EVlB1AAMXEwi34IWeQwL2G8J6nOrITFqXa8Fplpd9TXy6u6ioJLBuZKa68NujvSf340jJ3TfByg9kPz1EzsgYL92fpp6KUFCUTzrzKVGHPX5sEKl0m3tDt61vMlUSWMRZacw70IUBCyfYjgZEBqHadZtfFVbxUcY6orueBxmBYvAgTWogAH0dl_i7zozdwl71nIMgkhjItpvCEtV4oFINGbbB75bUeA..&type=2&query=%E6%B2%B8%E7%9F%B3%E5%82%AC%E5%8C%96%E5%89%82 %E7%83%AD%E8%A7%A3&token=224F3E8F66B4660FD2D49D9D7A955A9BD392B34D69CB94EE",
       "tags": [
         "创新催化剂",
         "沸石"
@@ -196,12 +197,13 @@
     },
     {
       "category": "创新催化剂",
-      "title": "【微信公众号】 天然粘土纳米管合成ZSM-5沸石微介孔催化剂的制备及其在C-8芳烃异构化反应中的应用",
-      "summary": "图1A显示了两种功能性沸石催化剂的合成程序.之后采用H2PtCl6·6H2O溶液湿法浸渍载体合成Pt催化剂,获得Pt/ZSM-5(t):HNT/Al2O...",
+      "title": "【微信公众号】 【解读】JEC:封装单原子Ga的中空ZSM-5沸石用于生物质废物的催化快速热解",
+      "summary": "封装的中空ZSM-5沸石催化剂在热解过程中会发生严重的金属烧结(图5).图5. (a) 3NiOx@HS-Z5的HRTEM图像;(b) 3NiOx@HS-...",
       "source": "weixin.qq.com",
-      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSy-EVlB1AAMXvFzPjrDm_0d13z3MyRNs4FqXa8Fplpd9sHA-PzgTeof_VyG6-p7R_oqVC07HSS6_NyU4v_4NtO6I0DLDbFxlqNGH-hBREtbJmbtMX1VamYO7elD6qukhA0c1y3YhFaoQR2DUEDfvCHIaf2VUDpVEKxCvp8p12pdhX_0c1TVe5rGxTpqJFzCMoFa0Hzpyzv-N0LyyhEsmPIFr1dbZWbKUeQ..&type=2&query=%E6%B2%B8%E7%9F%B3%E5%82%AC%E5%8C%96%E5%89%82 %E7%83%AD%E8%A7%A3&token=222F32F63EEA39508B8AC2C5EC0E03538CC0761269CB9029",
+      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSy-EVlB1AAMXEwi34IWeQwL2G8J6nOrITFqXa8Fplpd9D7QEof1VFCxqIsMKwNidlEF5rHL-p1guRALKRXqcmzaRXyvT8sjVme9-SPFBQCBowmNEj0SzRaLY7kginpdERqHf2bTUUSwDGEsPItrYx7Pg77oT-ue5Bqah_NFp-2gpVLYXTUqvmjokoTeMq8qkemMvLaQRkr61JrsBi25L-t45eBgmN3LoYQ..&type=2&query=%E6%B2%B8%E7%9F%B3%E5%82%AC%E5%8C%96%E5%89%82 %E7%83%AD%E8%A7%A3&token=224F3E8F66B4660FD2D49D9D7A955A9BD392B34D69CB94EE",
       "tags": [
         "创新催化剂",
+        "生物质",
         "沸石",
         "ZSM-5"
       ],
@@ -212,7 +214,7 @@
       "title": "【微信公众号】 【Applied Energy 最新原创论文】中国生物质热解多联产系统耗水量的生命周期评价",
       "summary": "中国生物质热解多联产系统耗水量的生命周期评价Qing YangJi ... (曾用名沸腾炉课题组,流化床课题组),一直致力于流化床与生...",
       "source": "weixin.qq.com",
-      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSy-EVlB1AAMX2eOYniuouV513z3MyRNs4FqXa8Fplpd9oy5zbd-a7olOffZhSUgzc1fmZs_AC3ZpFpXrjIYa34L7ki2kvAEl_uTNk86WVZaasOHlGAg2VOoSzJseMIwZkG5ZVuVHiysGOoFAmnhCEReD48uY8wotpvAnmAUYNoN1yZKnl8CyZoX7J2d1y67bAs0bpYB2qu-Syh5S3xXsZFZhlgeRt7bSzA..&type=2&query=%E7%83%AD%E8%A7%A3 %E8%AE%BA%E6%96%87 %E8%AF%BE%E9%A2%98%E7%BB%84&token=222F4CEB1FCF1C75A9AFE4E7C911470AAA10825269CB902D",
+      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSy-EVlB1AAMX0qBXZjiTxDn2G8J6nOrITFqXa8Fplpd9CcCPqj3K7EIJwkxS-PcQO3hzCxfC_6Yr6wnUz6yPH3TOKVLkY1IIiwj7pXvMb7gkV8Bir_fQmLIj--50jsycLQCkzFfO7ko63Kkk2aHAIb3CHbgZpuHh665rX4xlyowcc7rUiGcrXZ1XVd_nCNzKs2ebjXyJl6I4m9mZISNJ3BFhWLv6O878UA..&type=2&query=%E7%83%AD%E8%A7%A3 %E8%AE%BA%E6%96%87 %E8%AF%BE%E9%A2%98%E7%BB%84&token=224F50D5914591FF24226D6A8D53FD742494AD7869CB94F1",
       "tags": [
         "科研圈",
         "生物质"
@@ -224,7 +226,7 @@
       "title": "【微信公众号】 上海交通大学环境科学与工程学院楼紫阳课题组ES&T:中低温热解条件诱导共轭芳环结构污泥微塑料上环境持久性自由基的生成",
       "summary": "上海交通大学环境科学与工程学院楼紫阳教授课题组在... 的研究论文(DOI: 10.1021/acs.est.2c04453),发现中低温热解...",
       "source": "weixin.qq.com",
-      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSy-EVlB1AAMX2eOYniuouV513z3MyRNs4FqXa8Fplpd94JjGvPOqet3Trf3Bg2Eb3AhYK_Xl0KFDfI1uFyD2Drh3_xqQ2ytmSixiY7nN3VD0au2y55r0OXkRI_N8IPfghgGd2V3_1kaQfiFGQs7jykvdsLw_ct4_H17UWIL0-SIbrvBDGRG6glb0Z45g5E7dIiBiwLmCy7yDSPXi0c458yD1AfaFW2DefQ..&type=2&query=%E7%83%AD%E8%A7%A3 %E8%AE%BA%E6%96%87 %E8%AF%BE%E9%A2%98%E7%BB%84&token=222F4CEB1FCF1C75A9AFE4E7C911470AAA10825269CB902D",
+      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSy-EVlB1AAMX0qBXZjiTxDn2G8J6nOrITFqXa8Fplpd92Re07PjPWowyoqfa4tezLWMy0fvVGr_v5aqIZSFu3r_nqtgD8uO0cF814ITzQUJ2Kn-CTDKtge7SKc83FO6ZqcTOQb6fzk4qEIk6H5-dnzS5EtaBfFLQah915Of1OG-AyfNy9N1RNhV242-Dehr1dRCYUK4NRWO119laFEuzGnOfxjh3za6jWA..&type=2&query=%E7%83%AD%E8%A7%A3 %E8%AE%BA%E6%96%87 %E8%AF%BE%E9%A2%98%E7%BB%84&token=224F50D5914591FF24226D6A8D53FD742494AD7869CB94F1",
       "tags": [
         "科研圈"
       ],
@@ -232,12 +234,13 @@
     },
     {
       "category": "科研圈",
-      "title": "【微信公众号】 Nano Res.:中科大江海龙课题组:轴向卤原子配位调控优化MOF基单原子Ni催化剂的CO₂电还原性能",
-      "summary": "传统的一步热解策略很难对MOFs衍生的单原子催化剂的轴向配位环境实现精准控制.成果简介中国科学技术大学江海龙教授课题组发...",
+      "title": "【微信公众号】 山东大学许醒课题组ACB:利用富含铁的生物质浒苔制备铁单原子/铁原子簇催化剂:非自由基途径驱动类芬顿反应降解有机物",
+      "summary": "的研究论文(DOI: https://doi.org/10.1016/j.apcatb.2021.119963)....课题组前期研究发现,高温热解条件下浒苔内的多糖、蛋白质等含...",
       "source": "weixin.qq.com",
-      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSy-EVlB1AAMX2eOYniuouV513z3MyRNs4FqXa8Fplpd9qjN_IG68ojHUEAaE9X3VhX2qizFDmMutGRLD2Wwgg3itcm_8ANBIBD_kBfTZkXsFaLL1ZaYiaiTRjq-BeZDyQw3J3Vn9Te-nV-boZLn2YMvFI3ZJFSrhEUt-PQXBSp11Ye5uhLswl-UCpAdR545p3ZSL4vuJDnFf8D5_phm73PbRtmyIGw2VAg..&type=2&query=%E7%83%AD%E8%A7%A3 %E8%AE%BA%E6%96%87 %E8%AF%BE%E9%A2%98%E7%BB%84&token=222F4CEB1FCF1C75A9AFE4E7C911470AAA10825269CB902D",
+      "url": "https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSy-EVlB1AAMX0qBXZjiTxDn2G8J6nOrITFqXa8Fplpd92Re07PjPWowyoqfa4tezLWMy0fvVGr_v5aqIZSFu3r_nqtgD8uO0cAJUvj0p9slSjM1wnq88vyLmKydSdc-QRlrYDBPgNX24P4CGEjl-8KzzLQIXqTSnLbUnXjLz53iZ_xNwkO2AKW5MQ_HOqesDtVVbipfG0JSFo5E0pMETy5HzAjcIGepUqA..&type=2&query=%E7%83%AD%E8%A7%A3 %E8%AE%BA%E6%96%87 %E8%AF%BE%E9%A2%98%E7%BB%84&token=224F50D5914591FF24226D6A8D53FD742494AD7869CB94F1",
       "tags": [
-        "科研圈"
+        "科研圈",
+        "生物质"
       ],
       "id": 20
     }

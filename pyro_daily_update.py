@@ -63,14 +63,75 @@ BLACKLIST_PATTERNS = [
 BLACKLIST_RE = re.compile("|".join(BLACKLIST_PATTERNS), re.IGNORECASE)
 
 # ──────────────────────────────────────────
-# 期刊白名单关键词（CrossRef 结果的 container-title 必须含其中之一）
-# 确保只收化工/能源/环境/材料类学术期刊
+# 期刊精确白名单（CrossRef container-title 必须包含其中之一，不区分大小写）
+# 只收与热解/催化/能源/环境直接相关的核心期刊
 # ──────────────────────────────────────────
+APPROVED_JOURNALS = [
+    # 热解专属
+    "journal of analytical and applied pyrolysis",
+    "journal of analytical & applied pyrolysis",
+    # 燃料/能源
+    "fuel",
+    "fuel processing technology",
+    "energy & fuels",
+    "energy and fuels",
+    "applied energy",
+    "energy conversion and management",
+    "joule",
+    "international journal of hydrogen energy",
+    "energy & environmental science",
+    "energy and environmental science",
+    "renewable energy",
+    "renewable and sustainable energy",
+    # 化学工程
+    "chemical engineering journal",
+    "industrial & engineering chemistry research",
+    "industrial and engineering chemistry research",
+    "chemical engineering science",
+    "aiche journal",
+    # 催化
+    "applied catalysis b",
+    "applied catalysis a",
+    "acs catalysis",
+    "journal of catalysis",
+    "catalysis today",
+    "catalysis communications",
+    "catalysis reviews",
+    "catalysis science",
+    # 环境
+    "environmental science & technology",
+    "environmental science and technology",
+    "acs sustainable chemistry",
+    "green chemistry",
+    "waste management",
+    "bioresource technology",
+    "journal of cleaner production",
+    "science of the total environment",
+    "separation and purification technology",
+    # 高影响综合/化学
+    "nature",
+    "science",
+    "nature communications",
+    "nature energy",
+    "nature chemistry",
+    "science advances",
+    "angewandte chemie",
+    "journal of the american chemical society",
+    "acs nano",
+    "advanced materials",
+    "advanced energy materials",
+    "advanced functional materials",
+    "chemical society reviews",
+    "accounts of chemical research",
+    "progress in energy and combustion science",
+    # 材料/高分子
+    "polymer degradation",
+    "journal of hazardous materials",
+    "chemosphere",
+]
+
 JOURNAL_WHITELIST_RE = re.compile(
-    r"pyrolysis|fuel|energy|bioresource|biomass|chemical|catalysis|"
-    r"environmental|waste|polymer|material|analytical|applied|"
-    r"journal of analytical|renewable|sustainable|chemistry|"
-    r"industrial|engineering|green|carbon",
+    "|".join(re.escape(j) for j in APPROVED_JOURNALS),
     re.IGNORECASE,
 )
 
