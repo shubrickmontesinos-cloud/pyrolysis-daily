@@ -1,0 +1,87 @@
+Python was not found; run without arguments to install from the Microsoft Store, or disable this shortcut from Settings > Apps > Advanced app settings > App execution aliases.
+2026-03-30 14:32:44,863 [INFO] ========== 热解日报更新开始 2026-03-30 ==========
+2026-03-30 14:32:45,080 [INFO] response: https://www.bing.com/search?q=%E5%BA%9F%E5%A1%91%E6%96%99+%E7%83%AD%E8%A7%A3+%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95+2026 302
+2026-03-30 14:32:45,080 [INFO] Error to search using bing backend: https://www.bing.com/search?q=%E5%BA%9F%E5%A1%91%E6%96%99+%E7%83%AD%E8%A7%A3+%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95+2026 return None. params={'q': '废塑料 热解 最新进展 2026'} content=None data=None
+2026-03-30 14:32:45,090 [WARNING]   查询「废塑料 热解 最新进展 2026」失败: https://www.bing.com/search?q=%E5%BA%9F%E5%A1%91%E6%96%99+%E7%83%AD%E8%A7%A3+%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95+2026 return None. params={'q': '废塑料 热解 最新进展 2026'} content=None data=None
+2026-03-30 14:32:49,437 [INFO] response: https://www.bing.com/search?q=plastic+pyrolysis+industry+news+2026 302
+2026-03-30 14:32:49,438 [INFO] Error to search using bing backend: https://www.bing.com/search?q=plastic+pyrolysis+industry+news+2026 return None. params={'q': 'plastic pyrolysis industry news 2026'} content=None data=None
+2026-03-30 14:32:49,438 [WARNING]   查询「plastic pyrolysis industry news 202」失败: https://www.bing.com/search?q=plastic+pyrolysis+industry+news+2026 return None. params={'q': 'plastic pyrolysis industry news 2026'} content=None data=None
+2026-03-30 14:32:51,572 [INFO] response: https://www.bing.com/search?q=%E7%94%9F%E7%89%A9%E8%B4%A8%E7%83%AD%E8%A7%A3+%E7%94%9F%E7%89%A9%E6%B2%B9+%E7%94%9F%E7%89%A9%E7%82%AD+%E6%9C%80%E6%96%B0+2026 302
+2026-03-30 14:32:51,572 [INFO] Error to search using bing backend: https://www.bing.com/search?q=%E7%94%9F%E7%89%A9%E8%B4%A8%E7%83%AD%E8%A7%A3+%E7%94%9F%E7%89%A9%E6%B2%B9+%E7%94%9F%E7%89%A9%E7%82%AD+%E6%9C%80%E6%96%B0+2026 return None. params={'q': '生物质热解 生物油 生物炭 最新 2026'} content=None data=None
+2026-03-30 14:32:51,572 [WARNING]   查询「生物质热解 生物油 生物炭 最新 2026」失败: https://www.bing.com/search?q=%E7%94%9F%E7%89%A9%E8%B4%A8%E7%83%AD%E8%A7%A3+%E7%94%9F%E7%89%A9%E6%B2%B9+%E7%94%9F%E7%89%A9%E7%82%AD+%E6%9C%80%E6%96%B0+2026 return None. params={'q': '生物质热解 生物油 生物炭 最新 2026'} content=None data=None
+2026-03-30 14:32:55,998 [INFO] Error to search using bing backend: https://www.bing.com/search ConnectError: ('error sending request for url (https://www.bing.com/search?q=biomass+pyrolysis+biochar+2026)', 'https://www.bing.com/search?q=biomass+pyrolysis+biochar+2026')
+2026-03-30 14:32:55,998 [WARNING]   查询「biomass pyrolysis biochar 2026」失败: https://www.bing.com/search ConnectError: ('error sending request for url (https://www.bing.com/search?q=biomass+pyrolysis+biochar+2026)', 'https://www.bing.com/search?q=biomass+pyrolysis+biochar+2026')
+2026-03-30 14:33:00,334 [INFO] response: https://www.bing.com/search?q=%E5%82%AC%E5%8C%96%E7%83%AD%E8%A7%A3+%E5%85%B1%E7%83%AD%E8%A7%A3+%E5%8F%8D%E5%BA%94%E5%99%A8+%E6%9C%BA%E7%90%86+2026 302
+2026-03-30 14:33:00,334 [INFO] Error to search using bing backend: https://www.bing.com/search?q=%E5%82%AC%E5%8C%96%E7%83%AD%E8%A7%A3+%E5%85%B1%E7%83%AD%E8%A7%A3+%E5%8F%8D%E5%BA%94%E5%99%A8+%E6%9C%BA%E7%90%86+2026 return None. params={'q': '催化热解 共热解 反应器 机理 2026'} content=None data=None
+2026-03-30 14:33:00,335 [WARNING]   查询「催化热解 共热解 反应器 机理 2026」失败: https://www.bing.com/search?q=%E5%82%AC%E5%8C%96%E7%83%AD%E8%A7%A3+%E5%85%B1%E7%83%AD%E8%A7%A3+%E5%8F%8D%E5%BA%94%E5%99%A8+%E6%9C%BA%E7%90%86+2026 return None. params={'q': '催化热解 共热解 反应器 机理 2026'} content=None data=None
+2026-03-30 14:33:04,244 [INFO] response: https://www.bing.com/search?q=catalytic+pyrolysis+mechanism+2026 302
+2026-03-30 14:33:04,244 [INFO] Error to search using bing backend: https://www.bing.com/search?q=catalytic+pyrolysis+mechanism+2026 return None. params={'q': 'catalytic pyrolysis mechanism 2026'} content=None data=None
+2026-03-30 14:33:04,244 [WARNING]   查询「catalytic pyrolysis mechanism 2026」失败: https://www.bing.com/search?q=catalytic+pyrolysis+mechanism+2026 return None. params={'q': 'catalytic pyrolysis mechanism 2026'} content=None data=None
+2026-03-30 14:33:07,450 [INFO] response: https://www.bing.com/search?q=%E6%96%B0%E5%9E%8B%E5%82%AC%E5%8C%96%E5%89%82+%E6%B2%B8%E7%9F%B3+%E7%83%AD%E8%A7%A3+%E5%8D%95%E5%8E%9F%E5%AD%90+2026 302
+2026-03-30 14:33:07,450 [INFO] Error to search using bing backend: https://www.bing.com/search?q=%E6%96%B0%E5%9E%8B%E5%82%AC%E5%8C%96%E5%89%82+%E6%B2%B8%E7%9F%B3+%E7%83%AD%E8%A7%A3+%E5%8D%95%E5%8E%9F%E5%AD%90+2026 return None. params={'q': '新型催化剂 沸石 热解 单原子 2026'} content=None data=None
+2026-03-30 14:33:07,450 [WARNING]   查询「新型催化剂 沸石 热解 单原子 2026」失败: https://www.bing.com/search?q=%E6%96%B0%E5%9E%8B%E5%82%AC%E5%8C%96%E5%89%82+%E6%B2%B8%E7%9F%B3+%E7%83%AD%E8%A7%A3+%E5%8D%95%E5%8E%9F%E5%AD%90+2026 return None. params={'q': '新型催化剂 沸石 热解 单原子 2026'} content=None data=None
+2026-03-30 14:33:11,596 [INFO] response: https://www.bing.com/search?q=novel+catalyst+zeolite+pyrolysis+2026 302
+2026-03-30 14:33:11,598 [INFO] Error to search using bing backend: https://www.bing.com/search?q=novel+catalyst+zeolite+pyrolysis+2026 return None. params={'q': 'novel catalyst zeolite pyrolysis 2026'} content=None data=None
+2026-03-30 14:33:11,598 [WARNING]   查询「novel catalyst zeolite pyrolysis 20」失败: https://www.bing.com/search?q=novel+catalyst+zeolite+pyrolysis+2026 return None. params={'q': 'novel catalyst zeolite pyrolysis 2026'} content=None data=None
+2026-03-30 14:33:15,559 [INFO] Error to search using bing backend: https://www.bing.com/search ConnectError: ('error sending request for url (https://www.bing.com/search?q=%E7%83%AD%E8%A7%A3+%E7%A7%91%E7%A0%94+%E6%9C%9F%E5%88%8A+%E8%AE%BA%E6%96%87+%E7%9F%A5%E4%B9%8E+%E7%A7%91%E6%99%AE+2026)', 'https://www.bing.com/search?q=%E7%83%AD%E8%A7%A3+%E7%A7%91%E7%A0%94+%E6%9C%9F%E5%88%8A+%E8%AE%BA%E6%96%87+%E7%9F%A5%E4%B9%8E+%E7%A7%91%E6%99%AE+2026')
+2026-03-30 14:33:15,559 [WARNING]   查询「热解 科研 期刊 论文 知乎 科普 2026」失败: https://www.bing.com/search ConnectError: ('error sending request for url (https://www.bing.com/search?q=%E7%83%AD%E8%A7%A3+%E7%A7%91%E7%A0%94+%E6%9C%9F%E5%88%8A+%E8%AE%BA%E6%96%87+%E7%9F%A5%E4%B9%8E+%E7%A7%91%E6%99%AE+2026)', 'https://www.bing.com/search?q=%E7%83%AD%E8%A7%A3+%E7%A7%91%E7%A0%94+%E6%9C%9F%E5%88%8A+%E8%AE%BA%E6%96%87+%E7%9F%A5%E4%B9%8E+%E7%A7%91%E6%99%AE+2026')
+2026-03-30 14:33:18,240 [WARNING] 分类「塑料热解」只有 0 条（目标 4）
+2026-03-30 14:33:18,240 [WARNING] 分类「生物质热解」只有 0 条（目标 4）
+2026-03-30 14:33:18,240 [WARNING] 分类「催化热解」只有 0 条（目标 4）
+2026-03-30 14:33:18,240 [WARNING] 分类「创新催化剂」只有 0 条（目标 4）
+2026-03-30 14:33:18,240 [WARNING] 分类「科研圈」只有 0 条（目标 4）
+2026-03-30 14:33:18,240 [ERROR] 未获取到任何新闻，退出
+2026-03-30 14:35:01,358 [INFO] ========== 热解日报更新开始 2026-03-30 ==========
+2026-03-30 14:35:02,115 [INFO] response: https://zh.wikipedia.org/w/api.php?action=opensearch&profile=fuzzy&limit=1&search=%E5%BA%9F%E5%A1%91%E6%96%99%20%E7%83%AD%E8%A7%A3%20%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95%202026 200
+2026-03-30 14:35:06,470 [INFO] Error in engine yandex: TimeoutException(TimeoutError('error sending request for url (https://grokipedia.com/api/typeahead?query=%E5%BA%9F%E5%A1%91%E6%96%99+%E7%83%AD%E8%A7%A3+%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95+2026&limit=1)', 'https://grokipedia.com/api/typeahead?query=%E5%BA%9F%E5%A1%91%E6%96%99+%E7%83%AD%E8%A7%A3+%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95+2026&limit=1'))
+2026-03-30 14:35:06,592 [INFO] Error in engine google: DDGSException("ConnectError: ConnectError('error sending request for url (https://www.google.com/search?q=%E5%BA%9F%E5%A1%91%E6%96%99+%E7%83%AD%E8%A7%A3+%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95+2026&filter=1&start=0&hl=zh-CN&lr=lang_zh&cr=countryCN)', 'https://www.google.com/search?q=%E5%BA%9F%E5%A1%91%E6%96%99+%E7%83%AD%E8%A7%A3+%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95+2026&filter=1&start=0&hl=zh-CN&lr=lang_zh&cr=countryCN')")
+2026-03-30 14:35:07,511 [INFO] response: https://search.brave.com/search?q=%E5%BA%9F%E5%A1%91%E6%96%99+%E7%83%AD%E8%A7%A3+%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95+2026&source=web 200
+2026-03-30 14:35:09,358 [INFO] response: https://yandex.com/search/site/?text=%E5%BA%9F%E5%A1%91%E6%96%99+%E7%83%AD%E8%A7%A3+%E6%9C%80%E6%96%B0%E8%BF%9B%E5%B1%95+2026&web=1&searchid=1318569 200
+2026-03-30 14:35:09,359 [INFO]   查询「废塑料 热解 最新进展 2026」→ 5 条
+2026-03-30 14:35:12,781 [INFO] response: https://zh.wikipedia.org/w/api.php?action=opensearch&profile=fuzzy&limit=1&search=plastic%20pyrolysis%20industry%20news%202026 200
+2026-03-30 14:35:17,143 [INFO] Error in engine yahoo: TimeoutException(TimeoutError('error sending request for url (https://grokipedia.com/api/typeahead?query=plastic+pyrolysis+industry+news+2026&limit=1)', 'https://grokipedia.com/api/typeahead?query=plastic+pyrolysis+industry+news+2026&limit=1'))
+2026-03-30 14:35:17,522 [INFO] response: https://search.brave.com/search?q=plastic+pyrolysis+industry+news+2026&source=web 429
+2026-03-30 14:35:17,763 [INFO] response: https://search.yahoo.com/search;_ylt=P-UAFkbKzshT0uUd1FOuSdBd;_ylu=VltVm1Sz1z-rfP7zfgpFsDQOOGx7gB44OkiPo2uJ7QfZ1_Q?p=plastic+pyrolysis+industry+news+2026 200
+2026-03-30 14:35:18,169 [INFO]   查询「plastic pyrolysis industry news 202」→ 4 条
+2026-03-30 14:35:22,926 [INFO] response: https://zh.wikipedia.org/w/api.php?action=opensearch&profile=fuzzy&limit=1&search=%E7%94%9F%E7%89%A9%E8%B4%A8%E7%83%AD%E8%A7%A3%20%E7%94%9F%E7%89%A9%E6%B2%B9%20%E7%94%9F%E7%89%A9%E7%82%AD%20%E6%9C%80%E6%96%B0%202026 200
+2026-03-30 14:35:27,303 [INFO] Error in engine brave: TimeoutException(TimeoutError('error sending request for url (https://grokipedia.com/api/typeahead?query=%E7%94%9F%E7%89%A9%E8%B4%A8%E7%83%AD%E8%A7%A3+%E7%94%9F%E7%89%A9%E6%B2%B9+%E7%94%9F%E7%89%A9%E7%82%AD+%E6%9C%80%E6%96%B0+2026&limit=1)', 'https://grokipedia.com/api/typeahead?query=%E7%94%9F%E7%89%A9%E8%B4%A8%E7%83%AD%E8%A7%A3+%E7%94%9F%E7%89%A9%E6%B2%B9+%E7%94%9F%E7%89%A9%E7%82%AD+%E6%9C%80%E6%96%B0+2026&limit=1'))
+2026-03-30 14:35:27,696 [INFO] response: https://search.brave.com/search?q=%E7%94%9F%E7%89%A9%E8%B4%A8%E7%83%AD%E8%A7%A3+%E7%94%9F%E7%89%A9%E6%B2%B9+%E7%94%9F%E7%89%A9%E7%82%AD+%E6%9C%80%E6%96%B0+2026&source=web 429
+2026-03-30 14:35:29,072 [INFO] response: https://www.mojeek.com/search?q=%E7%94%9F%E7%89%A9%E8%B4%A8%E7%83%AD%E8%A7%A3+%E7%94%9F%E7%89%A9%E6%B2%B9+%E7%94%9F%E7%89%A9%E7%82%AD+%E6%9C%80%E6%96%B0+2026 403
+2026-03-30 14:35:30,396 [INFO] response: https://html.duckduckgo.com/html/ 200
+2026-03-30 14:35:30,398 [INFO]   查询「生物质热解 生物油 生物炭 最新 2026」→ 5 条
+2026-03-30 14:35:35,399 [INFO] response: https://zh.wikipedia.org/w/api.php?action=opensearch&profile=fuzzy&limit=1&search=biomass%20pyrolysis%20biochar%202026 200
+2026-03-30 14:35:39,828 [INFO] Error in engine yahoo: TimeoutException(TimeoutError('error sending request for url (https://grokipedia.com/api/typeahead?query=biomass+pyrolysis+biochar+2026&limit=1)', 'https://grokipedia.com/api/typeahead?query=biomass+pyrolysis+biochar+2026&limit=1'))
+2026-03-30 14:35:40,364 [INFO] response: https://search.yahoo.com/search;_ylt=LgAdlyRW1dauxhxZenUC4iu1;_ylu=oidfGnOcFylLruJ9sh7d3bjsy4Ryr9HLhFESD-WTf4OlgxY?p=biomass+pyrolysis+biochar+2026 200
+2026-03-30 14:35:40,628 [INFO] response: https://www.mojeek.com/search?q=biomass+pyrolysis+biochar+2026 403
+2026-03-30 14:35:40,780 [INFO]   查询「biomass pyrolysis biochar 2026」→ 4 条
+2026-03-30 14:35:45,771 [INFO] response: https://zh.wikipedia.org/w/api.php?action=opensearch&profile=fuzzy&limit=1&search=%E5%82%AC%E5%8C%96%E7%83%AD%E8%A7%A3%20%E5%85%B1%E7%83%AD%E8%A7%A3%20%E5%8F%8D%E5%BA%94%E5%99%A8%20%E6%9C%BA%E7%90%86%202026 200
+2026-03-30 14:35:50,134 [INFO] Error in engine yandex: TimeoutException(TimeoutError('error sending request for url (https://grokipedia.com/api/typeahead?query=%E5%82%AC%E5%8C%96%E7%83%AD%E8%A7%A3+%E5%85%B1%E7%83%AD%E8%A7%A3+%E5%8F%8D%E5%BA%94%E5%99%A8+%E6%9C%BA%E7%90%86+2026&limit=1)', 'https://grokipedia.com/api/typeahead?query=%E5%82%AC%E5%8C%96%E7%83%AD%E8%A7%A3+%E5%85%B1%E7%83%AD%E8%A7%A3+%E5%8F%8D%E5%BA%94%E5%99%A8+%E6%9C%BA%E7%90%86+2026&limit=1'))
+2026-03-30 14:35:50,527 [INFO] response: https://search.brave.com/search?q=%E5%82%AC%E5%8C%96%E7%83%AD%E8%A7%A3+%E5%85%B1%E7%83%AD%E8%A7%A3+%E5%8F%8D%E5%BA%94%E5%99%A8+%E6%9C%BA%E7%90%86+2026&source=web 429
+2026-03-30 14:35:51,333 [INFO] response: https://yandex.com/search/site/?text=%E5%82%AC%E5%8C%96%E7%83%AD%E8%A7%A3+%E5%85%B1%E7%83%AD%E8%A7%A3+%E5%8F%8D%E5%BA%94%E5%99%A8+%E6%9C%BA%E7%90%86+2026&web=1&searchid=7200761 200
+2026-03-30 14:35:51,393 [INFO]   查询「催化热解 共热解 反应器 机理 2026」→ 5 条
+2026-03-30 14:35:55,463 [INFO] response: https://zh.wikipedia.org/w/api.php?action=opensearch&profile=fuzzy&limit=1&search=catalytic%20pyrolysis%20mechanism%202026 200
+2026-03-30 14:35:59,829 [INFO] Error in engine yandex: TimeoutException(TimeoutError('error sending request for url (https://grokipedia.com/api/typeahead?query=catalytic+pyrolysis+mechanism+2026&limit=1)', 'https://grokipedia.com/api/typeahead?query=catalytic+pyrolysis+mechanism+2026&limit=1'))
+2026-03-30 14:36:00,414 [INFO] response: https://www.google.com.hk/search?q=catalytic+pyrolysis+mechanism+2026&filter=1&start=0&hl=zh-CN&lr=lang_zh&cr=countryCN 200
+2026-03-30 14:36:01,080 [INFO] response: https://yandex.com/search/site/?text=catalytic+pyrolysis+mechanism+2026&web=1&searchid=5913399 200
+2026-03-30 14:36:01,130 [INFO]   查询「catalytic pyrolysis mechanism 2026」→ 4 条
+2026-03-30 14:36:04,827 [INFO] response: https://zh.wikipedia.org/w/api.php?action=opensearch&profile=fuzzy&limit=1&search=%E6%96%B0%E5%9E%8B%E5%82%AC%E5%8C%96%E5%89%82%20%E6%B2%B8%E7%9F%B3%20%E7%83%AD%E8%A7%A3%20%E5%8D%95%E5%8E%9F%E5%AD%90%202026 200
+2026-03-30 14:36:09,187 [INFO] Error in engine grokipedia: TimeoutException(TimeoutError('error sending request for url (https://grokipedia.com/api/typeahead?query=%E6%96%B0%E5%9E%8B%E5%82%AC%E5%8C%96%E5%89%82+%E6%B2%B8%E7%9F%B3+%E7%83%AD%E8%A7%A3+%E5%8D%95%E5%8E%9F%E5%AD%90+2026&limit=1)', 'https://grokipedia.com/api/typeahead?query=%E6%96%B0%E5%9E%8B%E5%82%AC%E5%8C%96%E5%89%82+%E6%B2%B8%E7%9F%B3+%E7%83%AD%E8%A7%A3+%E5%8D%95%E5%8E%9F%E5%AD%90+2026&limit=1'))
+2026-03-30 14:36:09,638 [INFO] response: https://search.brave.com/search?q=%E6%96%B0%E5%9E%8B%E5%82%AC%E5%8C%96%E5%89%82+%E6%B2%B8%E7%9F%B3+%E7%83%AD%E8%A7%A3+%E5%8D%95%E5%8E%9F%E5%AD%90+2026&source=web 429
+2026-03-30 14:36:10,352 [INFO] response: https://search.yahoo.com/search;_ylt=sqDe6PmSR3yO8uZuhvjmp_EW;_ylu=mqE90xI1MI3DXCNUidgZhmk4yjJplzQMQP59nfi-w6NQMb0?p=%E6%96%B0%E5%9E%8B%E5%82%AC%E5%8C%96%E5%89%82+%E6%B2%B8%E7%9F%B3+%E7%83%AD%E8%A7%A3+%E5%8D%95%E5%8E%9F%E5%AD%90+2026 200
+2026-03-30 14:36:11,835 [INFO] response: https://html.duckduckgo.com/html/ 200
+2026-03-30 14:36:11,844 [INFO]   查询「新型催化剂 沸石 热解 单原子 2026」→ 5 条
+2026-03-30 14:36:15,598 [INFO] response: https://zh.wikipedia.org/w/api.php?action=opensearch&profile=fuzzy&limit=1&search=novel%20catalyst%20zeolite%20pyrolysis%202026 200
+2026-03-30 14:36:19,993 [INFO] Error in engine google: TimeoutException(TimeoutError('error sending request for url (https://grokipedia.com/api/typeahead?query=novel+catalyst+zeolite+pyrolysis+2026&limit=1)', 'https://grokipedia.com/api/typeahead?query=novel+catalyst+zeolite+pyrolysis+2026&limit=1'))
+2026-03-30 14:36:20,566 [INFO] response: https://www.google.com.hk/search?q=novel+catalyst+zeolite+pyrolysis+2026&filter=1&start=0&hl=zh-CN&lr=lang_zh&cr=countryCN 200
+2026-03-30 14:36:20,791 [INFO] response: https://www.mojeek.com/search?q=novel+catalyst+zeolite+pyrolysis+2026 403
+2026-03-30 14:36:21,460 [INFO]   查询「novel catalyst zeolite pyrolysis 20」→ 4 条
+2026-03-30 14:36:25,409 [INFO] response: https://zh.wikipedia.org/w/api.php?action=opensearch&profile=fuzzy&limit=1&search=%E7%83%AD%E8%A7%A3%20%E7%A7%91%E7%A0%94%20%E6%9C%9F%E5%88%8A%20%E8%AE%BA%E6%96%87%20%E7%9F%A5%E4%B9%8E%20%E7%A7%91%E6%99%AE%202026 200
+2026-03-30 14:36:29,769 [INFO] Error in engine duckduckgo: TimeoutException(TimeoutError('error sending request for url (https://grokipedia.com/api/typeahead?query=%E7%83%AD%E8%A7%A3+%E7%A7%91%E7%A0%94+%E6%9C%9F%E5%88%8A+%E8%AE%BA%E6%96%87+%E7%9F%A5%E4%B9%8E+%E7%A7%91%E6%99%AE+2026&limit=1)', 'https://grokipedia.com/api/typeahead?query=%E7%83%AD%E8%A7%A3+%E7%A7%91%E7%A0%94+%E6%9C%9F%E5%88%8A+%E8%AE%BA%E6%96%87+%E7%9F%A5%E4%B9%8E+%E7%A7%91%E6%99%AE+2026&limit=1'))
+2026-03-30 14:36:30,347 [INFO] response: https://www.google.com.hk/search?q=%E7%83%AD%E8%A7%A3+%E7%A7%91%E7%A0%94+%E6%9C%9F%E5%88%8A+%E8%AE%BA%E6%96%87+%E7%9F%A5%E4%B9%8E+%E7%A7%91%E6%99%AE+2026&filter=1&start=0&hl=zh-CN&lr=lang_zh&cr=countryCN 200
+2026-03-30 14:36:30,916 [INFO] response: https://html.duckduckgo.com/html/ 200
+2026-03-30 14:36:30,921 [INFO]   查询「热解 科研 期刊 论文 知乎 科普 2026」→ 5 条
+2026-03-30 14:36:35,245 [INFO] 数据已保存：C:\Users\zhangzy40\lobsterai\project\pyrolysis-daily\data\2026-03-30.json
+2026-03-30 14:36:35,246 [INFO] 分类统计：♻️塑料热解:4条  🌿生物质热解:4条  ⚗️催化热解:4条  ✨创新催化剂:4条  🎓科研圈:4条
+2026-03-30 14:36:35,349 [INFO] [INFO] 注入日期: 2026-03-30
+[✅] 已注入 1 天数据到 index.html，当前显示: 2026-03-30
+2026-03-30 14:36:35,349 [INFO] ========== 更新完成 ==========
