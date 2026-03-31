@@ -22,7 +22,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install ddgs
+        run: pip install requests beautifulsoup4
 
       - name: Run daily update
         run: python pyro_daily_update.py
