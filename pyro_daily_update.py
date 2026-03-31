@@ -7,6 +7,7 @@ pyro_daily_update.py  v3.0
 依赖：pip install requests beautifulsoup4
 """
 
+import html
 import json
 import re
 import sys
@@ -76,19 +77,22 @@ APPROVED_JOURNALS = [
     "energy & fuels",
     "energy and fuels",
     "applied energy",
+    "energy",                                       # Energy (Elsevier)
     "energy conversion and management",
     "joule",
     "international journal of hydrogen energy",
     "energy & environmental science",
     "energy and environmental science",
     "renewable energy",
-    "renewable and sustainable energy",
+    "renewable and sustainable energy reviews",
+    "journal of the energy institute",
     # 化学工程
     "chemical engineering journal",
     "industrial & engineering chemistry research",
     "industrial and engineering chemistry research",
     "chemical engineering science",
     "aiche journal",
+    "chemsuschem",
     # 催化
     "applied catalysis b",
     "applied catalysis a",
@@ -98,6 +102,7 @@ APPROVED_JOURNALS = [
     "catalysis communications",
     "catalysis reviews",
     "catalysis science",
+    "microporous and mesoporous materials",         # zeolite/分子筛
     # 环境
     "environmental science & technology",
     "environmental science and technology",
@@ -107,7 +112,13 @@ APPROVED_JOURNALS = [
     "bioresource technology",
     "journal of cleaner production",
     "science of the total environment",
+    "resources, conservation and recycling",
+    "resources conservation and recycling",
     "separation and purification technology",
+    # 生物质
+    "biomass and bioenergy",
+    "biomass conversion and biorefinery",
+    "industrial crops and products",
     # 高影响综合/化学
     "nature",
     "science",
@@ -126,6 +137,7 @@ APPROVED_JOURNALS = [
     "progress in energy and combustion science",
     # 材料/高分子
     "polymer degradation",
+    "polymer degradation and stability",
     "journal of hazardous materials",
     "chemosphere",
 ]
@@ -139,16 +151,42 @@ JOURNAL_WHITELIST_RE = re.compile(
 # 热解核心关键词（标题必须包含其中之一才入库）
 # ──────────────────────────────────────────
 CORE_KEYWORDS = [
-    "热解", "pyrolysis", "催化热解", "catalytic pyrolysis",
-    "催化裂解", "catalytic cracking", "生物质", "biomass",
-    "废塑料", "塑料回收", "生物炭", "biochar", "生物油", "bio-oil",
-    "废轮胎", "废橡胶", "共热解", "co-pyrolysis",
-    "焦油", r"\btar\b", "焦炭", r"\bchar\b",
-    "沸石", "zeolite", "分子筛", r"\bZSM\b", r"\bMCM\b", r"\bSAPO\b",
-    "热裂解", "快速热解", "flash pyrolysis",
-    "聚乙烯", "polyethylene", "聚丙烯", "polypropylene",
-    "聚苯乙烯", "polystyrene", "秸秆", "lignocellulosic",
-    "木质素", "lignin", "纤维素", "cellulose",
+    # 中文热解核心
+    "热解", "催化热解", "热裂解", "催化裂解", "快速热解",
+    "共热解", "废塑料", "塑料回收", "废轮胎", "废橡胶",
+    "生物质", "生物炭", "生物油", "焦油", "焦炭",
+    "沸石", "分子筛", "聚乙烯", "聚丙烯", "聚苯乙烯",
+    "秸秆", "木质素", "纤维素", "高纯氢", "碳纳米管",
+    "微波热解", "等离子体热解", "催化气化",
+    # 英文热解核心（短语优先，防止宽泛单词误命中）
+    "pyrolysis", "catalytic pyrolysis", "thermal pyrolysis",
+    "co-pyrolysis", "flash pyrolysis", "fast pyrolysis",
+    "slow pyrolysis", "microwave pyrolysis", "plasma pyrolysis",
+    "in-situ catalytic", "ex-situ catalytic",
+    "pyrolysis-catalysis",
+    "catalytic cracking", "thermal cracking",
+    "catalytic gasification",
+    # 废塑料/聚烯烃
+    "waste plastic", "waste polyolefin", "waste polyolefins",
+    "waste polyethylene", r"\bwaste PE\b", r"\bwaste PP\b",
+    "waste polypropylene", "waste polystyrene",
+    r"\bPE pyrolysis\b", r"\bPP pyrolysis\b",
+    r"\bPET pyrolysis\b", r"\bPVC pyrolysis\b",
+    r"\bPS pyrolysis\b",
+    "polyolefin", "polyolefins",
+    "polyethylene", "polypropylene", "polystyrene",
+    # 产物/催化剂
+    "biochar", "bio-oil", "biocrude",
+    "hydrogen production", "hydrogen generation",
+    r"\bH2 production\b", r"\bH₂ production\b",
+    "high-purity hydrogen",
+    "carbon nanotube", "carbon nanotubes", r"\bCNT\b", r"\bCNTs\b",
+    "zeolite", r"\bZSM\b", r"\bMCM\b", r"\bSAPO\b",
+    "single-atom", "single atom catalyst",
+    # 生物质
+    "biomass", "lignocellulosic", "lignin", "cellulose",
+    # 带词边界的短词（防误匹配）
+    r"\btar\b", r"\bchar\b",
 ]
 CORE_KW_RE = re.compile("|".join(CORE_KEYWORDS), re.IGNORECASE)
 
@@ -184,48 +222,72 @@ CAT_ICONS = {
 
 # ──────────────────────────────────────────
 # CrossRef 学术期刊查询配置（英文期刊论文，先跑）
+# 每条查询用多关键词组合，CrossRef 会做 OR 全文检索，覆盖更多相关论文
 # ──────────────────────────────────────────
 # 查最近90天内的论文
 CROSSREF_START_DATE = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d")
 
 CROSSREF_TASKS = [
-    # (查询词,                                              目标分类,      多取倍数)
-    ("plastic waste pyrolysis fuel oil product",           "塑料热解",    8),
-    ("catalytic pyrolysis polyethylene polypropylene",     "塑料热解",    6),
-    ("biomass pyrolysis biochar bio-oil lignocellulosic",  "生物质热解",  8),
-    ("catalytic pyrolysis mechanism product selectivity",  "催化热解",    6),
-    ("co-pyrolysis plastic biomass thermal",               "催化热解",    6),
-    ("zeolite catalyst pyrolysis hydrocarbon",             "创新催化剂",  8),
-    ("novel catalyst thermal cracking plastic",            "创新催化剂",  6),
-    ("pyrolysis progress review renewable",                "科研圈",      8),
-    ("pyrolysis energy conversion sustainability",         "科研圈",      6),
+    # ── 塑料热解（废塑料/聚烯烃/PP/PE/PET/PVC/PS/油品/氢气/CNTs）──
+    # query.title 按标题关键词检索，relevance 排序，更精准
+    ("pyrolysis plastic polyolefin polyethylene polypropylene",    "塑料热解",   10),
+    ("pyrolysis PET PVC polystyrene thermal cracking plastic",    "塑料热解",   10),
+    ("plastic pyrolysis hydrogen carbon nanotube CNT upcycling",  "塑料热解",   8),
+    ("plastic pyrolysis microwave plasma catalytic",              "塑料热解",   8),
+
+    # ── 生物质热解（生物炭/生物油/木质素/纤维素/秸秆）──
+    ("pyrolysis biomass biochar bio-oil lignin cellulose",        "生物质热解", 10),
+    ("biomass pyrolysis fast catalytic co-pyrolysis bio-oil",    "生物质热解", 8),
+
+    # ── 催化热解（机理/选择性/共热解/原位/异位/气化）──
+    ("catalytic pyrolysis mechanism selectivity in-situ",         "催化热解",   10),
+    ("co-pyrolysis plastic biomass synergy product",              "催化热解",   8),
+    ("pyrolysis gasification thermal cracking coupling",          "催化热解",   8),
+
+    # ── 创新催化剂（沸石/单原子/ZSM/MCM/SAPO/新型）──
+    ("pyrolysis zeolite catalyst cracking ZSM SAPO MCM",         "创新催化剂", 10),
+    ("pyrolysis single-atom catalyst hydrogen carbon",            "创新催化剂", 8),
+    ("polyolefin pyrolysis catalyst hydrogen high-purity",        "创新催化剂", 8),
+
+    # ── 科研圈（综述/进展/高影响论文）──
+    ("pyrolysis plastic biomass review progress",                 "科研圈",     10),
+    ("waste plastic chemical recycling hydrogen review",          "科研圈",     8),
 ]
 
 # ──────────────────────────────────────────
 # arXiv 查询配置（预印本，补期刊不足时使用）
 # ──────────────────────────────────────────
 ARXIV_TASKS = [
-    # (arXiv 搜索词,                                        目标分类,    取条数)
-    ("ti:pyrolysis AND ti:plastic",                         "塑料热解",  4),
-    ("ti:pyrolysis AND (ti:biomass OR ti:biochar)",         "生物质热解",4),
-    ("ti:catalytic AND ti:pyrolysis",                       "催化热解",  4),
-    ("ti:pyrolysis AND ti:catalyst",                        "创新催化剂",4),
-    ("ti:pyrolysis AND ti:review",                          "科研圈",    4),
+    # (arXiv 搜索词,                                                  目标分类,    取条数)
+    ("ti:pyrolysis AND (ti:plastic OR ti:polyolefin OR ti:polyethylene OR ti:polypropylene)",
+                                                                      "塑料热解",  6),
+    ("ti:pyrolysis AND (ti:hydrogen OR ti:\"carbon nanotube\" OR ti:CNT)",
+                                                                      "塑料热解",  4),
+    ("ti:pyrolysis AND (ti:biomass OR ti:biochar OR ti:lignin OR ti:cellulose)",
+                                                                      "生物质热解",6),
+    ("ti:pyrolysis AND (ti:catalytic OR ti:\"in-situ\" OR ti:\"co-pyrolysis\")",
+                                                                      "催化热解",  6),
+    ("ti:pyrolysis AND (ti:zeolite OR ti:\"single-atom\" OR ti:ZSM OR ti:catalyst)",
+                                                                      "创新催化剂",6),
+    ("ti:pyrolysis AND ti:review",                                    "科研圈",    4),
 ]
 
 # ──────────────────────────────────────────
 # 搜狗微信搜索词配置（中文公众号，后跑补足）
 # ──────────────────────────────────────────
 WEIXIN_TASKS = [
-    # (关键词,               目标分类,      最多取条数)
-    ("废塑料 热解 产业化",   "塑料热解",    6),
-    ("塑料热解 化学回收",    "塑料热解",    6),
-    ("生物质热解 生物炭",    "生物质热解",  5),
-    ("催化热解 机理 选择性", "催化热解",    6),
-    ("共热解 协同效应",      "催化热解",    5),
-    ("沸石催化剂 热解",      "创新催化剂",  6),
-    ("新型催化剂 热解",      "创新催化剂",  5),
-    ("热解 论文 课题组",     "科研圈",      6),
+    # (关键词,                        目标分类,      最多取条数)
+    ("废塑料 热解 产业化 化学回收",   "塑料热解",    6),
+    ("塑料热解 氢气 碳纳米管",        "塑料热解",    6),
+    ("聚乙烯 聚丙烯 热解 催化",       "塑料热解",    6),
+    ("生物质热解 生物炭 生物油",      "生物质热解",  6),
+    ("秸秆 木质素 热解 催化",         "生物质热解",  5),
+    ("催化热解 原位 异位 机理",       "催化热解",    6),
+    ("共热解 协同效应 反应器",        "催化热解",    5),
+    ("沸石催化剂 ZSM 热解 选择性",   "创新催化剂",  6),
+    ("单原子催化剂 热解 氢气",        "创新催化剂",  6),
+    ("热解 综述 进展 最新",           "科研圈",      6),
+    ("催化热解 课题组 论文",           "科研圈",      6),
 ]
 
 # ──────────────────────────────────────────
@@ -350,11 +412,11 @@ def fetch_crossref(query: str, max_results: int = 5) -> list[dict]:
     r = http_get(
         "https://api.crossref.org/works",
         params={
-            "query":   query,
+            "query.title": query,              # 标题字段精确检索，比 query 全文更精准
             "filter":  f"from-pub-date:{CROSSREF_START_DATE},type:journal-article",
-            "rows":    max_results * 2,   # 多取一些以补过滤损耗
+            "rows":    max_results * 3,        # 多取以补过滤损耗
             "select":  "title,abstract,URL,published,container-title,author",
-            "sort":    "published",
+            "sort":    "relevance",            # 按相关性排序（原 published 会导致无关文章置顶）
             "order":   "desc",
         },
         headers={**API_HEADERS, "Accept": "application/json"},
@@ -370,7 +432,9 @@ def fetch_crossref(query: str, max_results: int = 5) -> list[dict]:
             if not title_list:
                 continue
             title   = title_list[0].strip()
-            journal = (w.get("container-title") or [""])[0]
+            journal_raw = (w.get("container-title") or [""])[0]
+            # CrossRef 偶尔返回 HTML 实体（如 &amp;），统一解码后再做白名单匹配
+            journal = html.unescape(journal_raw)
             url     = w.get("URL", "").strip()
             # 期刊白名单过滤：只收化工/能源/环境/材料类期刊
             if journal and not JOURNAL_WHITELIST_RE.search(journal):
