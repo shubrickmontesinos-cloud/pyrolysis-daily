@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-pyro_daily_update.py  v2.0
-每日热解科研资讯自动采集（只抓国内科研/学术平台，严格过滤无关内容）
+pyro_daily_update.py  v3.0
+每日热解科研资讯自动采集
+数据源：搜狗微信公众号 + CrossRef 学术期刊 API + arXiv 预印本
 依赖：pip install requests beautifulsoup4
 """
 
@@ -13,8 +14,9 @@ import time
 import random
 import logging
 import subprocess
+import xml.etree.ElementTree as ET
 from collections import Counter
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 try:
@@ -42,54 +44,22 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 # ──────────────────────────────────────────
-# 域名白名单（只允许这些来源）
-# ──────────────────────────────────────────
-DOMAIN_WHITELIST = [
-    "zhihu.com",
-    "zhuanlan.zhihu.com",
-    "mp.weixin.qq.com",
-    "weixin.qq.com",
-    "sciencenet.cn",
-    "cnki.net",
-    "wanfangdata.com.cn",
-    "cqvip.com",
-    "kns.cnki.net",
-    "pubs.rsc.org",          # RSC（化学类顶刊，学术来源）
-    "www.sciencedirect.com", # Elsevier（仅学术）
-    "academic.oup.com",
-    "xhslink.com",
-    "xiaohongshu.com",
-    "bilibili.com",          # B站学术视频
-    "sohu.com",              # 搜狐号（部分科研机构）
-    "guancha.cn",
-    "cas.cn",                # 中科院
-    "most.gov.cn",           # 科技部
-    "nsfc.gov.cn",           # 国自然基金委
-    "sinopec.com",
-    "pnnl.gov",
-    "nrel.gov",
-    "energy.gov",
-]
-
-# ──────────────────────────────────────────
 # 内容黑名单（标题/摘要中出现任一词则丢弃）
 # ──────────────────────────────────────────
 BLACKLIST_PATTERNS = [
     r"破解|crack|keygen|license.?key|激活码|序列号",
-    r"色情|黄色|成人|裸|性感|约炮|交友|找小姐|招聘.*女|夜场",
+    r"色情|黄色|成人|裸露|性感|约炮|交友|找小姐|招聘.*女|夜场",
     r"博彩|赌博|彩票|赌场|棋牌|老虎机|百家乐",
     r"贷款|网贷|小额贷|提现|套现|刷单|兼职.*赚钱",
     r"VPN|翻墙|代理.*软件|科学上网",
     r"盗版|破解版|免费下载.*软件",
     r"发票|洗钱|走私",
-    r"纪检|纪委|反腐|贪污|案件审判",  # 非科研内容
+    r"纪检|纪委|反腐|贪污|案件审判",
     r"明星|八卦|娱乐|综艺|追星",
     r"减肥|美容|养生|保健品|壮阳",
     r"菜谱|美食|旅游|攻略.*景点",
-    r"stock|forex|cryptocurrency|比特币|炒股",
-    r"BBC|CNN|NYT|foreign.*policy|washington.?post",  # 外媒无关内容
+    r"股票|cryptocurrency|比特币|炒股|forex",
 ]
-
 BLACKLIST_RE = re.compile("|".join(BLACKLIST_PATTERNS), re.IGNORECASE)
 
 # ──────────────────────────────────────────
@@ -97,23 +67,25 @@ BLACKLIST_RE = re.compile("|".join(BLACKLIST_PATTERNS), re.IGNORECASE)
 # ──────────────────────────────────────────
 CORE_KEYWORDS = [
     "热解", "pyrolysis", "催化", "catalytic", "生物质", "biomass",
-    "废塑料", "塑料回收", "生物炭", "生物油", "废轮胎", "废橡胶",
-    "共热解", "co-pyrolysis", "液化", "气化", "焦炭", "焦油",
+    "废塑料", "塑料回收", "生物炭", "biochar", "生物油", "bio-oil",
+    "废轮胎", "废橡胶", "共热解", "co-pyrolysis",
+    "焦油", "tar", "焦炭", "char",
     "沸石", "zeolite", "分子筛", "ZSM", "MCM", "SAPO",
-    "催化裂解", "热裂解", "快速热解", "慢速热解", "闪速热解",
-    "聚乙烯", "聚丙烯", "聚苯乙烯", "PE热解", "PP热解",
-    "秸秆", "木质素", "纤维素", "半纤维素",
+    "催化裂解", "热裂解", "快速热解", "flash pyrolysis",
+    "聚乙烯", "polyethylene", "聚丙烯", "polypropylene",
+    "聚苯乙烯", "polystyrene", "秸秆", "lignocellulosic",
+    "木质素", "lignin", "纤维素", "cellulose",
 ]
 CORE_KW_RE = re.compile("|".join(CORE_KEYWORDS), re.IGNORECASE)
 
 # ──────────────────────────────────────────
-# 分类配置
+# 分类配置（按用户要求）
+# 塑料热解8 / 生物质热解3 / 催化热解5 / 科研圈4  合计20
 # ──────────────────────────────────────────
 CATEGORY_QUOTA = {
-    "塑料热解":   4,
-    "生物质热解": 4,
-    "催化热解":   4,
-    "创新催化剂": 4,
+    "塑料热解":   8,
+    "生物质热解": 3,
+    "催化热解":   5,
     "科研圈":     4,
 }
 
@@ -121,29 +93,55 @@ CAT_ICONS = {
     "塑料热解":   "♻️",
     "生物质热解": "🌿",
     "催化热解":   "⚗️",
-    "创新催化剂": "✨",
     "科研圈":     "🎓",
 }
 
-# 每个分类对应的搜狗微信/知乎搜索词
-SEARCH_TASKS = [
-    # (搜索词,              目标分类)
-    ("废塑料 热解",          "塑料热解"),
-    ("塑料热解 回收",        "塑料热解"),
-    ("生物质热解",           "生物质热解"),
-    ("生物炭 生物油",        "生物质热解"),
-    ("催化热解 机理",        "催化热解"),
-    ("共热解 反应器",        "催化热解"),
-    ("沸石催化剂 热解",      "创新催化剂"),
-    ("新型催化剂 热解",      "创新催化剂"),
-    ("热解 论文 科研",       "科研圈"),
-    ("热解 课题组 进展",     "科研圈"),
+# ──────────────────────────────────────────
+# 搜狗微信搜索词配置（中文行业/科研资讯）
+# ──────────────────────────────────────────
+WEIXIN_TASKS = [
+    # (关键词,             目标分类,      最多取条数)
+    ("废塑料 热解",         "塑料热解",    8),
+    ("塑料热解 产业化",     "塑料热解",    6),
+    ("废塑料 化学回收",     "塑料热解",    6),
+    ("生物质热解 生物炭",   "生物质热解",  6),
+    ("秸秆热解 生物油",     "生物质热解",  5),
+    ("催化热解 机理",       "催化热解",    6),
+    ("共热解 反应器",       "催化热解",    6),
+    ("热解 课题组 进展",    "科研圈",      6),
+    ("热解 论文 期刊",      "科研圈",      6),
 ]
 
 # ──────────────────────────────────────────
-# HTTP 通用请求
+# CrossRef 学术期刊查询配置（英文期刊论文）
 # ──────────────────────────────────────────
-HEADERS = {
+# 查最近90天内的论文
+CROSSREF_START_DATE = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d")
+
+CROSSREF_TASKS = [
+    # (查询词,                                          目标分类,    取条数)
+    ("catalytic pyrolysis plastic polyethylene",        "塑料热解",  5),
+    ("plastic waste pyrolysis oil product",             "塑料热解",  5),
+    ("biomass pyrolysis biochar bio-oil",               "生物质热解",5),
+    ("catalytic pyrolysis mechanism zeolite",           "催化热解",  5),
+    ("co-pyrolysis synergy catalyst",                   "催化热解",  4),
+    ("pyrolysis review progress",                       "科研圈",    4),
+]
+
+# ──────────────────────────────────────────
+# arXiv 查询配置（预印本，补充用）
+# ──────────────────────────────────────────
+ARXIV_TASKS = [
+    # (arXiv 搜索词,                                    目标分类,    取条数)
+    ("ti:pyrolysis AND ti:plastic",                     "塑料热解",  3),
+    ("ti:pyrolysis AND (ti:biomass OR ti:biochar)",     "生物质热解",3),
+    ("ti:pyrolysis AND ti:catalytic",                   "催化热解",  3),
+]
+
+# ──────────────────────────────────────────
+# HTTP 通用配置
+# ──────────────────────────────────────────
+BROWSER_HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
         "AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -151,54 +149,79 @@ HEADERS = {
     ),
     "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
 }
+API_HEADERS = {
+    "User-Agent": "pyrolysis-daily/3.0 (academic research tool; github-actions)",
+}
 
 
-def get(url: str, params: dict = None, timeout: int = 12) -> requests.Response | None:
+def http_get(url: str, params: dict = None, headers: dict = None,
+             timeout: int = 15) -> requests.Response | None:
+    h = headers or BROWSER_HEADERS
     try:
-        r = requests.get(url, params=params, headers=HEADERS, timeout=timeout)
+        r = requests.get(url, params=params, headers=h, timeout=timeout)
         r.raise_for_status()
         return r
     except Exception as e:
-        log.warning(f"  请求失败 {url}: {e}")
+        log.warning(f"  请求失败 {url[:60]}: {e}")
         return None
 
 
 # ──────────────────────────────────────────
-# 过滤核心逻辑
+# 内容过滤
 # ──────────────────────────────────────────
 
-def in_whitelist(url: str) -> bool:
-    """URL 必须属于白名单域名"""
-    try:
-        host = url.split("/")[2].lower().replace("www.", "")
-        return any(host == d or host.endswith("." + d) for d in DOMAIN_WHITELIST)
-    except Exception:
-        return False
-
-
-def is_clean(title: str, body: str) -> bool:
-    """通过黑名单 + 核心关键词双重校验"""
+def is_clean(title: str, body: str = "") -> bool:
+    """黑名单 + 核心词双重过滤"""
     combined = title + " " + body
-    # 黑名单命中 → 丢弃
     if BLACKLIST_RE.search(combined):
-        log.debug(f"  黑名单命中，丢弃: {title[:40]}")
+        log.debug(f"  [黑名单] 丢弃: {title[:50]}")
         return False
-    # 标题不含热解相关词 → 丢弃
     if not CORE_KW_RE.search(title):
-        log.debug(f"  核心词未命中，丢弃: {title[:40]}")
+        log.debug(f"  [核心词] 丢弃: {title[:50]}")
         return False
     return True
 
 
+def extract_domain(url: str) -> str:
+    try:
+        return url.split("/")[2].replace("www.", "")
+    except Exception:
+        return "未知来源"
+
+
+def extract_tags(title: str, category: str) -> list:
+    keyword_map = {
+        "废塑料": "废塑料", "聚乙烯": "PE", "聚丙烯": "PP",
+        "polyethylene": "PE", "polypropylene": "PP", "polystyrene": "PS",
+        "生物质": "生物质", "biomass": "生物质",
+        "生物油": "生物油", "bio-oil": "生物油",
+        "生物炭": "生物炭", "biochar": "生物炭",
+        "秸秆": "秸秆", "lignin": "木质素", "cellulose": "纤维素",
+        "沸石": "沸石", "zeolite": "Zeolite", "ZSM": "ZSM-5",
+        "共热解": "共热解", "co-pyrolysis": "共热解",
+        "反应器": "反应器", "机理": "反应机理", "mechanism": "反应机理",
+        "产业化": "产业化",
+        "JACS": "JACS", "Nature": "Nature", "Science": "Science",
+    }
+    tags = [category]
+    for kw, tag in keyword_map.items():
+        if kw.lower() in title.lower() and tag not in tags:
+            tags.append(tag)
+        if len(tags) >= 4:
+            break
+    return tags[:4]
+
+
 # ──────────────────────────────────────────
-# 数据源 1：搜狗微信搜索（最接近公众号）
+# 数据源 A：搜狗微信公众号（中文行业/科研资讯）
 # ──────────────────────────────────────────
 
 def fetch_weixin(keyword: str, max_results: int = 8) -> list[dict]:
-    """通过搜狗微信搜索抓取微信公众号文章"""
-    url = "https://weixin.sogou.com/weixin"
-    params = {"type": "2", "query": keyword, "ie": "utf8"}
-    r = get(url, params=params)
+    """搜狗微信搜索，返回公众号文章"""
+    r = http_get(
+        "https://weixin.sogou.com/weixin",
+        params={"type": "2", "query": keyword, "ie": "utf8"},
+    )
     if not r:
         return []
 
@@ -211,108 +234,121 @@ def fetch_weixin(keyword: str, max_results: int = 8) -> list[dict]:
             continue
         title = a_tag.get_text(strip=True)
         body  = p_tag.get_text(strip=True) if p_tag else ""
-        href  = a_tag.get("href", "")
-        # 搜狗返回的是重定向链接，实际是 mp.weixin.qq.com
-        if not href:
+        href  = a_tag.get("href", "").strip()
+        if not href or not title:
             continue
-        items.append({"title": title, "body": body, "url": href, "source_tag": "【微信公众号】"})
-    log.info(f"  搜狗微信「{keyword}」→ {len(items)} 条")
+        # 补全搜狗站内重定向路径
+        if href.startswith("/link?"):
+            href = "https://weixin.sogou.com" + href
+        items.append({
+            "title":      title,
+            "body":       body,
+            "url":        href,
+            "source_tag": "【微信公众号】",
+            "source":     "weixin.qq.com",
+        })
+    log.info(f"  搜狗微信「{keyword}」→ 原始 {len(items)} 条")
     return items
 
 
 # ──────────────────────────────────────────
-# 数据源 2：知乎搜索
+# 数据源 B：CrossRef API（正式期刊论文）
 # ──────────────────────────────────────────
 
-def fetch_zhihu(keyword: str, max_results: int = 6) -> list[dict]:
-    """知乎搜索（文章/专栏）"""
-    url = "https://www.zhihu.com/search"
-    params = {"type": "content", "q": keyword}
-    r = get(url, params=params)
+def fetch_crossref(query: str, max_results: int = 5) -> list[dict]:
+    """CrossRef REST API，检索近期正式发表的期刊论文"""
+    r = http_get(
+        "https://api.crossref.org/works",
+        params={
+            "query":   query,
+            "filter":  f"from-pub-date:{CROSSREF_START_DATE},type:journal-article",
+            "rows":    max_results * 2,   # 多取一些以补过滤损耗
+            "select":  "title,abstract,URL,published,container-title,author",
+            "sort":    "published",
+            "order":   "desc",
+        },
+        headers={**API_HEADERS, "Accept": "application/json"},
+    )
     if not r:
         return []
 
-    soup = BeautifulSoup(r.text, "html.parser")
     items = []
-
-    for card in soup.select("div.SearchResult-Card")[:max_results]:
-        a_tag = card.select_one("h2 a, .ContentItem-title a")
-        p_tag = card.select_one("div.RichContent-inner p, .SearchItem-excerpt")
-        if not a_tag:
-            continue
-        title = a_tag.get_text(strip=True)
-        body  = p_tag.get_text(strip=True)[:200] if p_tag else ""
-        href  = a_tag.get("href", "")
-        if href.startswith("/"):
-            href = "https://www.zhihu.com" + href
-        if not href:
-            continue
-        items.append({"title": title, "body": body, "url": href, "source_tag": "【知乎】"})
-
-    log.info(f"  知乎「{keyword}」→ {len(items)} 条")
-    return items
-
-
-# ──────────────────────────────────────────
-# 数据源 3：科学网（中国科研门户）
-# ──────────────────────────────────────────
-
-def fetch_sciencenet(keyword: str, max_results: int = 6) -> list[dict]:
-    """科学网搜索"""
-    url = "http://www.sciencenet.cn/m/search.aspx"
-    params = {"c": "news", "q": keyword}
-    r = get(url, params=params)
-    if not r:
-        return []
-
-    soup = BeautifulSoup(r.text, "html.parser")
-    items = []
-    for li in soup.select("div#divNews ul li")[:max_results]:
-        a_tag = li.select_one("a")
-        p_tag = li.select_one("p.abstract, p")
-        if not a_tag:
-            continue
-        title = a_tag.get_text(strip=True)
-        body  = p_tag.get_text(strip=True)[:200] if p_tag else ""
-        href  = a_tag.get("href", "")
-        if href.startswith("/"):
-            href = "http://www.sciencenet.cn" + href
-        if not href:
-            continue
-        items.append({"title": title, "body": body, "url": href, "source_tag": "【科学网】"})
-
-    log.info(f"  科学网「{keyword}」→ {len(items)} 条")
-    return items
-
-
-# ──────────────────────────────────────────
-# 辅助函数
-# ──────────────────────────────────────────
-
-def extract_domain(url: str) -> str:
     try:
-        return url.split("/")[2].replace("www.", "")
-    except Exception:
-        return "未知来源"
+        data = r.json()
+        for w in data["message"]["items"]:
+            title_list = w.get("title", [])
+            if not title_list:
+                continue
+            title   = title_list[0].strip()
+            journal = (w.get("container-title") or [""])[0]
+            url     = w.get("URL", "").strip()
+            # abstract 可能是 jats XML 格式，简单清洗
+            abstract_raw = w.get("abstract", "")
+            body = re.sub(r"<[^>]+>", "", abstract_raw).strip()[:200]
+            if not body:
+                body = f"发表于 {journal}，点击原文查看摘要。" if journal else "点击原文查看详情。"
+            # 作者
+            authors = w.get("author", [])
+            author_str = ""
+            if authors:
+                first = authors[0]
+                author_str = f"{first.get('family','')} {first.get('given','')}".strip()
+                if len(authors) > 1:
+                    author_str += " 等"
+            items.append({
+                "title":      title,
+                "body":       body,
+                "url":        url,
+                "source_tag": f"【{journal[:20]}】" if journal else "【学术期刊】",
+                "source":     extract_domain(url) if url else "doi.org",
+                "author":     author_str,
+            })
+    except Exception as e:
+        log.warning(f"  CrossRef 解析失败: {e}")
+    log.info(f"  CrossRef「{query[:35]}」→ 原始 {len(items)} 条")
+    return items
 
 
-def extract_tags(title: str, category: str) -> list:
-    keyword_map = {
-        "废塑料": "废塑料", "聚乙烯": "PE", "聚丙烯": "PP", "PE": "PE", "PP": "PP",
-        "生物质": "生物质", "生物油": "生物油", "生物炭": "生物炭", "秸秆": "秸秆",
-        "沸石": "沸石", "分子筛": "分子筛", "单原子": "单原子催化剂", "双金属": "双金属",
-        "共热解": "共热解", "反应器": "反应器", "机理": "反应机理",
-        "产业化": "产业化", "投产": "工业化",
-        "JACS": "JACS", "Nature": "Nature",
-        "zeolite": "Zeolite", "ZSM": "ZSM-5", "MOF": "MOF",
-    }
-    tags = [category]
-    for kw, tag in keyword_map.items():
-        if kw.lower() in title.lower() and tag not in tags:
-            tags.append(tag)
-        if len(tags) >= 4:
-            break
-    return tags[:4]
+# ──────────────────────────────────────────
+# 数据源 C：arXiv API（预印本）
+# ──────────────────────────────────────────
+
+def fetch_arxiv(query: str, max_results: int = 3) -> list[dict]:
+    """arXiv Atom API，检索最新预印本"""
+    r = http_get(
+        "http://export.arxiv.org/api/query",
+        params={
+            "search_query": query,
+            "start":        0,
+            "max_results":  max_results * 2,
+            "sortBy":       "submittedDate",
+            "sortOrder":    "descending",
+        },
+        headers=API_HEADERS,
+    )
+    if not r:
+        return []
+
+    items = []
+    try:
+        root = ET.fromstring(r.text)
+        ns   = {"atom": "http://www.w3.org/2005/Atom"}
+        for entry in root.findall("atom:entry", ns):
+            title   = entry.find("atom:title", ns).text.strip().replace("\n", " ")
+            summary = entry.find("atom:summary", ns).text.strip()[:200]
+            url     = entry.find("atom:id", ns).text.strip()
+            pub     = entry.find("atom:published", ns).text[:10]
+            items.append({
+                "title":      title,
+                "body":       f"[arXiv {pub}] {summary}",
+                "url":        url,
+                "source_tag": "【arXiv预印本】",
+                "source":     "arxiv.org",
+            })
+    except Exception as e:
+        log.warning(f"  arXiv 解析失败: {e}")
+    log.info(f"  arXiv「{query[:35]}」→ 原始 {len(items)} 条")
+    return items
 
 
 # ──────────────────────────────────────────
@@ -321,64 +357,68 @@ def extract_tags(title: str, category: str) -> list:
 
 def collect_news() -> list[dict]:
     category_pool: dict[str, list] = {k: [] for k in CATEGORY_QUOTA}
-    seen_urls: set[str] = set()
+    seen_titles: set[str] = set()   # 用标题去重（跨平台 URL 可能不同）
+    seen_urls:   set[str] = set()
 
-    for keyword, category in SEARCH_TASKS:
-        log.info(f"搜索：「{keyword}」→ {category}")
+    def try_add(item: dict, category: str):
+        title = item["title"].strip()
+        body  = item.get("body", "").strip()
+        url   = item.get("url", "").strip()
+        tag   = item.get("source_tag", "")
 
-        # 三个数据源都尝试
-        raw_items: list[dict] = []
-        raw_items += fetch_weixin(keyword, max_results=6)
-        time.sleep(random.uniform(1.5, 3.0))
-        raw_items += fetch_zhihu(keyword, max_results=5)
-        time.sleep(random.uniform(1.5, 3.0))
-        raw_items += fetch_sciencenet(keyword, max_results=4)
-        time.sleep(random.uniform(1.0, 2.0))
+        if not title or not url:
+            return
+        # 标题去重（忽略大小写/空格）
+        title_key = re.sub(r"\s+", "", title).lower()
+        if title_key in seen_titles or url in seen_urls:
+            return
+        # 内容过滤
+        if not is_clean(title, body):
+            return
 
-        for item in raw_items:
-            title = item["title"].strip()
-            body  = item["body"].strip()
-            url   = item["url"].strip()
-            tag   = item.get("source_tag", "")
+        seen_titles.add(title_key)
+        seen_urls.add(url)
 
-            # 基础过滤
-            if not title or not url:
-                continue
-            if url in seen_urls:
-                continue
+        display_title = f"{tag} {title}" if tag else title
+        category_pool[category].append({
+            "category": category,
+            "title":    display_title,
+            "summary":  body if body else "点击原文查看详情。",
+            "source":   item.get("source", extract_domain(url)),
+            "url":      url,
+            "tags":     extract_tags(title, category),
+        })
 
-            # 域名白名单（搜狗微信返回的是 /link?url=... 相对路径，视为合法）
-            is_weixin_redirect = (
-                "weixin.sogou.com" in url
-                or "mp.weixin.qq.com" in url
-                or url.startswith("/link?url=")   # 搜狗站内重定向
-            )
-            if not is_weixin_redirect and not in_whitelist(url):
-                log.debug(f"  域名不在白名单，丢弃: {url}")
-                continue
+    # ── A: 搜狗微信（中文公众号，行业资讯）──
+    log.info("=== 阶段A：搜狗微信公众号 ===")
+    for keyword, category, num in WEIXIN_TASKS:
+        results = fetch_weixin(keyword, max_results=num)
+        for item in results:
+            try_add(item, category)
+        log.info(f"  池「{category}」: {len(category_pool[category])} 条")
+        time.sleep(random.uniform(2.0, 4.0))
 
-            # 内容清洁度校验
-            if not is_clean(title, body):
-                continue
+    # ── B: CrossRef（英文学术期刊，补充深度）──
+    log.info("=== 阶段B：CrossRef 学术期刊 ===")
+    for query, category, num in CROSSREF_TASKS:
+        results = fetch_crossref(query, max_results=num)
+        for item in results:
+            try_add(item, category)
+        log.info(f"  池「{category}」: {len(category_pool[category])} 条")
+        time.sleep(random.uniform(1.0, 2.5))
 
-            seen_urls.add(url)
-            # 搜狗重定向链接补全为完整 URL
-            if url.startswith("/link?url="):
-                url = "https://weixin.sogou.com" + url
-            display_title = f"{tag} {title}" if tag else title
+    # ── C: arXiv（预印本，补不足用）──
+    log.info("=== 阶段C：arXiv 预印本 ===")
+    for query, category, num in ARXIV_TASKS:
+        # 只在该分类还未达到配额时才补充
+        if len(category_pool[category]) < CATEGORY_QUOTA[category]:
+            results = fetch_arxiv(query, max_results=num)
+            for item in results:
+                try_add(item, category)
+            log.info(f"  池「{category}」: {len(category_pool[category])} 条")
+        time.sleep(random.uniform(0.5, 1.5))
 
-            category_pool[category].append({
-                "category": category,
-                "title":    display_title,
-                "summary":  body[:200] if body else "点击原文查看详情。",
-                "source":   "weixin.qq.com" if is_weixin_redirect else extract_domain(url),
-                "url":      url,
-                "tags":     extract_tags(title, category),
-            })
-
-        log.info(f"  当前「{category}」池：{len(category_pool[category])} 条")
-
-    # 按配额拼装
+    # ── 按配额拼装 ──
     news_list = []
     item_id = 1
     for category, quota in CATEGORY_QUOTA.items():
