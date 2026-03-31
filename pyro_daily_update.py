@@ -347,8 +347,12 @@ def collect_news() -> list[dict]:
             if url in seen_urls:
                 continue
 
-            # 域名白名单（搜狗微信的 url 可能是重定向链，放宽判断）
-            is_weixin_redirect = "weixin.sogou.com" in url or "mp.weixin.qq.com" in url
+            # 域名白名单（搜狗微信返回的是 /link?url=... 相对路径，视为合法）
+            is_weixin_redirect = (
+                "weixin.sogou.com" in url
+                or "mp.weixin.qq.com" in url
+                or url.startswith("/link?url=")   # 搜狗站内重定向
+            )
             if not is_weixin_redirect and not in_whitelist(url):
                 log.debug(f"  域名不在白名单，丢弃: {url}")
                 continue
@@ -358,6 +362,9 @@ def collect_news() -> list[dict]:
                 continue
 
             seen_urls.add(url)
+            # 搜狗重定向链接补全为完整 URL
+            if url.startswith("/link?url="):
+                url = "https://weixin.sogou.com" + url
             display_title = f"{tag} {title}" if tag else title
 
             category_pool[category].append({
