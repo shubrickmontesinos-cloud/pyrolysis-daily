@@ -78,12 +78,13 @@ JOURNAL_WHITELIST_RE = re.compile(
 # 热解核心关键词（标题必须包含其中之一才入库）
 # ──────────────────────────────────────────
 CORE_KEYWORDS = [
-    "热解", "pyrolysis", "催化", "catalytic", "生物质", "biomass",
+    "热解", "pyrolysis", "催化热解", "catalytic pyrolysis",
+    "催化裂解", "catalytic cracking", "生物质", "biomass",
     "废塑料", "塑料回收", "生物炭", "biochar", "生物油", "bio-oil",
     "废轮胎", "废橡胶", "共热解", "co-pyrolysis",
-    "焦油", "tar", "焦炭", "char",
-    "沸石", "zeolite", "分子筛", "ZSM", "MCM", "SAPO",
-    "催化裂解", "热裂解", "快速热解", "flash pyrolysis",
+    "焦油", r"\btar\b", "焦炭", r"\bchar\b",
+    "沸石", "zeolite", "分子筛", r"\bZSM\b", r"\bMCM\b", r"\bSAPO\b",
+    "热裂解", "快速热解", "flash pyrolysis",
     "聚乙烯", "polyethylene", "聚丙烯", "polypropylene",
     "聚苯乙烯", "polystyrene", "秸秆", "lignocellulosic",
     "木质素", "lignin", "纤维素", "cellulose",
@@ -429,7 +430,6 @@ def collect_news() -> list[dict]:
         if journal_counts[category] >= jq:
             log.info(f"  「{category}」期刊已达上限{jq}，跳过")
             continue
-        before = len(category_pool[category])
         results = fetch_crossref(query, max_results=num)
         for item in results:
             if journal_counts[category] < jq:
