@@ -35,3 +35,42 @@ jobs:
           git add data/ index.html
           git diff --cached --quiet || git commit -m "chore: daily update $(date +'%Y-%m-%d')"
           git push
+
+      - name: Sync to Aliyun OSS
+        env:
+          OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
+          OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+        run: |
+          pip install oss2 --quiet
+          python - <<'EOF'
+          import oss2, os, pathlib
+
+          auth = oss2.Auth(
+              os.environ["OSS_ACCESS_KEY_ID"],
+              os.environ["OSS_ACCESS_KEY_SECRET"]
+          )
+          bucket = oss2.Bucket(auth, "https://oss-cn-beijing.aliyuncs.com", "pyrolysis-daily")
+
+          CONTENT_TYPE = {
+              ".html": "text/html; charset=utf-8",
+              ".json": "application/json; charset=utf-8",
+              ".js":   "application/javascript; charset=utf-8",
+              ".css":  "text/css; charset=utf-8",
+              ".png":  "image/png",
+              ".jpg":  "image/jpeg",
+              ".ico":  "image/x-icon",
+          }
+
+          base = pathlib.Path(".")
+          upload_targets = list(base.glob("index.html")) + list(base.glob("data/**/*"))
+
+          for f in upload_targets:
+              if not f.is_file():
+                  continue
+              key = str(f).replace("\\", "/")
+              ct = CONTENT_TYPE.get(f.suffix, "application/octet-stream")
+              bucket.put_object_from_file(key, str(f), headers={"Content-Type": ct})
+              print(f"  uploaded: {key}")
+
+          print("OSS sync done.")
+          EOF
