@@ -22,6 +22,7 @@
       --cat-catalytic: #f0a05a;
       --cat-catalyst: #a855f7;
       --cat-sci: #ec4899;
+      --cat-tips: #22c55e;
     }
     [data-theme="light"] {
       --bg: #f4f6fb;
@@ -40,6 +41,7 @@
       --cat-catalytic: #d4820a;
       --cat-catalyst: #8b3fd4;
       --cat-sci: #c4326a;
+      --cat-tips: #16a34a;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'SF Pro Display','PingFang SC','Helvetica Neue',system-ui,sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
@@ -76,6 +78,7 @@
     .filter-btn[data-cat="催化热解"].active { background: var(--cat-catalytic); border-color: var(--cat-catalytic); }
     .filter-btn[data-cat="创新催化剂"].active { background: var(--cat-catalyst); border-color: var(--cat-catalyst); }
     .filter-btn[data-cat="科研圈"].active { background: var(--cat-sci); border-color: var(--cat-sci); }
+    .filter-btn[data-cat="科研技巧"].active { background: var(--cat-tips); border-color: var(--cat-tips); }
     .count-badge { background: rgba(255,255,255,.2); border-radius: 10px; padding: 1px 6px; font-size: 11px; }
 
     /* Stats */
@@ -97,6 +100,7 @@
     .news-card[data-cat="催化热解"]::before { background: var(--cat-catalytic); }
     .news-card[data-cat="创新催化剂"]::before { background: var(--cat-catalyst); }
     .news-card[data-cat="科研圈"]::before { background: var(--cat-sci); }
+    .news-card[data-cat="科研技巧"]::before { background: var(--cat-tips); }
     .news-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(91,141,239,.15); }
     .card-header { display: flex; align-items: center; justify-content: space-between; }
     .cat-pill { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 12px; letter-spacing: .03em; }
@@ -105,6 +109,7 @@
     [data-cat="催化热解"] .cat-pill { background: rgba(240,160,90,.15); color: var(--cat-catalytic); }
     [data-cat="创新催化剂"] .cat-pill { background: rgba(168,85,247,.15); color: var(--cat-catalyst); }
     [data-cat="科研圈"] .cat-pill { background: rgba(236,72,153,.15); color: var(--cat-sci); }
+    [data-cat="科研技巧"] .cat-pill { background: rgba(34,197,94,.15); color: var(--cat-tips); }
     .card-num { font-size: 11px; color: var(--text-muted); background: var(--tag-bg); border-radius: 8px; padding: 2px 8px; }
     .news-title { font-size: 14px; font-weight: 600; line-height: 1.5; }
     .news-summary { font-size: 12px; line-height: 1.7; color: var(--text-muted); }
@@ -155,7 +160,7 @@
       <div class="logo-icon">🔬</div>
       <div>
         <h1>热解<span>日报</span></h1>
-        <small>PyroDaily · 催化热解 / 塑料 / 生物质 / 科研圈</small>
+        <small>PyroDaily · 催化热解 / 塑料 / 生物质 / 科研圈 / 科研技巧</small>
       </div>
     </div>
     <div class="header-right">
@@ -179,7 +184,7 @@
   <div class="modal" id="modal-content"></div>
 </div>
 
-<footer>热解日报 · PyroDaily &nbsp;|&nbsp; 多渠道每日自动抓取整理，内容仅供参考<br>覆盖领域：催化热解 · 塑料热解 · 生物质热解 · 创新催化剂 · 科研圈</footer>
+<footer>热解日报 · PyroDaily &nbsp;|&nbsp; 多渠道每日自动抓取整理，内容仅供参考<br>覆盖领域：催化热解 · 塑料热解 · 生物质热解 · 创新催化剂 · 科研圈 · 科研技巧</footer>
 
 <!-- ═══════════════════════════════════════════════════════════
      DATA BLOCK — 由每日更新脚本自动替换此区域
@@ -196,8 +201,8 @@ const EMBEDDED_DATA = {
 
 <script>
 // ── Config ──────────────────────────────────────────────────────
-const CATEGORIES = ['全部','塑料热解','生物质热解','催化热解','创新催化剂','科研圈'];
-const CAT_ICONS  = {'全部':'🌐','塑料热解':'♻️','生物质热解':'🌿','催化热解':'⚗️','创新催化剂':'✨','科研圈':'🎓'};
+const CATEGORIES = ['全部','塑料热解','生物质热解','催化热解','创新催化剂','科研圈','科研技巧'];
+const CAT_ICONS  = {'全部':'🌐','塑料热解':'♻️','生物质热解':'🌿','催化热解':'⚗️','创新催化剂':'✨','科研圈':'🎓','科研技巧':'💡'};
 
 // ── State ────────────────────────────────────────────────────────
 let allNews      = [];

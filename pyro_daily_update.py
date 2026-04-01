@@ -200,16 +200,19 @@ CATEGORY_QUOTA = {
     "催化热解":   4,
     "创新催化剂": 4,
     "科研圈":     3,
+    "科研技巧":   5,
 }
 
 # 每个分类期刊/预印本来源的目标条数（剩余用微信公众号补足）
 # 约各占一半：期刊3/微信3、期刊2/微信1、期刊2/微信2、期刊2/微信2、期刊2/微信1
+# 科研技巧全部来自微信公众号，期刊配额为0
 JOURNAL_QUOTA = {
     "塑料热解":   3,
     "生物质热解": 2,
     "催化热解":   2,
     "创新催化剂": 2,
     "科研圈":     2,
+    "科研技巧":   0,
 }
 
 CAT_ICONS = {
@@ -218,6 +221,7 @@ CAT_ICONS = {
     "催化热解":   "⚗️",
     "创新催化剂": "✨",
     "科研圈":     "🎓",
+    "科研技巧":   "💡",
 }
 
 # ──────────────────────────────────────────
@@ -288,6 +292,12 @@ WEIXIN_TASKS = [
     ("单原子催化剂 热解 氢气",        "创新催化剂",  6),
     ("热解 综述 进展 最新",           "科研圈",      6),
     ("催化热解 课题组 论文",           "科研圈",      6),
+    # ── 科研技巧（覆盖分子筛百科/研之成理/DFT茶水间/MS建模/科技学术写作等公众号）──
+    ("科研技巧 论文写作 学术写作 投稿",    "科研技巧",    6),
+    ("DFT 计算化学 第一性原理 催化",       "科研技巧",    6),
+    ("Materials Studio 建模 分子筛 沸石",  "科研技巧",    6),
+    ("催化剂表征 实验技巧 科研方法",       "科研技巧",    6),
+    ("研究生 科研经验 文献管理 论文",      "科研技巧",    6),
 ]
 
 # ──────────────────────────────────────────
@@ -322,13 +332,13 @@ def http_get(url: str, params: dict = None, headers: dict = None,
 # 内容过滤
 # ──────────────────────────────────────────
 
-def is_clean(title: str, body: str = "") -> bool:
-    """黑名单 + 核心词双重过滤"""
+def is_clean(title: str, body: str = "", skip_core_kw: bool = False) -> bool:
+    """黑名单 + 核心词双重过滤；skip_core_kw=True 时跳过核心词检查（用于科研技巧分类）"""
     combined = title + " " + body
     if BLACKLIST_RE.search(combined):
         log.debug(f"  [黑名单] 丢弃: {title[:50]}")
         return False
-    if not CORE_KW_RE.search(title):
+    if not skip_core_kw and not CORE_KW_RE.search(title):
         log.debug(f"  [核心词] 丢弃: {title[:50]}")
         return False
     return True
@@ -530,8 +540,8 @@ def collect_news() -> list[dict]:
         title_key = re.sub(r"\s+", "", title).lower()
         if title_key in seen_titles or url in seen_urls:
             return
-        # 内容过滤
-        if not is_clean(title, body):
+        # 内容过滤（科研技巧分类跳过核心词检查，允许非热解类文章通过）
+        if not is_clean(title, body, skip_core_kw=(category == "科研技巧")):
             return
 
         seen_titles.add(title_key)
