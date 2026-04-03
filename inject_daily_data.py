@@ -38,13 +38,25 @@ def scan_all_days() -> list[dict]:
             print(f"  [WARN] 跳过 {f.name}: {e}")
     return days
 
+def sanitize_news(all_days: list[dict]) -> list[dict]:
+    """清理每条新闻文本字段中的控制字符（换行/制表符），防止注入 JS 时产生语法错误"""
+    import copy
+    clean = copy.deepcopy(all_days)
+    for day in clean:
+        for item in day.get("news", []):
+            for field in ("title", "summary", "source", "url"):
+                if field in item and isinstance(item[field], str):
+                    item[field] = " ".join(item[field].split())
+    return clean
+
 def inject_to_html(all_days: list[dict], current_date: str):
     html = HTML_FILE.read_text(encoding="utf-8")
 
+    safe_days = sanitize_news(all_days)
     new_js = (
         f'const EMBEDDED_DATA = {{\n'
         f'  "currentDate": "{current_date}",\n'
-        f'  "allDays": {json.dumps(all_days, ensure_ascii=False, separators=(",", ":"))}\n'
+        f'  "allDays": {json.dumps(safe_days, ensure_ascii=False, separators=(",", ":"))}\n'
         f'}};'
     )
 
