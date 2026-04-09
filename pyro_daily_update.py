@@ -419,9 +419,9 @@ def collect_news() -> List[Dict]:
             time.sleep(3)
     # 新增：科研技巧从知乎补充抓取
     if len(category_pool["科研技巧"]) < CATEGORY_QUOTA["科研技巧"]:
-        zhihu_kw = "科研技巧 论文写作 Origin绘图 热解实验方法 XRD 拉曼 红外 TPR TPD origin 
-        科研绘图 SEM 期刊分区 TEM XPS Origin绘图 论文写作 数据处理 实验设计 文献管理 EndNote 
-        Zotero 投稿技巧 审稿回复 科研数据可视化 热解实验方法 催化表征 论文润色 学术写作"
+        zhihu_kw = "科研技巧 论文写作 Origin绘图 热解实验方法 XRD 拉曼 红外 TPR TPD origin"
+        "科研绘图 SEM 期刊分区 TEM XPS Origin绘图 论文写作 数据处理 实验设计 文献管理 EndNote"
+        "Zotero 投稿技巧 审稿回复 科研数据可视化 热解实验方法 催化表征 论文润色 学术写作"
         for item in fetch_zhihu(zhihu_kw, 10):
             try_add(item, "科研技巧")
 
