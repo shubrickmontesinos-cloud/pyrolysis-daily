@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-inject_daily_data.py (Fixed v3.1)
-优化了正则注入安全性与 JS 字符串安全
+inject_daily_data.py (Fixed v3.2)
+修复：1. 正则匹配鲁棒性 2. 时区统一 3. 增加 HTML 备份
 """
 
 import json
 import re
 import sys
-from datetime import datetime
+import shutil
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import List, Dict
 
@@ -57,6 +58,11 @@ def inject_to_html(all_days: List[Dict], current_date: str):
         print(f"[ERROR] 找不到 HTML 文件: {HTML_FILE}")
         return False
 
+    # 【优化】注入前先备份原 HTML，防止写坏
+    backup_file = HTML_FILE.with_suffix(".html.bak")
+    shutil.copy2(HTML_FILE, backup_file)
+    print(f"[INFO] 已备份原 HTML 至: {backup_file.name}")
+
     content = HTML_FILE.read_text(encoding="utf-8")
 
     # 1. 准备数据
@@ -72,10 +78,10 @@ def inject_to_html(all_days: List[Dict], current_date: str):
 
     new_js_block = f'const EMBEDDED_DATA = {data_json};'
 
-    # 3. 正则注入（使用 Lambda 避免正则转义符 \ 引起的 backreference 报错）
-    pattern = r'(<script id="embedded-data">)(.*?)(</script>)'
+    # 3. 【修复】正则注入：增强鲁棒性，允许 script 标签有其他属性
+    # 允许 id 前后有空格、允许标签有其他属性（如 type="text/javascript"）
+    pattern = r'(<script\s+id\s*=\s*"embedded-data"[^>]*>)(.*?)(</script>)'
     
-    # 使用函数作为 re.sub 的第二个参数，是处理包含反斜杠字符串的唯一安全方法
     def replacer(match):
         return f"{match.group(1)}\n{new_js_block}\n{match.group(3)}"
 
@@ -83,6 +89,9 @@ def inject_to_html(all_days: List[Dict], current_date: str):
 
     if count == 0:
         print("[ERROR] 未找到 <script id=\"embedded-data\"> 标签，注入失败")
+        # 恢复备份
+        shutil.copy2(backup_file, HTML_FILE)
+        print("[INFO] 已恢复原 HTML 文件")
         return False
 
     HTML_FILE.write_text(new_html, encoding="utf-8")
@@ -95,7 +104,9 @@ def main():
         arg = sys.argv[1]
         date_str = Path(arg).stem if arg.endswith(".json") else arg
     else:
-        date_str = datetime.now().strftime("%Y-%m-%d")
+        # 【修复】统一使用北京时间 (UTC+8)，和采集脚本保持一致
+        bj_time = datetime.utcnow() + timedelta(hours=8)
+        date_str = bj_time.strftime("%Y-%m-%d")
 
     print(f"[INFO] 开始注入数据，目标日期: {date_str}")
 
