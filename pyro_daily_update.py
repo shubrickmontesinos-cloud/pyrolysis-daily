@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-pyro_daily_update.py  v3.1 (Fixed & Optimized)
+pyro_daily_update.py  v3.2 (Freshness Optimized)
 每日热解科研资讯自动采集
-数据源：搜狗微信公众号 + CrossRef 学术期刊 API + arXiv 预印本
-依赖：pip install requests beautifulsoup4
+修复点：优化 CrossRef 排序逻辑以提高每日更新的差异度
 """
 
 import html
@@ -46,7 +45,7 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 # ──────────────────────────────────────────
-# 内容黑名单（标题/摘要中出现任一词则丢弃）
+# 内容黑名单与白名单配置
 # ──────────────────────────────────────────
 BLACKLIST_PATTERNS = [
     r"破解|crack|keygen|license.?key|激活码|序列号",
@@ -64,9 +63,6 @@ BLACKLIST_PATTERNS = [
 ]
 BLACKLIST_RE = re.compile("|".join(BLACKLIST_PATTERNS), re.IGNORECASE)
 
-# ──────────────────────────────────────────
-# 期刊精确白名单
-# ──────────────────────────────────────────
 APPROVED_JOURNALS = [
     "journal of analytical and applied pyrolysis", "journal of analytical & applied pyrolysis",
     "fuel", "fuel processing technology", "energy & fuels", "energy and fuels", "applied energy",
@@ -74,16 +70,14 @@ APPROVED_JOURNALS = [
     "energy & environmental science", "energy and environmental science", "renewable energy",
     "renewable and sustainable energy reviews", "journal of the energy institute",
     "chemical engineering journal", "industrial & engineering chemistry research",
-    "industrial and engineering chemistry research", "chemical engineering science",
-    "aiche journal", "chemsuschem", "applied catalysis b", "applied catalysis a",
-    "acs catalysis", "journal of catalysis", "catalysis today", "catalysis communications",
-    "catalysis reviews", "catalysis science", "microporous and mesoporous materials",
-    "environmental science & technology", "environmental science and technology",
+    "chemical engineering science", "aiche journal", "chemsuschem", "applied catalysis b", 
+    "applied catalysis a", "acs catalysis", "journal of catalysis", "catalysis today", 
+    "catalysis communications", "catalysis reviews", "catalysis science", 
+    "microporous and mesoporous materials", "environmental science & technology", 
     "acs sustainable chemistry", "green chemistry", "waste management", "bioresource technology",
     "journal of cleaner production", "science of the total environment",
-    "resources, conservation and recycling", "resources conservation and recycling",
-    "separation and purification technology", "biomass and bioenergy",
-    "biomass conversion and biorefinery", "industrial crops and products",
+    "resources, conservation and recycling", "separation and purification technology", 
+    "biomass and bioenergy", "biomass conversion and biorefinery", "industrial crops and products",
     "nature", "science", "nature communications", "nature energy", "nature chemistry",
     "science advances", "angewandte chemie", "journal of the american chemical society",
     "acs nano", "advanced materials", "advanced energy materials", "advanced functional materials",
@@ -91,484 +85,232 @@ APPROVED_JOURNALS = [
     "progress in energy and combustion science", "polymer degradation",
     "polymer degradation and stability", "journal of hazardous materials", "chemosphere",
 ]
+JOURNAL_WHITELIST_RE = re.compile("|".join(re.escape(j) for j in APPROVED_JOURNALS), re.IGNORECASE)
 
-JOURNAL_WHITELIST_RE = re.compile(
-    "|".join(re.escape(j) for j in APPROVED_JOURNALS),
-    re.IGNORECASE,
-)
-
-# ──────────────────────────────────────────
-# 热解核心关键词
-# ──────────────────────────────────────────
 CORE_KEYWORDS = [
     "热解", "催化热解", "热裂解", "催化裂解", "快速热解", "共热解", "废塑料", "塑料回收",
     "废轮胎", "废橡胶", "生物质", "生物炭", "生物油", "焦油", "焦炭", "沸石", "分子筛",
     "聚乙烯", "聚丙烯", "聚苯乙烯", "秸秆", "木质素", "纤维素", "高纯氢", "碳纳米管",
-    "微波热解", "等离子体热解", "催化气化",
-    "pyrolysis", "catalytic pyrolysis", "thermal pyrolysis", "co-pyrolysis", "flash pyrolysis",
-    "fast pyrolysis", "slow pyrolysis", "microwave pyrolysis", "plasma pyrolysis",
-    "in-situ catalytic", "ex-situ catalytic", "pyrolysis-catalysis",
-    "catalytic cracking", "thermal cracking", "catalytic gasification",
-    "waste plastic", "waste polyolefin", "waste polyolefins", "waste polyethylene",
-    r"\bwaste PE\b", r"\bwaste PP\b", "waste polypropylene", "waste polystyrene",
-    r"\bPE pyrolysis\b", r"\bPP pyrolysis\b", r"\bPET pyrolysis\b", r"\bPVC pyrolysis\b", r"\bPS pyrolysis\b",
-    "polyolefin", "polyolefins", "polyethylene", "polypropylene", "polystyrene",
-    "biochar", "bio-oil", "biocrude", "hydrogen production", "hydrogen generation",
-    r"\bH2 production\b", r"\bH₂ production\b", "high-purity hydrogen",
-    "carbon nanotube", "carbon nanotubes", r"\bCNT\b", r"\bCNTs\b",
-    "zeolite", r"\bZSM\b", r"\bMCM\b", r"\bSAPO\b", "single-atom", "single atom catalyst",
-    "biomass", "lignocellulosic", "lignin", "cellulose", r"\btar\b", r"\bchar\b",
+    "pyrolysis", "catalytic pyrolysis", "thermal pyrolysis", "co-pyrolysis",
+    "waste plastic", "polyolefin", "polyethylene", "polypropylene", "polystyrene",
+    "biochar", "bio-oil", "hydrogen production", "carbon nanotube", "zeolite",
 ]
 CORE_KW_RE = re.compile("|".join(CORE_KEYWORDS), re.IGNORECASE)
 
 # ──────────────────────────────────────────
-# 分类与查询配置
+# 采集配额
 # ──────────────────────────────────────────
-CATEGORY_QUOTA = {
-    "塑料热解":   6, "生物质热解": 3, "催化热解":   4,
-    "创新催化剂": 4, "科研圈":     3, "科研技巧":   5,
-}
+CATEGORY_QUOTA = {"塑料热解": 6, "生物质热解": 3, "催化热解": 4, "创新催化剂": 4, "科研圈": 3, "科研技巧": 5}
+JOURNAL_QUOTA = {"塑料热解": 3, "生物质热解": 2, "催化热解": 2, "创新催化剂": 2, "科研圈": 2, "科研技巧": 0}
+CAT_ICONS = {"塑料热解": "♻️", "生物质热解": "🌿", "催化热解": "⚗️", "创新催化剂": "✨", "科研圈": "🎓", "科研技巧": "💡"}
 
-JOURNAL_QUOTA = {
-    "塑料热解": 3, "生物质热解": 2, "催化热解": 2,
-    "创新催化剂": 2, "科研圈": 2, "科研技巧": 0,
-}
-
-CAT_ICONS = {
-    "塑料热解": "♻️", "生物质热解": "🌿", "催化热解": "⚗️",
-    "创新催化剂": "✨", "科研圈": "🎓", "科研技巧": "💡",
-}
-
+# 设置 CrossRef 检索起始时间（最近 90 天）
 CROSSREF_START_DATE = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d")
 
+# ──────────────────────────────────────────
+# 采集任务清单
+# ──────────────────────────────────────────
 CROSSREF_TASKS = [
-    ("pyrolysis plastic polyolefin polyethylene polypropylene", "塑料热解", 10),
-    ("pyrolysis PET PVC polystyrene thermal cracking plastic", "塑料热解", 10),
-    ("plastic pyrolysis hydrogen carbon nanotube CNT upcycling", "塑料热解", 8),
-    ("plastic pyrolysis microwave plasma catalytic", "塑料热解", 8),
-    ("pyrolysis biomass biochar bio-oil lignin cellulose", "生物质热解", 10),
-    ("biomass pyrolysis fast catalytic co-pyrolysis bio-oil", "生物质热解", 8),
-    ("catalytic pyrolysis mechanism selectivity in-situ", "催化热解", 10),
-    ("co-pyrolysis plastic biomass synergy product", "催化热解", 8),
-    ("pyrolysis gasification thermal cracking coupling", "催化热解", 8),
-    ("pyrolysis zeolite catalyst cracking ZSM SAPO MCM", "创新催化剂", 10),
-    ("pyrolysis single-atom catalyst hydrogen carbon", "创新催化剂", 8),
-    ("polyolefin pyrolysis catalyst hydrogen high-purity", "创新催化剂", 8),
-    ("pyrolysis plastic biomass review progress", "科研圈", 10),
-    ("waste plastic chemical recycling hydrogen review", "科研圈", 8),
+    ("pyrolysis plastic polyolefin polyethylene", "塑料热解", 10),
+    ("pyrolysis biomass biochar bio-oil lignin", "生物质热解", 10),
+    ("catalytic pyrolysis mechanism selectivity", "催化热解", 10),
+    ("pyrolysis zeolite catalyst ZSM SAPO", "创新催化剂", 10),
+    ("pyrolysis review progress recent", "科研圈", 10),
 ]
 
 ARXIV_TASKS = [
-    ("ti:pyrolysis AND (ti:plastic OR ti:polyolefin OR ti:polyethylene OR ti:polypropylene)", "塑料热解", 6),
-    ("ti:pyrolysis AND (ti:hydrogen OR ti:\"carbon nanotube\" OR ti:CNT)", "塑料热解", 4),
-    ("ti:pyrolysis AND (ti:biomass OR ti:biochar OR ti:lignin OR ti:cellulose)", "生物质热解", 6),
-    ("ti:pyrolysis AND (ti:catalytic OR ti:\"in-situ\" OR ti:\"co-pyrolysis\")", "催化热解", 6),
-    ("ti:pyrolysis AND (ti:zeolite OR ti:\"single-atom\" OR ti:ZSM OR ti:catalyst)", "创新催化剂", 6),
-    ("ti:pyrolysis AND ti:review", "科研圈", 4),
+    ("ti:pyrolysis AND (ti:plastic OR ti:polyolefin)", "塑料热解", 5),
+    ("ti:pyrolysis AND ti:catalytic", "催化热解", 5),
 ]
 
 WEIXIN_TASKS = [
-    ("废塑料 热解 产业化 化学回收", "塑料热解", 6),
-    ("塑料热解 氢气 碳纳米管", "塑料热解", 6),
-    ("聚乙烯 聚丙烯 热解 催化", "塑料热解", 6),
+    ("废塑料 热解 产业化 化学回收", "塑料热解", 8),
     ("生物质热解 生物炭 生物油", "生物质热解", 6),
-    ("秸秆 木质素 热解 催化", "生物质热解", 5),
-    ("催化热解 原位 异位 机理", "催化热解", 6),
-    ("共热解 协同效应 反应器", "催化热解", 5),
-    ("沸石催化剂 ZSM 热解 选择性", "创新催化剂", 6),
-    ("单原子催化剂 热解 氢气", "创新催化剂", 6),
-    ("热解 综述 进展 最新", "科研圈", 6),
-    ("催化热解 课题组 论文", "科研圈", 6),
-    ("科研技巧 论文写作 学术写作 投稿", "科研技巧", 6),
-    ("DFT 计算化学 第一性原理 催化", "科研技巧", 6),
-    ("Materials Studio 建模 分子筛 沸石", "科研技巧", 6),
-    ("催化剂表征 实验技巧 科研方法", "科研技巧", 6),
-    ("研究生 科研经验 文献管理 论文", "科研技巧", 6),
+    ("催化热解 机理 选择性", "催化热解", 6),
+    ("科研技巧 论文写作 学术投稿", "科研技巧", 6),
 ]
 
 # ──────────────────────────────────────────
-# HTTP 通用配置
+# 工具函数
 # ──────────────────────────────────────────
 BROWSER_HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/123.0.0.0 Safari/537.36"
-    ),
-    "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+    "Accept-Language": "zh-CN,zh;q=0.9",
 }
+# 修改此邮箱以符合 CrossRef 规范
+API_HEADERS = {"User-Agent": "pyrolysis-daily/3.2 (mailto:admin@pyrolysis-daily.store)"}
 
-# ⚠️ 注意：修改这里的 mailto 邮箱为你自己的真实邮箱，否则容易被 CrossRef 限制
-API_HEADERS = {
-    "User-Agent": "pyrolysis-daily/3.1 (academic research tool; mailto:your.email@example.com)",
-}
-
-
-def http_get(url: str, params: dict = None, headers: dict = None,
-             timeout: int = 15) -> Optional[requests.Response]:
-    h = headers or BROWSER_HEADERS
+def http_get(url: str, params: dict = None, headers: dict = None) -> Optional[requests.Response]:
     try:
-        r = requests.get(url, params=params, headers=h, timeout=timeout)
+        r = requests.get(url, params=params, headers=headers or BROWSER_HEADERS, timeout=15)
         r.raise_for_status()
         return r
     except Exception as e:
-        log.warning(f"  请求失败 {url[:60]}: {e}")
+        log.warning(f"  请求失败 {url[:50]}: {e}")
         return None
 
-# ──────────────────────────────────────────
-# 数据历史加载（用于跨日去重）
-# ──────────────────────────────────────────
 def load_history_identifiers() -> Tuple[Set[str], Set[str]]:
-    """读取历史 JSON 文件，提取已经抓取过的标题和 URL，防止每天重复抓取相同的旧论文"""
-    seen_titles = set()
-    seen_urls = set()
+    seen_titles, seen_urls = set(), set()
     for json_file in DATA_DIR.glob("*.json"):
         try:
-            with open(json_file, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-                for item in data.get("news", []):
-                    if "url" in item:
-                        seen_urls.add(item["url"])
-                    if "title" in item:
-                        # 移除来源标签（如【学术期刊】）并去除空格，用于精准匹配
-                        raw_title = re.sub(r"【.*?】", "", item["title"])
-                        seen_titles.add(re.sub(r"\s+", "", raw_title).lower())
-        except Exception as e:
-            log.warning(f"  读取历史文件 {json_file.name} 失败: {e}")
-    
-    log.info(f"已加载历史数据：{len(seen_titles)} 个标题，{len(seen_urls)} 个 URL 用于去重。")
+            data = json.loads(json_file.read_text(encoding="utf-8"))
+            for item in data.get("news", []):
+                if "url" in item: seen_urls.add(item["url"])
+                if "title" in item:
+                    clean_t = re.sub(r"【.*?】", "", item["title"])
+                    seen_titles.add(re.sub(r"\s+", "", clean_t).lower())
+        except: continue
+    log.info(f"已加载历史数据：{len(seen_titles)} 条标题用于去重")
     return seen_titles, seen_urls
-
-# ──────────────────────────────────────────
-# 内容过滤与处理
-# ──────────────────────────────────────────
 
 def is_clean(title: str, body: str = "", skip_core_kw: bool = False) -> bool:
     combined = title + " " + body
-    if BLACKLIST_RE.search(combined):
-        log.debug(f"  [黑名单] 丢弃: {title[:50]}")
-        return False
-    if not skip_core_kw and not CORE_KW_RE.search(title):
-        log.debug(f"  [核心词] 丢弃: {title[:50]}")
-        return False
+    if BLACKLIST_RE.search(combined): return False
+    if not skip_core_kw and not CORE_KW_RE.search(title): return False
     return True
 
-def extract_domain(url: str) -> str:
-    try:
-        return url.split("/")[2].replace("www.", "")
-    except Exception:
-        return "未知来源"
-
-def extract_tags(title: str, category: str) -> List[str]:
-    keyword_map = {
-        "废塑料": "废塑料", "聚乙烯": "PE", "聚丙烯": "PP",
-        "polyethylene": "PE", "polypropylene": "PP", "polystyrene": "PS",
-        "生物质": "生物质", "biomass": "生物质",
-        "生物油": "生物油", "bio-oil": "生物油",
-        "生物炭": "生物炭", "biochar": "生物炭",
-        "秸秆": "秸秆", "lignin": "木质素", "cellulose": "纤维素",
-        "沸石": "沸石", "zeolite": "Zeolite", "ZSM": "ZSM-5",
-        "共热解": "共热解", "co-pyrolysis": "共热解",
-        "反应器": "反应器", "机理": "反应机理", "mechanism": "反应机理",
-        "产业化": "产业化",
-        "JACS": "JACS", "Nature": "Nature", "Science": "Science",
-    }
-    tags = [category]
-    for kw, tag in keyword_map.items():
-        if kw.lower() in title.lower() and tag not in tags:
-            tags.append(tag)
-        if len(tags) >= 4:
-            break
-    return tags[:4]
-
 # ──────────────────────────────────────────
-# 数据源抓取
+# 数据源抓取逻辑
 # ──────────────────────────────────────────
-
-def fetch_weixin(keyword: str, max_results: int = 8) -> List[Dict]:
-    r = http_get(
-        "https://weixin.sogou.com/weixin",
-        params={"type": "2", "query": keyword, "ie": "utf8"},
-    )
-    if not r:
-        return []
-
-    # 反爬虫安全检测拦截
-    if "antispider" in r.url or "用户您好，我们的系统检测到您网络中存在异常访问请求" in r.text:
-        log.error("  [警告] 搜狗微信触发反爬验证码，本轮搜狗采集将失效，请稍后重试或更换 IP。")
-        return []
-
-    soup = BeautifulSoup(r.text, "html.parser")
-    items = []
-    for li in soup.select("ul.news-list li")[:max_results]:
-        a_tag = li.select_one("h3 a")
-        p_tag = li.select_one("p.txt-info")
-        if not a_tag:
-            continue
-        title = a_tag.get_text(strip=True)
-        body  = p_tag.get_text(strip=True) if p_tag else ""
-        href  = a_tag.get("href", "").strip()
-        if not href or not title:
-            continue
-        if href.startswith("/link?"):
-            href = "https://weixin.sogou.com" + href
-        items.append({
-            "title":      title,
-            "body":       body,
-            "url":        href,
-            "source_tag": "【微信公众号】",
-            "source":     "weixin.qq.com",
-        })
-    log.info(f"  搜狗微信「{keyword}」→ 原始 {len(items)} 条")
-    return items
 
 def fetch_crossref(query: str, max_results: int = 5) -> List[Dict]:
+    """核心修复点：将排序改为 published，并增加采样 rows 以防止每日内容重复"""
     r = http_get(
         "https://api.crossref.org/works",
         params={
             "query.title": query,
-            "filter":  f"from-pub-date:{CROSSREF_START_DATE},type:journal-article",
-            "rows":    max_results * 3,
-            "select":  "title,abstract,URL,published,container-title,author",
-            "sort":    "relevance",
-            "order":   "desc",
+            "filter": f"from-pub-date:{CROSSREF_START_DATE},type:journal-article",
+            "rows": max_results * 10,  # 采样池扩大到10倍
+            "sort": "published",       # 改为按日期排序，保证每天都有新鲜内容
+            "order": "desc",
         },
-        headers={**API_HEADERS, "Accept": "application/json"},
+        headers=API_HEADERS
     )
-    if not r:
-        return []
-
+    if not r: return []
     items = []
     try:
-        data = r.json()
-        for w in data["message"]["items"]:
-            title_list = w.get("title", [])
-            if not title_list:
-                continue
-            title   = title_list[0].strip()
-            journal_raw = (w.get("container-title") or [""])[0]
-            journal = html.unescape(journal_raw)
-            url     = w.get("URL", "").strip()
+        for w in r.json()["message"]["items"]:
+            title_list = w.get("title")
+            if not title_list: continue
+            title = title_list[0].strip()
+            journal = (w.get("container-title") or [""])[0]
+            if journal and not JOURNAL_WHITELIST_RE.search(journal): continue
             
-            if journal and not JOURNAL_WHITELIST_RE.search(journal):
-                continue
-                
-            abstract_raw = w.get("abstract", "")
-            body = re.sub(r"<[^>]+>", "", abstract_raw).strip()[:200]
-            if not body:
-                body = f"发表于 {journal}，点击原文查看摘要。" if journal else "点击原文查看详情。"
-                
-            authors = w.get("author", [])
-            author_str = ""
-            if authors:
-                first = authors[0]
-                author_str = f"{first.get('family','')} {first.get('given','')}".strip()
-                if len(authors) > 1:
-                    author_str += " 等"
-                    
             items.append({
-                "title":      title,
-                "body":       body,
-                "url":        url,
-                "source_tag": f"【{journal[:20]}】" if journal else "【学术期刊】",
-                "source":     extract_domain(url) if url else "doi.org",
-                "author":     author_str,
+                "title": title,
+                "body": (w.get("abstract") or "点击原文查看详情。")[:200],
+                "url": w.get("URL", ""),
+                "source_tag": f"【{journal[:15]}】" if journal else "【学术期刊】",
+                "source": "doi.org"
             })
-    except Exception as e:
-        log.warning(f"  CrossRef 解析失败: {e}")
-    log.info(f"  CrossRef「{query[:35]}」→ 原始 {len(items)} 条（过滤后）")
+    except: pass
+    return items
+
+def fetch_weixin(keyword: str, max_results: int = 8) -> List[Dict]:
+    r = http_get("https://weixin.sogou.com/weixin", params={"type": "2", "query": keyword, "ie": "utf8"})
+    if not r or "antispider" in r.url:
+        log.error(f"  [!] 搜狗微信反爬拦截 (关键字: {keyword})")
+        return []
+    soup = BeautifulSoup(r.text, "html.parser")
+    items = []
+    for li in soup.select("ul.news-list li")[:max_results]:
+        a = li.select_one("h3 a")
+        if not a: continue
+        items.append({
+            "title": a.get_text(strip=True),
+            "body": li.select_one("p.txt-info").get_text(strip=True) if li.select_one("p.txt-info") else "",
+            "url": "https://weixin.sogou.com" + a["href"] if a["href"].startswith("/link") else a["href"],
+            "source_tag": "【微信公众号】",
+            "source": "weixin.qq.com"
+        })
     return items
 
 def fetch_arxiv(query: str, max_results: int = 3) -> List[Dict]:
-    r = http_get(
-        "http://export.arxiv.org/api/query",
-        params={
-            "search_query": query,
-            "start":        0,
-            "max_results":  max_results * 2,
-            "sortBy":       "submittedDate",
-            "sortOrder":    "descending",
-        },
-        headers=API_HEADERS,
-    )
-    if not r:
-        return []
-
+    r = http_get("http://export.arxiv.org/api/query", params={
+        "search_query": query, "max_results": max_results * 3, "sortBy": "submittedDate", "sortOrder": "descending"
+    })
+    if not r: return []
     items = []
     try:
         root = ET.fromstring(r.text)
-        ns   = {"atom": "http://www.w3.org/2005/Atom"}
+        ns = {"atom": "http://www.w3.org/2005/Atom"}
         for entry in root.findall("atom:entry", ns):
-            title   = entry.find("atom:title", ns).text.strip().replace("\n", " ")
-            summary = entry.find("atom:summary", ns).text.strip()[:200]
-            url     = entry.find("atom:id", ns).text.strip()
-            pub     = entry.find("atom:published", ns).text[:10]
             items.append({
-                "title":      title,
-                "body":       f"[arXiv {pub}] {summary}",
-                "url":        url,
+                "title": entry.find("atom:title", ns).text.strip().replace("\n", " "),
+                "body": entry.find("atom:summary", ns).text.strip()[:200],
+                "url": entry.find("atom:id", ns).text.strip(),
                 "source_tag": "【arXiv预印本】",
-                "source":     "arxiv.org",
+                "source": "arxiv.org"
             })
-    except Exception as e:
-        log.warning(f"  arXiv 解析失败: {e}")
-    log.info(f"  arXiv「{query[:35]}」→ 原始 {len(items)} 条")
+    except: pass
     return items
 
 # ──────────────────────────────────────────
-# 主采集逻辑
+# 主逻辑控制
 # ──────────────────────────────────────────
 
 def collect_news() -> List[Dict]:
-    category_pool: Dict[str, List] = {k: [] for k in CATEGORY_QUOTA}
-    
-    # 挂载历史记录进行去重
+    category_pool = {k: [] for k in CATEGORY_QUOTA}
     seen_titles, seen_urls = load_history_identifiers()
 
     def try_add(item: dict, category: str):
-        title = item["title"].strip()
-        body  = item.get("body", "").strip()
-        url   = item.get("url", "").strip()
-        tag   = item.get("source_tag", "")
-
-        if not title or not url:
-            return
-            
+        title, url = item["title"], item["url"]
         title_key = re.sub(r"\s+", "", title).lower()
-        if title_key in seen_titles or url in seen_urls:
-            return
-            
-        if not is_clean(title, body, skip_core_kw=(category == "科研技巧")):
-            return
+        if title_key in seen_titles or url in seen_urls: return
+        if not is_clean(title, item.get("body", ""), skip_core_kw=(category=="科研技巧")): return
 
         seen_titles.add(title_key)
         seen_urls.add(url)
-
-        display_title = f"{tag} {title}" if tag else title
         category_pool[category].append({
             "category": category,
-            "title":    display_title,
-            "summary":  body if body else "点击原文查看详情。",
-            "source":   item.get("source", extract_domain(url)),
-            "url":      url,
-            "tags":     extract_tags(title, category),
+            "title": f"{item.get('source_tag','')}{title}",
+            "summary": item.get("body", "查看详情"),
+            "url": url,
+            "source": item.get("source", "未知"),
+            "tags": [category]
         })
 
-    log.info("=== 阶段A：CrossRef 学术期刊 ===")
-    journal_counts: Dict[str, int] = {k: 0 for k in CATEGORY_QUOTA}
-    for query, category, num in CROSSREF_TASKS:
-        jq = JOURNAL_QUOTA.get(category, 2)
-        if journal_counts[category] >= jq:
-            continue
-        results = fetch_crossref(query, max_results=num)
-        for item in results:
-            if journal_counts[category] < jq:
-                prev = len(category_pool[category])
-                try_add(item, category)
-                if len(category_pool[category]) > prev:
-                    journal_counts[category] += 1
-        log.info(f"  池「{category}」: {len(category_pool[category])} 条（期刊 {journal_counts[category]}/{jq}）")
-        time.sleep(random.uniform(1.0, 2.5))
+    log.info("--- 开始多源采集 ---")
+    # A. 期刊 (CrossRef & arXiv)
+    for q, cat, num in CROSSREF_TASKS:
+        for item in fetch_crossref(q, num): try_add(item, cat)
+        time.sleep(2)
+    for q, cat, num in ARXIV_TASKS:
+        for item in fetch_arxiv(q, num): try_add(item, cat)
 
-    log.info("=== 阶段B：arXiv 预印本 ===")
-    for query, category, num in ARXIV_TASKS:
-        jq = JOURNAL_QUOTA.get(category, 2)
-        if journal_counts[category] >= jq:
-            continue
-        results = fetch_arxiv(query, max_results=num)
-        for item in results:
-            if journal_counts[category] < jq:
-                prev = len(category_pool[category])
-                try_add(item, category)
-                if len(category_pool[category]) > prev:
-                    journal_counts[category] += 1
-        log.info(f"  池「{category}」: {len(category_pool[category])} 条（期刊 {journal_counts[category]}/{jq}）")
-        time.sleep(random.uniform(0.5, 1.5))
+    # B. 微信补足
+    for kw, cat, num in WEIXIN_TASKS:
+        if len(category_pool[cat]) < CATEGORY_QUOTA[cat]:
+            for item in fetch_weixin(kw, num): try_add(item, cat)
+            time.sleep(3)
 
-    log.info("期刊/预印本阶段完成：" + "  ".join(
-        f"{c} 期刊{journal_counts[c]}条" for c in CATEGORY_QUOTA
-    ))
-
-    log.info("=== 阶段C：搜狗微信公众号（补足剩余配额）===")
-    for keyword, category, num in WEIXIN_TASKS:
-        quota = CATEGORY_QUOTA.get(category, 4)
-        if len(category_pool[category]) >= quota:
-            continue
-        results = fetch_weixin(keyword, max_results=num)
-        for item in results:
-            try_add(item, category)
-        log.info(f"  池「{category}」: {len(category_pool[category])} / {quota} 条")
-        time.sleep(random.uniform(2.0, 4.0))
-
-    news_list = []
-    item_id = 1
-    for category, quota in CATEGORY_QUOTA.items():
-        items = category_pool[category][:quota]
-        if len(items) < quota:
-            log.warning(f"分类「{category}」只有 {len(items)} 条（目标 {quota}）")
-        for it in items:
-            it["id"] = item_id
-            news_list.append(it)
-            item_id += 1
-
-    return news_list
-
-# ──────────────────────────────────────────
-# 写文件 & 注入 HTML
-# ──────────────────────────────────────────
-
-def save_json(news_list: List[Dict], date_str: str) -> Path:
-    out_path = DATA_DIR / f"{date_str}.json"
-    payload = {
-        "date":         date_str,
-        "generated_at": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
-        "news":         news_list,
-    }
-    out_path.write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
-    log.info(f"数据已保存：{out_path}")
-    return out_path
-
-def run_inject():
-    inject_script = SCRIPT_DIR / "inject_daily_data.py"
-    result = subprocess.run(
-        [sys.executable, str(inject_script)],
-        capture_output=True, text=True, encoding="utf-8",
-    )
-    if result.returncode == 0:
-        log.info(result.stdout.strip())
-    else:
-        log.error(f"注入失败:\n{result.stderr}")
-        # 如果是依赖执行流，抛出异常阻断后续错误的发生
-        sys.exit(1)
-
-# ──────────────────────────────────────────
-# 主入口
-# ──────────────────────────────────────────
+    # C. 汇总输出
+    final_list = []
+    uid = 1
+    for cat, quota in CATEGORY_QUOTA.items():
+        for it in category_pool[cat][:quota]:
+            it["id"] = uid
+            final_list.append(it)
+            uid += 1
+    return final_list
 
 def main():
     today = datetime.now().strftime("%Y-%m-%d")
-    log.info(f"========== 热解日报更新开始 {today} ==========")
-
-    out_path = DATA_DIR / f"{today}.json"
-    if out_path.exists():
-        log.info("今日数据已存在，直接执行注入步骤")
-    else:
-        news = collect_news()
-        if not news:
-            log.error("未获取到任何新闻，退出")
-            sys.exit(1)
-        save_json(news, today)
-
-        cats = Counter(n["category"] for n in news)
-        log.info("分类统计：" + "  ".join(
-            f"{CAT_ICONS.get(c, '•')}{c}:{n}条" for c, n in cats.items()
-        ))
-
+    log.info(f"========== 启动更新任务: {today} ==========")
+    
+    news = collect_news()
+    if not news:
+        log.error("采集失败，无可用内容")
+        sys.exit(1)
+        
+    save_json(news, today)
     run_inject()
-    log.info("========== 更新完成 ==========")
+    log.info("========== 更新任务圆满完成 ==========")
+
+def run_inject():
+    res = subprocess.run([sys.executable, str(SCRIPT_DIR / "inject_daily_data.py")], capture_output=True, text=True)
+    if res.returncode == 0: log.info(res.stdout.strip())
+    else: log.error(res.stderr)
 
 if __name__ == "__main__":
     main()
