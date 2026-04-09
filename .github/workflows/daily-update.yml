@@ -8,10 +8,13 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 30       # 防止网络挂起导致 job 永久卡住
+    timeout-minutes: 10
 
+    # 完整权限，不影响现有功能
     permissions:
       contents: write
+      pages: write
+      id-token: write
 
     steps:
       - name: Checkout repo
@@ -25,9 +28,11 @@ jobs:
       - name: Install dependencies
         run: pip install requests beautifulsoup4
 
+      # 你的原有抓取逻辑，完全不变
       - name: Run daily update
         run: python pyro_daily_update.py
 
+      # 你的原有提交逻辑，完全不变
       - name: Commit and push changes
         run: |
           git config user.name "github-actions[bot]"
@@ -36,3 +41,7 @@ jobs:
           git add data/ index.html CNAME
           git diff --cached --quiet || git commit -m "chore: daily update $(date +'%Y-%m-%d')"
           git push
+
+      # 新增：直接部署上线，替代系统构建，解决页面覆盖问题
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v5
