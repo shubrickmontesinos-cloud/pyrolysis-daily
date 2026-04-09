@@ -88,20 +88,20 @@ APPROVED_JOURNALS = [
 JOURNAL_WHITELIST_RE = re.compile("|".join(re.escape(j) for j in APPROVED_JOURNALS), re.IGNORECASE)
 
 CORE_KEYWORDS = [
-    "塑料","热解", "催化热解", "热裂解", "催化裂解", "快速热解", "共热解", "废塑料", "塑料回收",
-    "废轮胎", "废橡胶", "生物质", "生物炭", "生物油", "焦油", "焦炭", "沸石", "分子筛", "合成气",
-    "聚乙烯", "聚丙烯", "聚苯乙烯", "秸秆", "木质素", "纤维素", "高纯氢", "碳纳米管", "微波", "等离子体",
-    "plastic","pyrolysis", "catalytic pyrolysis", "thermal pyrolysis", "co-pyrolysis",
-    "waste plastic", "polyolefin", "polyethylene", "polypropylene", "polystyrene","sygas", "gas",
-    "biochar", "bio-oil", "hydrogen production", "carbon nanotube", "zeolite", "microwave", "plasma",
+    "塑料","热解", "催化热解", "热裂解", "催化裂解", "快速热解", "共热解", "废塑料", "塑料回收", "非原位热解", 
+    "废轮胎", "废橡胶", "生物质", "生物炭", "生物油", "焦油", "焦炭", "沸石", "分子筛", "合成气", "原位热解", 
+    "聚乙烯", "聚丙烯", "聚苯乙烯", "秸秆", "木质素", "纤维素", "高纯氢", "碳纳米管", "微波", "等离子体", "串联催化", 
+    "plastic","pyrolysis", "catalytic pyrolysis", "thermal pyrolysis", "co-pyrolysis", "Hydrogen", "Methane", 
+    "waste plastic", "polyolefin", "polyethylene", "polypropylene", "polystyrene","sygas", "gas", "in-situ", 
+    "biochar", "bio-oil", "hydrogen production", "carbon nanotube", "zeolite", "microwave", "plasma", "ex-situ", "series connection", 
 ]
 CORE_KW_RE = re.compile("|".join(CORE_KEYWORDS), re.IGNORECASE)
 
 # ──────────────────────────────────────────
 # 采集配额
 # ──────────────────────────────────────────
-CATEGORY_QUOTA = {"塑料热解": 6, "生物质热解": 3, "催化热解": 4, "创新催化剂": 4, "科研圈": 3, "科研技巧": 5}
-JOURNAL_QUOTA = {"塑料热解": 3, "生物质热解": 2, "催化热解": 2, "创新催化剂": 2, "科研圈": 2, "科研技巧": 0}
+CATEGORY_QUOTA = {"塑料热解": 5, "生物质热解": 3, "催化热解": 3, "创新催化剂": 3, "科研圈": 3, "科研技巧": 5}
+JOURNAL_QUOTA = {"塑料热解": 5, "生物质热解": 3, "催化热解": 3, "创新催化剂": 3, "科研圈": 2, "科研技巧": 0}
 CAT_ICONS = {"塑料热解": "♻️", "生物质热解": "🌿", "催化热解": "⚗️", "创新催化剂": "✨", "科研圈": "🎓", "科研技巧": "💡"}
 
 # 设置 CrossRef 检索起始时间（最近 120 天）
@@ -111,7 +111,7 @@ CROSSREF_START_DATE = (datetime.now() - timedelta(days=120)).strftime("%Y-%m-%d"
 # 采集任务清单
 # ──────────────────────────────────────────
 CROSSREF_TASKS = [
-    ("plastic pyrolysis catalytic pyrolysis thermal pyrolysis co-pyrolysis waste polyolefin polyethylene polypropylene polystyrene sygas gas hydrogen production carbon nanotube zeolite microwave plasma", "塑料热解", 10),
+    ("plastic pyrolysis catalytic pyrolysis thermal pyrolysis co-pyrolysis waste-plastic polyolefin polyethylene polypropylene sygas hydrogen-production carbon-nanotube zeolite microwave plasma ex-situ in-situ series connection", "塑料热解", 10),
     ("pyrolysis biomass biochar bio-oil lignin", "生物质热解", 10),
     ("catalytic pyrolysis mechanism selectivity", "催化热解", 10),
     ("pyrolysis zeolite catalyst ZSM SAPO single-atom metal oxide", "创新催化剂", 10),
@@ -124,7 +124,7 @@ ARXIV_TASKS = [
 ]
 
 WEIXIN_TASKS = [
-    ("塑料 热解 产业化 化学回收 塑料热解 塑料 热解 催化热解 热裂解 催化裂解 快速热解 共热解 废塑料 塑料回收 焦油 焦炭 沸石 分子筛 合成气 聚乙烯 聚丙烯 聚苯乙烯 高纯氢 碳纳米管 微波 等离子体", "塑料热解", 8),
+    ("塑料 热解 原位热解 非原位热解 串联催化 金属氧化物 产业化 化学回收 催化热解 热裂解 快速热解 共热解 废塑料 塑料回收 沸石 分子筛 合成气 聚乙烯 聚丙烯 聚苯乙烯 高纯氢 碳纳米管 微波 等离子体", "塑料热解", 8),
     ("生物质热解 生物炭 生物油 塑料 热解 催化热解 热裂解 催化裂解 快速热解 共热解 废塑料 塑料回收 废轮胎 废橡胶 生物质 生物炭 生物油 焦油 焦炭 沸石 分子筛 合成气 聚乙烯 聚丙烯 聚苯乙烯 秸秆 木质素 纤维素 高纯氢 碳纳米管 微波 等离子体", "生物质热解", 6),
     ("催化热解 机理 选择性 产率 合成气 三态产物", "催化热解", 6),
     ("科研技巧 XRD 拉曼 红外 TPR TPD origin 科研绘图 SEM 期刊分区 TEM XPS", "科研技巧", 6),
@@ -174,36 +174,79 @@ def is_clean(title: str, body: str = "", skip_core_kw: bool = False) -> bool:
 # ──────────────────────────────────────────
 
 def fetch_crossref(query: str, max_results: int = 5) -> List[Dict]:
-    """核心修复点：将排序改为 published，并增加采样 rows 以防止每日内容重复"""
+    """抓取 Crossref 最新论文 + 强关键词过滤 + 领域白名单，确保100%相关"""
     r = http_get(
         "https://api.crossref.org/works",
         params={
             "query.title": query,
             "filter": f"from-pub-date:{CROSSREF_START_DATE},type:journal-article",
-            "rows": max_results * 10,  # 采样池扩大到10倍
-            "sort": "published",       # 改为按日期排序，保证每天都有新鲜内容
+            "rows": max_results * 10,
+            "sort": "published",
             "order": "desc",
         },
         headers=API_HEADERS
     )
-    if not r: return []
+    if not r:
+        return []
+
     items = []
     try:
         for w in r.json()["message"]["items"]:
             title_list = w.get("title")
-            if not title_list: continue
+            if not title_list:
+                continue
+
             title = title_list[0].strip()
+            lower_title = title.lower()
+
+            # ==============================================
+            # 【第一层强过滤：必须包含热解核心词】
+            # ==============================================
+            if "pyrolysis", "plastic", "pyrolysis", "catalytic pyrolysis", "thermal pyrolysis", "co-pyrolysis", "Hydrogen", "Methane", "waste plastic", "polyolefin", "polyethylene", "polypropylene", "polystyrene","sygas", "gas", "in-situ", "biochar", "bio-oil", "hydrogen production", "carbon nanotube", "zeolite", "microwave", "plasma", "ex-situ", "series connection"not in lower_title and "塑料", "热解", "催化热解", "热裂解", "催化裂解", "快速热解", "共热解", "废塑料", "塑料回收", "非原位热解", "废轮胎", "废橡胶", "生物质", "生物炭", "生物油", "焦油", "焦炭", "沸石", "分子筛", "合成气", "原位热解", "聚乙烯", "聚丙烯", "聚苯乙烯", "秸秆", "木质素", "纤维素", "高纯氢", "碳纳米管", "微波", "等离子体", "串联催化", not in title:
+                continue
+
+            # ==============================================
+            # 【第二层领域白名单：只允许你的研究领域】
+            # ==============================================
+            allowed_keywords = [
+                # 英文
+                "plastic", "polyethylene", "polypropylene", "polystyrene", "plastic waste",
+                "biomass", "lignin", "cellulose", "biochar", "bio-oil",
+                "catalytic", "catalyst", "zeolite",
+                "energy", "fuel", "syngas", "hydrogen",
+                "waste", "recycling", "circular economy", "pyrolysis", "catalytic pyrolysis", "thermal pyrolysis", "co-pyrolysis", "Hydrogen", "Methane", 
+                "waste plastic", "polyolefin", "polyethylene", "polypropylene", "polystyrene","sygas", "gas", "in-situ", 
+                "hydrogen production", "carbon nanotube", "zeolite", "microwave", "plasma", "ex-situ", "series connection"
+                # 中文
+                "催化", "能源", "废塑", "回收", "塑料","热解", "催化热解", 
+                "热裂解", "催化裂解", "快速热解", "共热解", "废塑料", "塑料回收", 
+                "非原位热解", "废轮胎", "废橡胶", "生物质", "生物炭", "生物油", "焦油", 
+                "焦炭", "沸石", "分子筛", "合成气", "原位热解", "聚乙烯", "聚丙烯", "聚苯乙烯", 
+                "秸秆", "木质素", "纤维素", "高纯氢", "碳纳米管", "微波", "等离子体", "串联催化",
+            ]
+
+            # 如果标题里没有任何白名单关键词 → 直接丢掉
+            if not any(keyword in lower_title or keyword in title for keyword in allowed_keywords):
+                continue
+
+            # ==============================================
+            # 【第三层：期刊白名单】
+            # ==============================================
             journal = (w.get("container-title") or [""])[0]
-            if journal and not JOURNAL_WHITELIST_RE.search(journal): continue
-            
+            if journal and not JOURNAL_WHITELIST_RE.search(journal):
+                continue
+
+            # 符合所有条件 → 收录
             items.append({
                 "title": title,
-                "body": (w.get("abstract") or "点击原文查看详情。")[:200],
+                "body": (w.get("abstract") or "点击查看详情。")[:200],
                 "url": w.get("URL", ""),
                 "source_tag": f"【{journal[:15]}】" if journal else "【学术期刊】",
                 "source": "doi.org"
             })
-    except: pass
+    except Exception:
+        pass
+
     return items
 
 def fetch_weixin(keyword: str, max_results: int = 8) -> List[Dict]:
