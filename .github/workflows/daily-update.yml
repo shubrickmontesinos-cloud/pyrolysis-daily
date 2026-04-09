@@ -2,18 +2,18 @@ name: Daily Pyrolysis Update
 
 on:
   schedule:
-    - cron: '0 1 * * *'   # 每天 UTC 01:00 = 北京时间 09:00
-  workflow_dispatch:        # 允许手动触发
+    - cron: '0 1 * * *'
+  workflow_dispatch:
 
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 30       # 完全保留你原来的超时时间，不改动
+    timeout-minutes: 30
 
     permissions:
       contents: write
-      pages: write      # 新增：Pages部署权限（仅加了这2行权限）
-      id-token: write   # 新增：身份验证权限
+      pages: write
+      id-token: write
 
     steps:
       - name: Checkout repo
@@ -30,21 +30,25 @@ jobs:
       - name: Run daily update
         run: python pyro_daily_update.py
 
+      # 👇 修复点1：先生成CNAME，准备好所有最新文件
+      - name: Prepare CNAME
+        run: echo "pyrolysis-daily.store" > CNAME
+
+      # 👇 修复点2：【先打包最新文件部署】（核心修正！）
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      # 👇 修复点3：立即部署最新文件
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v5
+
+      # 👇 修复点4：【部署完，再提交代码到仓库】
       - name: Commit and push changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          echo "pyrolysis-daily.store" > CNAME
           git add data/ index.html CNAME
           git diff --cached --quiet || git commit -m "chore: daily update $(date +'%Y-%m-%d')"
           git push
-
-      # 👇 【关键修复1】打包要部署的文件，生成github-pages artifact（必须！）
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: .  # 直接打包仓库根目录的所有文件（你的index.html、data/都在这里）
-
-      # 👇 【关键修复2】部署到GitHub Pages（之前只加了这一步，漏了上面的上传）
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v5
