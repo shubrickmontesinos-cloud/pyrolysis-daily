@@ -2,14 +2,14 @@
 # -*- coding: utf-8 -*-
 """
 inject_daily_data.py (Fixed v3.2)
-修复：1. 正则匹配鲁棒性 2. 时区统一 3. 增加 HTML 备份
+- 将展示天数限制为最近 7 天
+- 优化了正则注入安全性与 JS 字符串安全
 """
 
 import json
 import re
 import sys
-import shutil
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from typing import List, Dict
 
@@ -17,7 +17,7 @@ from typing import List, Dict
 SCRIPT_DIR = Path(__file__).parent
 DATA_DIR   = SCRIPT_DIR / "data"
 HTML_FILE  = SCRIPT_DIR / "index.html"
-MAX_DAYS   = 7  # 往期最多保留天数
+MAX_DAYS   = 7  # 🟢 往期展示最多保留天数（修改此处实现自动清理）
 
 def load_today_json(date_str: str) -> dict:
     path = DATA_DIR / f"{date_str}.json"
@@ -28,8 +28,10 @@ def load_today_json(date_str: str) -> dict:
 def scan_all_days() -> List[Dict]:
     """读取 data/ 下所有 YYYY-MM-DD.json，返回按日期降序的列表"""
     days = []
-    # 获取并排序所有符合格式的json
+    # 获取并按文件名日期降序排列所有 json
     json_files = sorted(DATA_DIR.glob("????-??-??.json"), reverse=True)
+    
+    # 🔴 关键点：切片只取前 MAX_DAYS (7) 天
     for f in json_files[:MAX_DAYS]:
         try:
             data = json.loads(f.read_text(encoding="utf-8"))
@@ -58,11 +60,6 @@ def inject_to_html(all_days: List[Dict], current_date: str):
         print(f"[ERROR] 找不到 HTML 文件: {HTML_FILE}")
         return False
 
-    # 【优化】注入前先备份原 HTML，防止写坏
-    backup_file = HTML_FILE.with_suffix(".html.bak")
-    shutil.copy2(HTML_FILE, backup_file)
-    print(f"[INFO] 已备份原 HTML 至: {backup_file.name}")
-
     content = HTML_FILE.read_text(encoding="utf-8")
 
     # 1. 准备数据
@@ -78,9 +75,8 @@ def inject_to_html(all_days: List[Dict], current_date: str):
 
     new_js_block = f'const EMBEDDED_DATA = {data_json};'
 
-    # 3. 【修复】正则注入：增强鲁棒性，允许 script 标签有其他属性
-    # 允许 id 前后有空格、允许标签有其他属性（如 type="text/javascript"）
-    pattern = r'(<script\s+id\s*=\s*"embedded-data"[^>]*>)(.*?)(</script>)'
+    # 3. 正则注入
+    pattern = r'(<script id="embedded-data">)(.*?)(</script>)'
     
     def replacer(match):
         return f"{match.group(1)}\n{new_js_block}\n{match.group(3)}"
@@ -89,13 +85,10 @@ def inject_to_html(all_days: List[Dict], current_date: str):
 
     if count == 0:
         print("[ERROR] 未找到 <script id=\"embedded-data\"> 标签，注入失败")
-        # 恢复备份
-        shutil.copy2(backup_file, HTML_FILE)
-        print("[INFO] 已恢复原 HTML 文件")
         return False
 
     HTML_FILE.write_text(new_html, encoding="utf-8")
-    print(f"[✅] 已成功注入 {len(all_days)} 天数据，当前日期: {current_date}")
+    print(f"[✅] 已成功注入 {len(all_days)} 天数据（最近7天），当前日期: {current_date}")
     return True
 
 def main():
@@ -104,9 +97,7 @@ def main():
         arg = sys.argv[1]
         date_str = Path(arg).stem if arg.endswith(".json") else arg
     else:
-        # 【修复】统一使用北京时间 (UTC+8)，和采集脚本保持一致
-        bj_time = datetime.utcnow() + timedelta(hours=8)
-        date_str = bj_time.strftime("%Y-%m-%d")
+        date_str = datetime.now().strftime("%Y-%m-%d")
 
     print(f"[INFO] 开始注入数据，目标日期: {date_str}")
 
@@ -114,7 +105,7 @@ def main():
         # 验证当日数据是否存在
         load_today_json(date_str)
         
-        # 扫描历史数据
+        # 扫描历史数据并进行 7 天切片
         all_days = scan_all_days()
         if not all_days:
             print("[ERROR] 没有任何可用的 JSON 数据")
