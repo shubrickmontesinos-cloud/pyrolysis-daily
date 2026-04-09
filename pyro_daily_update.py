@@ -215,7 +215,7 @@ def fetch_crossref(query: str, max_results: int = 5) -> List[Dict]:
         is_research_circle = "科研圈" in query.lower() or "review" in query.lower()
         if not is_research_circle:
             # 原有核心词校验（给其他分类保留）
-            if not any(kw in lower_title or kw in title for kw in ["pyrolysis", "塑料", "热解"...]):
+            if not any(kw in lower_title or kw in title for kw in ["pyrolysis", "塑料", "热解", ]):
                 continue
         else:
             # 科研圈仅需包含「综述/进展/科研」等弱相关词即可
