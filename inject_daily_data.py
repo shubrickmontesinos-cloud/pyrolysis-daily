@@ -16,7 +16,7 @@ from typing import List, Dict
 SCRIPT_DIR = Path(__file__).parent
 DATA_DIR   = SCRIPT_DIR / "data"
 HTML_FILE  = SCRIPT_DIR / "index.html"
-MAX_DAYS   = 30  # 往期最多保留天数
+MAX_DAYS   = 7  # 往期最多保留天数
 
 def load_today_json(date_str: str) -> dict:
     path = DATA_DIR / f"{date_str}.json"
