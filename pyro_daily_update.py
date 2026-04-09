@@ -294,8 +294,33 @@ def collect_news() -> List[Dict]:
             uid += 1
     return final_list
 
+def save_json(news: list, date_str: str):
+    """
+    保存采集到的新闻到当日JSON文件
+    完全匹配你项目的路径、格式规范
+    """
+    # 统一使用北京时间，和项目全局逻辑保持一致
+    bj_time = datetime.utcnow() + timedelta(hours=8)
+    # 生成当日数据文件路径
+    out_path = DATA_DIR / f"{date_str}.json"
+    # 构造和你项目完全兼容的payload格式
+    payload = {
+        "date": date_str,
+        "generated_at": bj_time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "news": news,
+    }
+    # 写入JSON文件
+    out_path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2),
+        encoding="utf-8"
+    )
+    log.info(f"✅ 成功保存今日数据: {len(news)} 条，保存路径: {out_path}")
+    
 def main():
-    today = datetime.now().strftime("%Y-%m-%d")
+    # 统一使用北京时间 (UTC+8) 防止时区混乱
+    bj_time = datetime.utcnow() + timedelta(hours=8)
+    today = bj_time.strftime("%Y-%m-%d")
+    
     log.info(f"========== 启动更新任务: {today} ==========")
     
     news = collect_news()
