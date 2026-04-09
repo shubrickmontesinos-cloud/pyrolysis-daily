@@ -202,7 +202,7 @@ def fetch_crossref(query: str, max_results: int = 5) -> List[Dict]:
             # ==============================================
             # 【第一层强过滤：必须包含热解核心词】
             # ==============================================
-            if "pyrolysis", "plastic", "pyrolysis", "catalytic pyrolysis", "thermal pyrolysis", "co-pyrolysis", "Hydrogen", "Methane", "waste plastic", "polyolefin", "polyethylene", "polypropylene", "polystyrene","sygas", "gas", "in-situ", "biochar", "bio-oil", "hydrogen production", "carbon nanotube", "zeolite", "microwave", "plasma", "ex-situ", "series connection"not in lower_title and "塑料", "热解", "催化热解", "热裂解", "催化裂解", "快速热解", "共热解", "废塑料", "塑料回收", "非原位热解", "废轮胎", "废橡胶", "生物质", "生物炭", "生物油", "焦油", "焦炭", "沸石", "分子筛", "合成气", "原位热解", "聚乙烯", "聚丙烯", "聚苯乙烯", "秸秆", "木质素", "纤维素", "高纯氢", "碳纳米管", "微波", "等离子体", "串联催化", not in title:
+            if not any(kw in lower_title or kw in title for kw in ["pyrolysis", "plastic", "pyrolysis", "catalytic pyrolysis", "thermal pyrolysis", "co-pyrolysis", "Hydrogen", "Methane", "waste plastic", "polyolefin", "polyethylene", "polypropylene", "polystyrene","sygas", "gas", "in-situ", "biochar", "bio-oil", "hydrogen production", "carbon nanotube", "zeolite", "microwave", "plasma", "ex-situ", "in-situ", "series connection", "塑料", "热解", "催化热解", "热裂解", "催化裂解", "快速热解", "共热解", "废塑料", "塑料回收", "非原位热解", "废轮胎", "废橡胶", "生物质", "生物炭", "生物油", "焦油", "焦炭", "沸石", "分子筛", "合成气", "原位热解", "聚乙烯", "聚丙烯", "聚苯乙烯", "秸秆", "木质素", "纤维素", "高纯氢", "碳纳米管", "微波", "等离子体", "串联催化", ]):
                 continue
 
             # ==============================================
