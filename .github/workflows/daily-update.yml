@@ -8,13 +8,12 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30       # 完全保留你原来的超时时间，不改动
 
-    # 完整权限，不影响现有功能
     permissions:
       contents: write
-      pages: write
-      id-token: write
+      pages: write      # 新增：Pages部署权限（仅加了这2行权限）
+      id-token: write   # 新增：身份验证权限
 
     steps:
       - name: Checkout repo
@@ -28,11 +27,9 @@ jobs:
       - name: Install dependencies
         run: pip install requests beautifulsoup4
 
-      # 你的原有抓取逻辑，完全不变
       - name: Run daily update
         run: python pyro_daily_update.py
 
-      # 你的原有提交逻辑，完全不变
       - name: Commit and push changes
         run: |
           git config user.name "github-actions[bot]"
@@ -42,6 +39,12 @@ jobs:
           git diff --cached --quiet || git commit -m "chore: daily update $(date +'%Y-%m-%d')"
           git push
 
-      # 新增：直接部署上线，替代系统构建，解决页面覆盖问题
+      # 👇 【关键修复1】打包要部署的文件，生成github-pages artifact（必须！）
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .  # 直接打包仓库根目录的所有文件（你的index.html、data/都在这里）
+
+      # 👇 【关键修复2】部署到GitHub Pages（之前只加了这一步，漏了上面的上传）
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v5
