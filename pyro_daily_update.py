@@ -116,19 +116,29 @@ CROSSREF_TASKS = [
     ("catalytic pyrolysis mechanism selectivity", "催化热解", 10),
     ("pyrolysis zeolite catalyst ZSM SAPO single-atom metal oxide", "创新催化剂", 10),
     ("pyrolysis review progress recent journal", "科研圈", 10),
+    # 新增科研圈抓取任务（多维度扩充）
+    ("scientific research progress pyrolysis perspective outlook", "科研圈", 10),
+    ("热解 综述 进展 研究前沿 科研动态 学术会议", "科研圈", 10),
 ]
 
 ARXIV_TASKS = [
-    ("ti:pyrolysis AND ti:plastic", "塑料热解", 5),
-    ("ti:pyrolysis AND ti:catalytic", "催化热解", 5),
+    ("ti:pyrolysis AND ti:plastic", "塑料热解", 10),
+    ("ti:pyrolysis AND ti:catalytic", "催化热解", 10),
 ]
 
 WEIXIN_TASKS = [
     ("塑料 热解 原位热解 非原位热解 串联催化 金属氧化物 产业化 化学回收 催化热解 热裂解 快速热解 共热解 废塑料 塑料回收 沸石 分子筛 合成气 聚乙烯 聚丙烯 聚苯乙烯 高纯氢 碳纳米管 微波 等离子体", "塑料热解", 8),
     ("生物质热解 生物炭 生物油 塑料 热解 催化热解 热裂解 催化裂解 快速热解 共热解 废塑料 塑料回收 废轮胎 废橡胶 生物质 生物炭 生物油 焦油 焦炭 沸石 分子筛 合成气 聚乙烯 聚丙烯 聚苯乙烯 秸秆 木质素 纤维素 高纯氢 碳纳米管 微波 等离子体", "生物质热解", 6),
-    ("催化热解 机理 选择性 产率 合成气 三态产物", "催化热解", 6),
-    ("科研技巧 XRD 拉曼 红外 TPR TPD origin 科研绘图 SEM 期刊分区 TEM XPS", "科研技巧", 6),
+    ("催化热解 机理 选择性 产率 合成气 三态产物", "催化热解", 10),
+    ("科研技巧 XRD 拉曼 红外 TPR TPD origin 科研绘图 SEM 期刊分区 TEM XPS", "科研技巧", 15),
+     "Origin绘图 论文写作 数据处理 实验设计 文献管理 EndNote Zotero 投稿技巧 审稿回复 "
+     "科研数据可视化 热解实验方法 催化表征 论文润色 学术写作", "科研技巧", 15),  # 关键词扩充，数量从6→15
+    ("pyrolysis review progress recent journal", "科研圈", 10),
+    # 新增科研圈抓取任务（多维度扩充）
+    ("scientific research progress pyrolysis perspective outlook", "科研圈", 15),
+    ("热解 综述 进展 研究前沿 科研动态 学术会议", "科研圈", 15),
 ]
+
 
 # ──────────────────────────────────────────
 # 工具函数
@@ -201,6 +211,16 @@ def fetch_crossref(query: str, max_results: int = 5) -> List[Dict]:
 
             # ==============================================
             # 【第一层强过滤：必须包含热解核心词】
+            # 新增：如果是科研圈分类，放宽核心词要求
+        is_research_circle = "科研圈" in query.lower() or "review" in query.lower()
+        if not is_research_circle:
+            # 原有核心词校验（给其他分类保留）
+            if not any(kw in lower_title or kw in title for kw in ["pyrolysis", "塑料", "热解"...]):
+                continue
+        else:
+            # 科研圈仅需包含「综述/进展/科研」等弱相关词即可
+            if not any(kw in lower_title for kw in ["review", "progress", "perspective", "outlook", "综述", "进展", "科研"]):
+                continue
             # ==============================================
             if not any(kw in lower_title or kw in title for kw in ["pyrolysis", "plastic", "pyrolysis", "catalytic pyrolysis", "thermal pyrolysis", "co-pyrolysis", "Hydrogen", "Methane", "waste plastic", "polyolefin", "polyethylene", "polypropylene", "polystyrene","sygas", "gas", "in-situ", "biochar", "bio-oil", "hydrogen production", "carbon nanotube", "zeolite", "microwave", "plasma", "ex-situ", "in-situ", "series connection", "塑料", "热解", "催化热解", "热裂解", "催化裂解", "快速热解", "共热解", "废塑料", "塑料回收", "非原位热解", "废轮胎", "废橡胶", "生物质", "生物炭", "生物油", "焦油", "焦炭", "沸石", "分子筛", "合成气", "原位热解", "聚乙烯", "聚丙烯", "聚苯乙烯", "秸秆", "木质素", "纤维素", "高纯氢", "碳纳米管", "微波", "等离子体", "串联催化", ]):
                 continue
@@ -249,7 +269,55 @@ def fetch_crossref(query: str, max_results: int = 5) -> List[Dict]:
 
     return items
 
+# 极简兜底：保证每个分类至少 2 条内容
+def ensure_min_items(pool, min_count=2):
+    default = {
+        "塑料热解": [
+            {"title": "塑料热解最新行业动态", "summary": "每日更新塑料热解前沿进展", "url": "#", "source": "系统"},
+            {"title": "废塑料化学回收技术进展", "summary": "热解资源化利用最新研究", "url": "#", "source": "系统"}
+        ],
+        "生物质热解": [
+            {"title": "生物质热解研究进展", "summary": "生物炭、生物油最新研究", "url": "#", "source": "系统"},
+            {"title": "秸秆木质素热解利用", "summary": "农业废弃物高值化利用", "url": "#", "source": "系统"}
+        ],
+        "催化热解": [
+            {"title": "催化热解机理研究", "summary": "催化剂与反应路径研究", "url": "#", "source": "系统"},
+            {"title": "热解催化剂改性研究", "summary": "高选择性催化体系开发", "url": "#", "source": "系统"}
+        ],
+        "创新催化剂": [
+            {"title": "新型热解催化剂开发", "summary": "高稳定、抗积碳催化剂进展", "url": "#", "source": "系统"},
+            {"title": "分子筛催化热解应用", "summary": "ZSM-5、SAPO等催化体系", "url": "#", "source": "系统"}
+        ],
+        "科研圈": [
+            {"title": "热解领域最新科研进展", "summary": "顶刊论文、综述、前沿动态", "url": "#", "source": "系统"},
+            {"title": "热解国际学术动态汇总", "summary": "全球热解科研最新成果", "url": "#", "source": "系统"}
+        ],
+        "科研技巧": [
+            {"title": "热解科研数据处理技巧", "summary": "Origin绘图、数据分析方法", "url": "#", "source": "系统"},
+            {"title": "论文写作与期刊投稿指南", "summary": "科研作图、文献管理技巧", "url": "#", "source": "系统"}
+        ]
+    }
+
+    for cat in pool:
+        while len(pool[cat]) < min_count:
+            pool[cat].append(default[cat][len(pool[cat])])
+            
 def fetch_weixin(keyword: str, max_results: int = 8) -> List[Dict]:
+    # 新增：随机延迟+更换请求头
+    time.sleep(random.uniform(3, 6))  # 随机延迟，避免高频请求
+    headers = BROWSER_HEADERS.copy()
+    # 新增多个User-Agent备选，随机选一个
+    user_agents = [
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15",
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+    ]
+    headers["User-Agent"] = random.choice(user_agents)
+    
+    # 修改请求：添加headers参数，使用新的请求头
+    r = http_get("https://weixin.sogou.com/weixin", 
+                 params={"type": "2", "query": keyword, "ie": "utf8"},
+                 headers=headers)  # 新增headers参数
     r = http_get("https://weixin.sogou.com/weixin", params={"type": "2", "query": keyword, "ie": "utf8"})
     if not r or "antispider" in r.url:
         log.error(f"  [!] 搜狗微信反爬拦截 (关键字: {keyword})")
@@ -268,6 +336,29 @@ def fetch_weixin(keyword: str, max_results: int = 8) -> List[Dict]:
         })
     return items
 
+# 新增函数：抓取知乎科研技巧内容
+def fetch_zhihu(keyword: str, max_results: int = 5) -> List[Dict]:
+    r = http_get("https://www.zhihu.com/search", 
+                 params={"q": keyword, "type": "content"},
+                 headers=BROWSER_HEADERS)
+    if not r: return []
+    soup = BeautifulSoup(r.text, "html.parser")
+    items = []
+    for item in soup.select(".ContentItem")[:max_results]:
+        title_elem = item.select_one(".ContentItem-title a")
+        if not title_elem: continue
+        title = title_elem.get_text(strip=True)
+        url = "https://www.zhihu.com" + title_elem["href"]
+        body = item.select_one(".RichText").get_text(strip=True)[:200] if item.select_one(".RichText") else ""
+        items.append({
+            "title": title,
+            "body": body,
+            "url": url,
+            "source_tag": "【知乎】",
+            "source": "zhihu.com"
+        })
+    return items
+    
 def fetch_arxiv(query: str, max_results: int = 3) -> List[Dict]:
     r = http_get("http://export.arxiv.org/api/query", params={
         "search_query": query, "max_results": max_results * 3, "sortBy": "submittedDate", "sortOrder": "descending"
@@ -321,11 +412,24 @@ def collect_news() -> List[Dict]:
     for q, cat, num in ARXIV_TASKS:
         for item in fetch_arxiv(q, num): try_add(item, cat)
 
-    # B. 微信补足
+    # B. 微信补足 + 新增知乎补足科研技巧
     for kw, cat, num in WEIXIN_TASKS:
         if len(category_pool[cat]) < CATEGORY_QUOTA[cat]:
             for item in fetch_weixin(kw, num): try_add(item, cat)
             time.sleep(3)
+    # 新增：科研技巧从知乎补充抓取
+    if len(category_pool["科研技巧"]) < CATEGORY_QUOTA["科研技巧"]:
+        zhihu_kw = "科研技巧 论文写作 Origin绘图 热解实验方法 XRD 拉曼 红外 TPR TPD origin 
+        科研绘图 SEM 期刊分区 TEM XPS Origin绘图 论文写作 数据处理 实验设计 文献管理 EndNote 
+        Zotero 投稿技巧 审稿回复 科研数据可视化 热解实验方法 催化表征 论文润色 学术写作"
+        for item in fetch_zhihu(zhihu_kw, 10):
+            try_add(item, "科研技巧")
+
+    # ========== 极简加固：保证每个分类至少 2 条 ==========
+    ensure_min_items(category_pool, 2)
+
+    # 加在这里！！
+ensure_min_total(pool)
 
     # C. 汇总输出
     final_list = []
@@ -336,7 +440,7 @@ def collect_news() -> List[Dict]:
             final_list.append(it)
             uid += 1
     return final_list
-
+            
 def save_json(news: list, date_str: str):
     """
     保存采集到的新闻到当日JSON文件
@@ -382,3 +486,36 @@ def run_inject():
 
 if __name__ == "__main__":
     main()
+
+# --------------------------
+# 极简加固：保证
+# 1) 每个分类至少 2 条
+# 2) 总数至少 15 条
+# --------------------------
+def ensure_min_total(pool):
+    # 1. 每个分类至少 2 条
+    for cat in pool:
+        while len(pool[cat]) < 2:
+            pool[cat].append({
+                "title": f"【{cat}】今日行业与科研动态",
+                "summary": "实时更新行业进展、科研成果",
+                "url": "#",
+                "source": "系统自动补充"
+            })
+
+    # 2. 总数至少 15 条
+    total = sum(len(items) for items in pool.values())
+    all_cats = list(pool.keys())
+    
+    while total < 15:
+        # 轮着补，均匀凑够 15 条
+        for cat in all_cats:
+            if total >= 15:
+                break
+            pool[cat].append({
+                "title": f"【{cat}】今日科研与产业动态",
+                "summary": "实时更新行业进展、科研成果",
+                "url": "#",
+                "source": "系统自动补充"
+            })
+            total += 1
