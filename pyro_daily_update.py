@@ -429,7 +429,7 @@ def collect_news() -> List[Dict]:
     ensure_min_items(category_pool, 2)
 
     # 加在这里！！
-ensure_min_total(pool)
+    ensure_min_total(pool)
 
     # C. 汇总输出
     final_list = []
