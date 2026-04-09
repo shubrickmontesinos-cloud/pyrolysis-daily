@@ -278,7 +278,10 @@ function renderCards(news) {
       <div class="news-summary">${n.summary.slice(0,90)}…</div>
       <div class="card-footer">
         <div class="card-source">📄 ${n.source}</div>
-        <div class="card-tags">${n.tags.slice(0,2).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+        <div class="card-tags">
+          <span class="tag">${n.category}</span>
+          ${n.tags.slice(0,2).map(t=>`<span class="tag">${t}</span>`).join('')}
+        </div>
       </div>
     </div>`).join('')}</div>`;
 }
