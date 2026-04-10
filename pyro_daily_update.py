@@ -152,12 +152,20 @@ API_HEADERS = {"User-Agent": "18453706091@163.com"}
 
 def http_get(url: str, params: dict = None, headers: dict = None) -> Optional[requests.Response]:
     try:
-        r = requests.get(url, params=params, headers=headers or BROWSER_HEADERS, timeout=15)
+        r = requests.get(
+            url, 
+            params=params, 
+            headers=headers or BROWSER_HEADERS, 
+            timeout=15, 
+            # 新增：禁用重定向（部分反爬会通过重定向拦截）
+            allow_redirects=False
+        )
         r.raise_for_status()
         return r
     except Exception as e:
-        log.warning(f"  请求失败 {url[:50]}: {e}")
-        return None
+        log.warning(f"  请求失败 {url[:50]} (重试{i+1}/{retry}): {e}")
+        time.sleep(random.uniform(2, 4))  # 重试前延迟
+return None
 
 def load_history_identifiers() -> Tuple[Set[str], Set[str]]:
     seen_titles, seen_urls = set(), set()
@@ -185,6 +193,13 @@ def is_clean(title: str, body: str = "", skip_core_kw: bool = False) -> bool:
 
 def fetch_crossref(query: str, max_results: int = 5) -> List[Dict]:
     """抓取 Crossref 最新论文 + 强关键词过滤 + 领域白名单，确保100%相关"""
+    # 新增：请求前随机延迟
+    time.sleep(random.uniform(1, 3))
+    r = http_get(
+        "https://api.crossref.org/works",
+        params={...},
+        headers=API_HEADERS
+    )
     r = http_get(
         "https://api.crossref.org/works",
         params={
@@ -212,15 +227,15 @@ def fetch_crossref(query: str, max_results: int = 5) -> List[Dict]:
             # ==============================================
             # 【第一层强过滤：必须包含热解核心词】
             # 新增：如果是科研圈分类，放宽核心词要求
-        is_research_circle = "科研圈" in query.lower() or "review" in query.lower()
-        if not is_research_circle:
-            # 原有核心词校验（给其他分类保留）
-            if not any(kw in lower_title or kw in title for kw in ["pyrolysis", "塑料", "热解", ]):
-                continue
-        else:
-            # 科研圈仅需包含「综述/进展/科研」等弱相关词即可
-            if not any(kw in lower_title for kw in ["review", "progress", "perspective", "outlook", "综述", "进展", "科研"]):
-                continue
+            is_research_circle = "科研圈" in query.lower() or "review" in query.lower()
+            if not is_research_circle:
+                # 原有核心词校验（给其他分类保留）
+                if not any(kw in lower_title or kw in title for kw in ["pyrolysis", "塑料", "热解", ]):
+                    continue
+            else:
+                # 科研圈仅需包含「综述/进展/科研」等弱相关词即可
+                if not any(kw in lower_title for kw in ["review", "progress", "perspective", "outlook", "综述", "进展", "科研"]):
+                    continue
             # ==============================================
             if not any(kw in lower_title or kw in title for kw in ["pyrolysis", "plastic", "pyrolysis", "catalytic pyrolysis", "thermal pyrolysis", "co-pyrolysis", "Hydrogen", "Methane", "waste plastic", "polyolefin", "polyethylene", "polypropylene", "polystyrene","sygas", "gas", "in-situ", "biochar", "bio-oil", "hydrogen production", "carbon nanotube", "zeolite", "microwave", "plasma", "ex-situ", "in-situ", "series connection", "塑料", "热解", "催化热解", "热裂解", "催化裂解", "快速热解", "共热解", "废塑料", "塑料回收", "非原位热解", "废轮胎", "废橡胶", "生物质", "生物炭", "生物油", "焦油", "焦炭", "沸石", "分子筛", "合成气", "原位热解", "聚乙烯", "聚丙烯", "聚苯乙烯", "秸秆", "木质素", "纤维素", "高纯氢", "碳纳米管", "微波", "等离子体", "串联催化", ]):
                 continue
@@ -244,10 +259,6 @@ def fetch_crossref(query: str, max_results: int = 5) -> List[Dict]:
                 "焦炭", "沸石", "分子筛", "合成气", "原位热解", "聚乙烯", "聚丙烯", "聚苯乙烯", 
                 "秸秆", "木质素", "纤维素", "高纯氢", "碳纳米管", "微波", "等离子体", "串联催化",
             ]
-
-            # 如果标题里没有任何白名单关键词 → 直接丢掉
-            if not any(keyword in lower_title or keyword in title for keyword in allowed_keywords):
-                continue
 
             # ==============================================
             # 【第三层：期刊白名单】
@@ -317,8 +328,7 @@ def fetch_weixin(keyword: str, max_results: int = 8) -> List[Dict]:
     # 修改请求：添加headers参数，使用新的请求头
     r = http_get("https://weixin.sogou.com/weixin", 
                  params={"type": "2", "query": keyword, "ie": "utf8"},
-                 headers=headers)  # 新增headers参数
-    r = http_get("https://weixin.sogou.com/weixin", params={"type": "2", "query": keyword, "ie": "utf8"})
+                 headers=headers)
     if not r or "antispider" in r.url:
         log.error(f"  [!] 搜狗微信反爬拦截 (关键字: {keyword})")
         return []
@@ -390,6 +400,11 @@ def collect_news() -> List[Dict]:
     def try_add(item: dict, category: str):
         title, url = item["title"], item["url"]
         title_key = re.sub(r"\s+", "", title).lower()
+        # 新增：检查本次已添加的内容是否重复
+        for existing in category_pool[category]:
+            existing_title_key = re.sub(r"\s+", "", existing["title"]).lower()
+            if existing_title_key == title_key or existing["url"] == url:
+                return
         if title_key in seen_titles or url in seen_urls: return
         if not is_clean(title, item.get("body", ""), skip_core_kw=(category=="科研技巧")): return
 
@@ -407,29 +422,32 @@ def collect_news() -> List[Dict]:
     log.info("--- 开始多源采集 ---")
     # A. 期刊 (CrossRef & arXiv)
     for q, cat, num in CROSSREF_TASKS:
-        for item in fetch_crossref(q, num): try_add(item, cat)
-        time.sleep(2)
+        for item in fetch_crossref(q, num):
+            try_add(item, cat)
+        time.sleep(random.uniform(*DELAY_ARXIV))
     for q, cat, num in ARXIV_TASKS:
-        for item in fetch_arxiv(q, num): try_add(item, cat)
+        for item in fetch_arxiv(q, num):
+            try_add(item, cat)
+        time.sleep(random.uniform(*DELAY_ARXIV))
 
-    # B. 微信补足 + 新增知乎补足科研技巧
+    # B. 微信+知乎补足
     for kw, cat, num in WEIXIN_TASKS:
         if len(category_pool[cat]) < CATEGORY_QUOTA[cat]:
-            for item in fetch_weixin(kw, num): try_add(item, cat)
-            time.sleep(3)
-    # 新增：科研技巧从知乎补充抓取
+            for item in fetch_weixin(kw, num):
+                try_add(item, cat)
+            time.sleep(random.uniform(*DELAY_WEIXIN))
+    # 科研技巧从知乎补充
     if len(category_pool["科研技巧"]) < CATEGORY_QUOTA["科研技巧"]:
-        zhihu_kw = "科研技巧 论文写作 Origin绘图 热解实验方法 XRD 拉曼 红外 TPR TPD origin"
-        "科研绘图 SEM 期刊分区 TEM XPS Origin绘图 论文写作 数据处理 实验设计 文献管理 EndNote"
-        "Zotero 投稿技巧 审稿回复 科研数据可视化 热解实验方法 催化表征 论文润色 学术写作"
+        zhihu_kw = (
+            "科研技巧 论文写作 Origin绘图 热解实验方法 XRD 拉曼 红外 TPR TPD origin "
+            "科研绘图 SEM 期刊分区 TEM XPS Origin绘图 论文写作 数据处理 实验设计 文献管理 EndNote "
+            "Zotero 投稿技巧 审稿回复 科研数据可视化 热解实验方法 催化表征 论文润色 学术写作"
+        )
         for item in fetch_zhihu(zhihu_kw, 10):
             try_add(item, "科研技巧")
 
-    # ========== 极简加固：保证每个分类至少 2 条 ==========
-    ensure_min_items(category_pool, 2)
-
-    # 加在这里！！
-    ensure_min_total(pool)
+    # 保证最小条目要求
+    ensure_min_requirements(category_pool)
 
     # C. 汇总输出
     final_list = []
