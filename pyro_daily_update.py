@@ -172,18 +172,8 @@ WEIXIN_TASKS = [
     ("生物质热解 生物炭 生物油 塑料 热解 催化热解 富氢气体 热裂解 催化裂解 快速热解 共热解 废塑料 塑料回收 废轮胎 废橡胶 生物质 生物炭 生物油 焦油 焦炭 沸石 分子筛 合成气 聚乙烯 聚丙烯 聚苯乙烯 秸秆 木质素 纤维素 高纯氢 碳纳米管 微波 等离子体", "生物质热解", 6),
     ("催化热解 混合塑料 催化气化 化学链气化 蒸汽重整 富氢合成气 循环稳定 抗积碳 固废资源化 微波热解 机理 选择性 产率 合成气 三态产物", "催化热解", 10),
     ("层状催化剂 单原子催化剂 LDH 不锈钢 自持续 热解催化剂 沸石 ZSM SAPO 金属氧化物 创新催化剂 镍基催化剂 铁基催化剂 双金属催化剂钙钛矿 碳基催化剂 生物质炭 分子筛 HZSM-5 抗积碳 循环稳定", "创新催化剂", 12),  # 新增微信来源，数量12
-    ("科研技巧 XRD 拉曼 红外 TPR TPD origin 科研绘图 SEM 期刊分区 TEM XPS 实验操作 样品制备 条件优化 平行实验 对照实验 重复验证 "
-     "数据处理 误差分析 表征测试 结构表征 形貌表征 成分分析 光谱分析 电镜表征 XRD XPS SEM TEM BET 红外光谱 拉曼光谱 热重分析 " 
-     "差示扫描量热 气相色谱 液相色谱 质谱分析 数据拟合 机理分析 结果讨论 实验记录 数据可视化 质控 重复性 稳定性 "
-     "方法优化 仪器操作 基线校正 峰位拟合 物相分析 元素分析 孔隙结构 催化性能 动力学分析 热力学分析 ", "科研技巧", 15),
-    ("Origin绘图 论文写作 数据处理 实验设计 文献管理 EndNote Zotero 投稿技巧 审稿回复 "
-     "科研数据可视化 热解实验方法 催化表征 论文润色 学术写作 "
-     "experimental operation sample preparation condition optimization parallel experiment control experiment repeated" 
-     "verification data processing error analysis characterization structural characterization morphological characterization"
-     "component analysis spectral analysis electron microscopy XRD XPS SEM TEM BET FTIR Raman spectroscopy TG DSC GC LC MS" 
-     "data fitting mechanism analysis result discussion experimental record data visualization quality control"
-     "repeatability stability method optimization instrument operation baseline correction peak" 
-     "fitting phase analysis elemental analysis pore structure catalytic performance kinetic analysis thermodynamic analysis", "科研技巧", 15), 
+    ("科研技巧 XRD 拉曼 红外 TPR TPD origin 科研绘图 SEM 期刊分区 TEM XPS 实验操作 样品制备 条件优化 平行实验 对照实验 重复验证 数据处理 误差分析 表征测试 结构表征 形貌表征 成分分析 光谱分析 电镜表征 XRD XPS SEM TEM BET 红外光谱 拉曼光谱 热重分析 气相色谱 液相色谱 质谱分析 数据拟合 机理分析 结果讨论 实验记录 数据可视化 质控 重复性 稳定性 方法优化 仪器操作 基线校正 峰位拟合 物相分析 元素分析 孔隙结构 催化性能 动力学分析 热力学分析 ", "科研技巧", 15),
+    ("Origin绘图 论文写作 数据处理 实验设计 文献管理 EndNote Zotero 科研数据可视化 热解实验方法 催化表征 论文润色 experimental operation sample preparation condition optimization parallel experiment control experiment repeated verification data processing error analysis characterization structural characterization morphological characterization component analysis spectral analysis electron microscopy XRD XPS SEM TEM BET FTIR Raman spectroscopy TG DSC GC LC MS data fitting mechanism analysis result discussion experimental record data visualization quality control repeatability stability method optimization instrument operation baseline correction peak fitting phase analysis elemental analysis pore structure catalytic performance kinetic analysis thermodynamic analysis", "科研技巧", 15), 
     ("pyrolysis review progress recent journal ", "科研圈", 10),
     # 新增科研圈抓取任务（多维度扩充）
     ("scientific research progress pyrolysis perspective outlook  research circle academic circle researcher postgraduate PhD student research group supervisor fund application paper publication journal impact factor academic misconduct research integrity literature retrieval academic conference academic evaluation", "科研圈", 15),
