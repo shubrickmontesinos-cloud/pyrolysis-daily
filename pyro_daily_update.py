@@ -94,6 +94,19 @@ CORE_KEYWORDS = [
     "plastic","pyrolysis", "catalytic pyrolysis", "thermal pyrolysis", "co-pyrolysis", "Hydrogen", "Methane", 
     "waste plastic", "polyolefin", "polyethylene", "polypropylene", "polystyrene","sygas", "gas", "in-situ", 
     "biochar", "bio-oil", "hydrogen production", "carbon nanotube", "zeolite", "microwave", "plasma", "ex-situ", "series connection", 
+    "层状催化剂", "单原子催化剂", "LDH", "不锈钢", "自持续", "layered catalyst", "single-atom catalyst", "self-sustaining"
+    "PET 塑料", "混合塑料", "催化气化", "化学链气化", "蒸汽重整","镍基催化剂", "铁基催化剂", "双金属催化剂", "钙钛矿", 
+    "碳基催化剂", "生物质炭", "分子筛", "HZSM-5", "单原子催化","富氢合成气", "高纯氢", "焦油裂解", "抗积碳", "循环稳定", 
+    "固废资源化", "微波热解", "光热催化", "串联催化","plastic", "polyethylene", "polypropylene", "polystyrene", 
+    "PET", "mixed plastic", "pyrolysis", "catalytic pyrolysis","catalytic gasification", "chemical looping gasification", 
+    "steam reforming", "Ni-based catalyst", "Fe-based catalyst","bimetallic catalyst", "perovskite", 
+    "carbon-based catalyst", "biochar", "zeolite", "single-atom catalysis","syngas", "hydrogen-rich syngas", 
+    "high-purity hydrogen", "tar cracking", "anti-coking", "cyclic stability","waste valorization", 
+    "microwave pyrolysis", "photothermal catalysis", "tandem catalysis", "literature retrieval", "academic conference", "academic evaluation", 
+    "科研圈", "学术圈", "科研工作者", "硕博", "研究生", "课题组", "导师", "科研项目", "基金申报", "论文发表", 
+    "SCI", "核心期刊", "影响因子", "学术不端", "科研诚信", "开题报告", "毕业论文", "文献检索", "学术会议", "科研内卷",
+    "research circle", "academic circle", "researcher", "postgraduate", "PhD student", "research group","supervisor", 
+    "fund application", "paper publication", "journal", "impact factor", "academic misconduct","research integrity",    
 ]
 CORE_KW_RE = re.compile("|".join(CORE_KEYWORDS), re.IGNORECASE)
 
@@ -125,14 +138,14 @@ DELAY_ZHIHU = (2, 5)
 MIN_ITEMS_PER_CAT = 2
 MIN_TOTAL_ITEMS = 15
 
-# 设置 CrossRef 检索起始时间（最近 120 天，统一北京时间）
+# 设置 CrossRef 检索起始时间（最近 365 天，统一北京时间）
 def get_bj_now() -> datetime:
     if BEIJING_TZ:
         return datetime.now(BEIJING_TZ).replace(tzinfo=None)
     else:
         return datetime.utcnow() + timedelta(hours=8)
 
-CROSSREF_START_DATE = (get_bj_now() - timedelta(days=120)).strftime("%Y-%m-%d")
+CROSSREF_START_DATE = (get_bj_now() - timedelta(days=365)).strftime("%Y-%m-%d")
 
 # ──────────────────────────────────────────
 # 采集任务清单
@@ -141,7 +154,7 @@ CROSSREF_TASKS = [
     ("plastic pyrolysis catalytic pyrolysis thermal pyrolysis co-pyrolysis waste-plastic polyolefin polyethylene polypropylene sygas hydrogen-production carbon-nanotube zeolite microwave plasma ex-situ in-situ series connection", "塑料热解", 10),
     ("pyrolysis biomass biochar bio-oil lignin", "生物质热解", 10),
     ("catalytic pyrolysis mechanism selectivity", "催化热解", 10),
-    ("pyrolysis zeolite catalyst ZSM SAPO single-atom metal oxide", "创新催化剂", 10),
+    ("pyrolysis layered catalyst single-atom catalyst LDH stainless steel self-sustaining zeolite catalyst ZSM SAPO single-atom metal oxide", "创新催化剂", 20),
     ("pyrolysis review progress recent journal", "科研圈", 10),
     # 新增科研圈抓取任务（多维度扩充）
     ("scientific research progress pyrolysis perspective outlook", "科研圈", 10),
@@ -151,19 +164,30 @@ CROSSREF_TASKS = [
 ARXIV_TASKS = [
     ("ti:pyrolysis AND ti:plastic", "塑料热解", 10),
     ("ti:pyrolysis AND ti:catalytic", "催化热解", 10),
+    ("ti:pyrolysis AND (ti:layered OR ti:single-atom OR ti:LDH OR ti:stainless steel OR ti:self-sustaining)", "创新催化剂", 10),
 ]
 
 WEIXIN_TASKS = [
-    ("塑料 热解 原位热解 非原位热解 串联催化 富氢气体 金属氧化物 产业化 化学回收 催化热解 热裂解 快速热解 共热解 废塑料 塑料回收 沸石 分子筛 合成气 聚乙烯 聚丙烯 聚苯乙烯 高纯氢 碳纳米管 微波 等离子体", "塑料热解", 8),
+    ("塑料 混合塑料 催化气化 化学链气化 蒸汽重整 富氢合成气 循环稳定 抗积碳 固废资源化 微波热解 原位热解 非原位热解 串联催化 富氢气体 金属氧化物 产业化 化学回收 催化热解 热裂解 快速热解 共热解 废塑料 塑料回收 沸石 分子筛 合成气 聚乙烯 聚丙烯 聚苯乙烯 高纯氢 碳纳米管 微波 等离子体", "塑料热解", 8),
     ("生物质热解 生物炭 生物油 塑料 热解 催化热解 富氢气体 热裂解 催化裂解 快速热解 共热解 废塑料 塑料回收 废轮胎 废橡胶 生物质 生物炭 生物油 焦油 焦炭 沸石 分子筛 合成气 聚乙烯 聚丙烯 聚苯乙烯 秸秆 木质素 纤维素 高纯氢 碳纳米管 微波 等离子体", "生物质热解", 6),
-    ("催化热解 机理 选择性 产率 合成气 三态产物", "催化热解", 10),
-    ("科研技巧 XRD 拉曼 红外 TPR TPD origin 科研绘图 SEM 期刊分区 TEM XPS", "科研技巧", 15),
+    ("催化热解 混合塑料 催化气化 化学链气化 蒸汽重整 富氢合成气 循环稳定 抗积碳 固废资源化 微波热解 机理 选择性 产率 合成气 三态产物", "催化热解", 10),
+    ("层状催化剂 单原子催化剂 LDH 不锈钢 自持续 热解催化剂 沸石 ZSM SAPO 金属氧化物 创新催化剂 镍基催化剂 铁基催化剂 双金属催化剂钙钛矿 碳基催化剂 生物质炭 分子筛 HZSM-5 抗积碳 循环稳定", "创新催化剂", 12),  # 新增微信来源，数量12
+    ("科研技巧 XRD 拉曼 红外 TPR TPD origin 科研绘图 SEM 期刊分区 TEM XPS 实验操作 样品制备 条件优化 平行实验 对照实验 重复验证 "
+     "数据处理 误差分析 表征测试 结构表征 形貌表征 成分分析 光谱分析 电镜表征 XRD XPS SEM TEM BET 红外光谱 拉曼光谱 热重分析 " 
+     "差示扫描量热 气相色谱 液相色谱 质谱分析 数据拟合 机理分析 结果讨论 实验记录 数据可视化 质控 重复性 稳定性 "
+     "方法优化 仪器操作 基线校正 峰位拟合 物相分析 元素分析 孔隙结构 催化性能 动力学分析 热力学分析 ", "科研技巧", 15),
     ("Origin绘图 论文写作 数据处理 实验设计 文献管理 EndNote Zotero 投稿技巧 审稿回复 "
-     "科研数据可视化 热解实验方法 催化表征 论文润色 学术写作", "科研技巧", 15),  # 关键词扩充，数量从6→15
-    ("pyrolysis review progress recent journal", "科研圈", 10),
+     "科研数据可视化 热解实验方法 催化表征 论文润色 学术写作 "
+     "experimental operation sample preparation condition optimization parallel experiment control experiment repeated" 
+     "verification data processing error analysis characterization structural characterization morphological characterization"
+     "component analysis spectral analysis electron microscopy XRD XPS SEM TEM BET FTIR Raman spectroscopy TG DSC GC LC MS" 
+     "data fitting mechanism analysis result discussion experimental record data visualization quality control"
+     "repeatability stability method optimization instrument operation baseline correction peak" 
+     "fitting phase analysis elemental analysis pore structure catalytic performance kinetic analysis thermodynamic analysis", "科研技巧", 15), 
+    ("pyrolysis review progress recent journal ", "科研圈", 10),
     # 新增科研圈抓取任务（多维度扩充）
-    ("scientific research progress pyrolysis perspective outlook", "科研圈", 15),
-    ("热解 综述 进展 研究前沿 科研动态 学术会议", "科研圈", 15),
+    ("scientific research progress pyrolysis perspective outlook  research circle academic circle researcher postgraduate PhD student research group supervisor fund application paper publication journal impact factor academic misconduct research integrity literature retrieval academic conference academic evaluation", "科研圈", 15),
+    ("热解 综述 进展 研究前沿 科研动态 学术会议 科研圈 学术圈 科研工作者 硕博 研究生 课题组 导师 科研项目 基金申报 论文发表 SCI 核心期刊 影响因子 学术不端 科研诚信 开题报告 毕业论文 文献检索 学术会议 科研内卷", "科研圈", 15),
 ]
 
 
@@ -281,12 +305,19 @@ def fetch_crossref(query: str, max_results: int = 5) -> List[Dict]:
                 "waste", "recycling", "circular economy", "pyrolysis", "catalytic pyrolysis", "thermal pyrolysis", "co-pyrolysis", "Hydrogen", "Methane", 
                 "waste plastic", "polyolefin", "polyethylene", "polypropylene", "polystyrene","sygas", "gas", "in-situ", 
                 "hydrogen production", "carbon nanotube", "zeolite", "microwave", "plasma", "ex-situ", "series connection"
+                "PET", "mixed plastic", "pyrolysis", "catalytic pyrolysis","catalytic gasification", "chemical looping gasification", 
+                "steam reforming", "Ni-based catalyst", "Fe-based catalyst","bimetallic catalyst", "perovskite", "carbon-based catalyst", 
+                "biochar", "zeolite", "single-atom catalysis","syngas", "hydrogen-rich syngas", "high-purity hydrogen", "tar cracking", 
+                "anti-coking", "cyclic stability","waste valorization", "microwave pyrolysis", "photothermal catalysis", "tandem catalysis", 
                 # 中文
                 "催化", "能源", "废塑", "回收", "塑料","热解", "催化热解", "富氢气体", 
                 "热裂解", "催化裂解", "快速热解", "共热解", "废塑料", "塑料回收", 
                 "非原位热解", "废轮胎", "废橡胶", "生物质", "生物炭", "生物油", "焦油", 
                 "焦炭", "沸石", "分子筛", "合成气", "原位热解", "聚乙烯", "聚丙烯", "聚苯乙烯", 
                 "秸秆", "木质素", "纤维素", "高纯氢", "碳纳米管", "微波", "等离子体", "串联催化",
+                "废塑料", "聚乙烯", "聚丙烯", "聚苯乙烯", "PET 塑料", "混合塑料", "催化热解", "催化气化", 
+                "化学链气化", "蒸汽重整","镍基催化剂", "铁基催化剂", "双金属催化剂", "钙钛矿", "碳基催化剂", "生物质炭", "分子筛", "HZSM-5", 
+                "单原子催化","富氢合成气", "高纯氢", "焦油裂解", "抗积碳", "循环稳定", "固废资源化", "微波热解", "光热催化", "串联催化",
             ]
 
             # ==============================================
@@ -513,7 +544,11 @@ def collect_news() -> List[Dict]:
         zhihu_kw = (
             "科研技巧 论文写作 Origin绘图 热解实验方法 XRD 拉曼 红外 TPR TPD origin "
             "科研绘图 SEM 期刊分区 TEM XPS Origin绘图 论文写作 数据处理 实验设计 文献管理 EndNote "
-            "Zotero 投稿技巧 审稿回复 科研数据可视化 热解实验方法 催化表征 论文润色 学术写作"
+            "Zotero 投稿技巧 审稿回复 科研数据可视化 热解实验方法 催化表征 论文润色 学术写作 实验操作 "
+            "样品制备 条件优化 平行实验 对照实验 重复验证 数据处理 误差分析 表征测试 结构表征 形貌表征 "
+            "成分分析 光谱分析 电镜表征 XRD XPS SEM TEM BET 红外光谱 拉曼光谱 热重分析 差示扫描量热 气相色谱 "
+            "液相色谱 质谱分析 数据拟合 机理分析 结果讨论 实验记录 数据可视化 质控 重复性 稳定性 方法优化 "
+            "仪器操作 基线校正 峰位拟合 物相分析 元素分析 孔隙结构 催化性能 动力学分析 热力学分析 "
         )
         items = fetch_zhihu(zhihu_kw, 10)
         for item in items:
@@ -524,7 +559,16 @@ def collect_news() -> List[Dict]:
     # 保证最小条目要求
     ensure_min_requirements(category_pool)
 
-    # D. 汇总输出
+    # D. 知乎补足创新催化剂
+    if len(category_pool["创新催化剂"]) < CATEGORY_QUOTA["创新催化剂"]:
+        zhihu_kw = "层状催化剂 单原子催化剂 LDH 不锈钢 自持续 热解催化剂 沸石 ZSM SAPO 金属氧化物 创新催化剂 镍基催化剂 铁基催化剂 双金属催化剂 钙钛矿 碳基催化剂 分子筛 抗积碳 循环稳定"
+        items = fetch_zhihu(zhihu_kw, 8)
+        for item in items:
+            try_add(item, "创新催化剂")
+        if items:
+            time.sleep(random.uniform(*DELAY_ZHIHU))
+
+    # E. 汇总输出
     final_list = []
     uid = 1
     for cat, quota in CATEGORY_QUOTA.items():
