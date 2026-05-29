@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>热解周报 · PyroWeekly</title>
+<style>
+:root {
+  --bg: #0f1117;
+  --surface: #1a1d27;
+  --surface2: #22253a;
+  --border: #2e3248;
+  --accent: #5b8def;
+  --accent2: #7c5cbf;
+  --accent3: #3dbfa0;
+  --warn: #f0a05a;
+  --text: #e8eaf6;
+  --text-muted: #8b90b5;
+  --tag-bg: #1e2140;
+  --cat-plastic: #5b8def;
+  --cat-biomass: #3dbfa0;
+  --cat-catalytic: #f0a05a;
+  --cat-catalyst: #a855f7;
+  --cat-sci: #ec4899;
+  --cat-tips: #22c55e;
+}
+
+/* 标签样式优化 */
+.card-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.card-tags .tag {
+  background: var(--surface2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+  
+    [data-theme="light"] {
+      --bg: #f4f6fb;
+      --surface: #ffffff;
+      --surface2: #eef1f8;
+      --border: #d0d7e8;
+      --accent: #3a6fd8;
+      --accent2: #6b3fad;
+      --accent3: #1fa888;
+      --warn: #d4820a;
+      --text: #1a1d2e;
+      --text-muted: #6b718f;
+      --tag-bg: #e8ecf8;
+      --cat-plastic: #3a6fd8;
+      --cat-biomass: #1fa888;
+      --cat-catalytic: #d4820a;
+      --cat-catalyst: #8b3fd4;
+      --cat-sci: #c4326a;
+      --cat-tips: #16a34a;
+    }
+
+  
+/* 标签样式优化 */
+.card-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.card-tags .tag {
+  background: var(--surface2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'SF Pro Display','PingFang SC','Helvetica Neue',system-ui,sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* Theme toggle */
+    .theme-toggle { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s; }
+    .theme-toggle:hover { border-color: var(--accent); background: var(--surface2); }
+
+    /* Header */
+    header { background: linear-gradient(135deg,#0d1b3e 0%,#1a1d27 60%,#0d2330 100%); border-bottom: 1px solid var(--border); padding: 20px 0 16px; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px); }
+    [data-theme="light"] header { background: linear-gradient(135deg,#dce8ff 0%,#f4f6fb 60%,#d8f0ea 100%); }
+    .header-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg,var(--accent),var(--accent2)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .logo h1 { font-size: 20px; font-weight: 700; letter-spacing: .02em; }
+    .logo h1 span { color: var(--accent); }
+    .logo small { display: block; font-size: 11px; color: var(--text-muted); font-weight: 400; margin-top: 1px; }
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    #date-display { font-size: 13px; color: var(--text-muted); background: var(--surface); border: 1px solid var(--border); padding: 6px 14px; border-radius: 20px; }
+    .update-badge { font-size: 11px; background: rgba(61,191,160,.15); color: var(--accent3); border: 1px solid rgba(61,191,160,.3); padding: 4px 10px; border-radius: 20px; display: flex; align-items: center; gap: 5px; }
+    .dot-live { width: 6px; height: 6px; border-radius: 50%; background: var(--accent3); animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.7)} }
+
+    /* Layout */
+    .container { max-width: 1200px; margin: 0 auto; padding: 28px 24px; }
+
+    /* Filter */
+    .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+    .filter-btn { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); font-size: 13px; cursor: pointer; transition: all .2s; display: flex; align-items: center; gap: 6px; }
+    .filter-btn:hover { border-color: var(--accent); color: var(--text); }
+    .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+    .filter-btn[data-cat="塑料热解"].active { background: var(--cat-plastic); border-color: var(--cat-plastic); }
+    .filter-btn[data-cat="生物质热解"].active { background: var(--cat-biomass); border-color: var(--cat-biomass); }
+    .filter-btn[data-cat="催化热解"].active { background: var(--cat-catalytic); border-color: var(--cat-catalytic); }
+    .filter-btn[data-cat="创新催化剂"].active { background: var(--cat-catalyst); border-color: var(--cat-catalyst); }
+    .filter-btn[data-cat="科研圈"].active { background: var(--cat-sci); border-color: var(--cat-sci); }
+    .filter-btn[data-cat="科研技巧"].active { background: var(--cat-tips); border-color: var(--cat-tips); }
+    .count-badge { background: rgba(255,255,255,.2); border-radius: 10px; padding: 1px 6px; font-size: 11px; }
+
+    /* Stats */
+    .stats-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
+    .stat-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 11px 16px; display: flex; flex-direction: column; gap: 2px; }
+    .stat-value { font-size: 22px; font-weight: 700; }
+    .stat-label { font-size: 11px; color: var(--text-muted); }
+
+    /* Section title */
+    .section-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+    .section-title::after { content:''; flex:1; height:1px; background: var(--border); }
+
+    /* News grid */
+    .news-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(340px,1fr)); gap: 14px; margin-bottom: 48px; }
+    .news-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px; transition: all .25s; cursor: pointer; display: flex; flex-direction: column; gap: 10px; position: relative; overflow: hidden; }
+    .news-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius:14px 14px 0 0; }
+    .news-card[data-cat="塑料热解"]::before { background: var(--cat-plastic); }
+    .news-card[data-cat="生物质热解"]::before { background: var(--cat-biomass); }
+    .news-card[data-cat="催化热解"]::before { background: var(--cat-catalytic); }
+    .news-card[data-cat="创新催化剂"]::before { background: var(--cat-catalyst); }
+    .news-card[data-cat="科研圈"]::before { background: var(--cat-sci); }
+    .news-card[data-cat="科研技巧"]::before { background: var(--cat-tips); }
+    .news-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(91,141,239,.15); }
+    .card-header { display: flex; align-items: center; justify-content: space-between; }
+    .cat-pill { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 12px; letter-spacing: .03em; }
+    [data-cat="塑料热解"] .cat-pill { background: rgba(91,141,239,.15); color: var(--cat-plastic); }
+    [data-cat="生物质热解"] .cat-pill { background: rgba(61,191,160,.15); color: var(--cat-biomass); }
+    [data-cat="催化热解"] .cat-pill { background: rgba(240,160,90,.15); color: var(--cat-catalytic); }
+    [data-cat="创新催化剂"] .cat-pill { background: rgba(168,85,247,.15); color: var(--cat-catalyst); }
+    [data-cat="科研圈"] .cat-pill { background: rgba(236,72,153,.15); color: var(--cat-sci); }
+    [data-cat="科研技巧"] .cat-pill { background: rgba(34,197,94,.15); color: var(--cat-tips); }
+    .card-num { font-size: 11px; color: var(--text-muted); background: var(--tag-bg); border-radius: 8px; padding: 2px 8px; }
+    .news-title { font-size: 14px; font-weight: 600; line-height: 1.5; }
+    .news-summary { font-size: 12px; line-height: 1.7; color: var(--text-muted); }
+    .card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; flex-wrap: wrap; gap: 6px; }
+    .card-source { font-size: 11px; color: var(--text-muted); }
+    .card-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .tag { font-size: 10px; background: var(--tag-bg); color: var(--text-muted); padding: 2px 6px; border-radius: 5px; border: 1px solid var(--border); }
+
+    /* Archive */
+    .archive-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(160px,1fr)); gap: 10px; }
+    .archive-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; cursor: pointer; transition: all .2s; text-align: center; }
+    .archive-card:hover { border-color: var(--accent); background: var(--surface2); }
+    .archive-card.active { border-color: var(--accent); background: rgba(91,141,239,.1); }
+    .archive-date { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+    .archive-count { font-size: 11px; color: var(--text-muted); }
+
+    /* Modal */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.7); z-index: 1000; backdrop-filter: blur(4px); align-items: center; justify-content: center; padding: 24px; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--surface2); border: 1px solid var(--border); border-radius: 18px; max-width: 640px; width: 100%; max-height: 80vh; overflow-y: auto; padding: 28px; }
+    .modal-close { float: right; background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; transition: all .2s; }
+    .modal-close:hover { background: var(--border); color: var(--text); }
+    .modal-cat { margin-bottom: 10px; }
+    .modal-title { font-size: 18px; font-weight: 700; line-height: 1.4; margin-bottom: 14px; }
+    .modal-summary { font-size: 14px; line-height: 1.8; color: var(--text-muted); margin-bottom: 18px; }
+    .modal-meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .modal-source-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--accent); color: #fff; text-decoration: none; padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 600; transition: opacity .2s; }
+    .modal-source-btn:hover { opacity: .85; }
+
+    /* Empty */
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+    .empty-icon { font-size: 48px; margin-bottom: 12px; }
+
+    /* Footer */
+    footer { border-top: 1px solid var(--border); text-align: center; padding: 20px; color: var(--text-muted); font-size: 12px; line-height: 1.7; }
+
+    @media (max-width: 640px) {
+      .news-grid { grid-template-columns: 1fr; }
+      .stats-bar { gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">🔬</div>
+      <div>
+        <h1>热解<span>周报</span></h1>
+        <small>PyroWeekly · 催化热解 / 塑料 / 生物质 / 科研圈 / 科研技巧</small>
+      </div>
+    </div>
+    <div class="header-right">
+      <div id="date-display">—</div>
+      <div class="update-badge"><div class="dot-live"></div>每周更新</div>
+      <button class="theme-toggle" id="theme-toggle" title="切换白天/夜间模式">🌙</button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="stats-bar" id="stats-bar"></div>
+  <div class="filter-bar" id="filter-bar"></div>
+  <div class="section-title">📰 本周速递</div>
+  <div id="news-container"></div>
+  <div class="section-title" style="margin-top:8px">📂 往期回顾</div>
+  <div class="archive-grid" id="archive-grid"></div>
+</div>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<footer>热解周报 · PyroWeekly &nbsp;|&nbsp; 多渠道每周自动抓取整理，内容仅供参考<br>覆盖领域：催化热解 · 塑料热解 · 生物质热解 · 创新催化剂 · 科研圈 · 科研技巧</footer>
+
+<!-- ═══════════════════════════════════════════════════════════
+     DATA BLOCK — 由每日更新脚本自动替换此区域
+     BEGIN_DATA_BLOCK
+═══════════════════════════════════════════════════════════ -->
+<script id="embedded-data">
+const EMBEDDED_DATA = {"currentDate":"2026-05-29","allDays":[{"date":"2026-05-29","news":[{"title":"Micro-mechanism of enhancing the re-ignition characteristics of pre-oxidation-pyrolysis coal","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139715","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":1},{"title":"Oriented conversion of cellulose into levoglucosan by vacuum pyrolysis coupled with rapid quenching of volatiles","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139615","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":2},{"title":"Fluorescence characteristics of common solid fuels pre- and post-pyrolysis","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139520","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":3},{"title":"Resolving rock eval limitations in overmature source rocks using high temperature pyrolysis","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139644","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":4},{"title":"The effect of metaplast on the condensation polymerization during coal pyrolysis","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139987","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":5},{"title":"Pyrolysis-induced evolution of aromatic fringe: study from Raman and HRTEM","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139858","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":6},{"title":"Hydrogen-rich producer gas from air- and steam-blown co-gasification of waste polypropylene pyrolysis oil and cashew nut shell in a two-stage downdraft gasifier","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139763","source_tag":"【Fuel】","source":"doi.org","category":"生物质热解","tags":["生物质热解"],"id":7},{"title":"Stepwise removal and controlled reintroduction of alkali and alkaline earth metals in biomass: mechanisms governing bio-oil composition in fast pyrolysis","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139666","source_tag":"【Fuel】","source":"doi.org","category":"生物质热解","tags":["生物质热解"],"id":8},{"title":"Artificial intelligence and machine learning models for electrolyzers and fuel cells optimization: A review on empowering sustainable hydrogen economy","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139795","source_tag":"【Fuel】","source":"doi.org","category":"科研圈","tags":["科研圈"],"id":9},{"title":"The ‘just energy transition’ for climate-resilient and low-carbon healthcare in the Asia-Pacific region: A rapid scoping review","body":"点击查看详情。","url":"https://doi.org/10.1016/j.ssmhs.2026.100243","source_tag":"【SSM - Health Sy】","source":"doi.org","category":"科研圈","tags":["科研圈"],"id":10},{"title":"Sustainable valorization of lignocellulosic biomass for integrated biofuel and biomaterials production within the circular economy framework: Recent advances in pretreatment processes — A comprehensive review","body":"点击查看详情。","url":"https://doi.org/10.1016/j.biombioe.2026.109534","source_tag":"【Biomass and Bio】","source":"doi.org","category":"科研圈","tags":["科研圈"],"id":11},{"title":"24种最常用材料表征知识全覆盖:SEM、XPS、TEM、STM、XRD、Raman、GPC、BET、AFM等!","body":"搞定XRD应用、Rietveld精修、Origin作图,玩转Jade!1、表征方... 可做定性定量表征手段.傅里叶一红外光谱仪全名为Fourier ...","url":"https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSyRNbfxne4563PVltnYbJ4JuscOoOpxUDFqXa8Fplpd9fxuzmSLGKG56n3XsKp_noQ-72X4bgq_yPyLFcn3hhzJ1H7GpRc143ztlz3rGd-SrV9eDgNObnZaSkc0tzCrQzQA96mqcCtXbty_WPkGvfsvcN2zFVFUcImy2iyhPrABA9-tArMPbH3luv6qQIXFB0vdaRaPU_VB5WNfRW4wTsahOJBjQH7pCxQ..&type=2&query=%E7%A7%91%E7%A0%94%E6%8A%80%E5%B7%A7 Origin %E7%83%AD%E8%A7%A3%E5%AE%9E%E9%AA%8C XRD %E7%BA%A2%E5%A4%96 TEM XPS %E8%A1%A8%E5%BE%81&token=0DF9468E6B85474B313663C5D09313F9311CEAF26A19A639","source_tag":"【微信公众号】","source":"weixin.qq.com","category":"科研技巧","tags":["科研技巧"],"id":12},{"title":"上海大学王亮课题组ACS Nano:酰胺共价键异质结增强太阳光驱动的高效CO2还原","body":"样品的(a)XRD和(b)Raman光谱;样品的(c)XPS全谱... 仪器表征基础知识汇总2. SCI论文写作专题汇总3. Origin/3D绘图等...","url":"https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSyRNbfxne4563PVltnYbJ4JuscOoOpxUDFqXa8Fplpd9pZ7UJdkB2KozbSxKf4qrWG-nytB-f_MuRS3a3XGOitBXdM8eEdtHnLPniFtlkJ1vKVRZufsRl5SA7TEZhjirqhQuMgAhpTxelqjPw9lBDRZsj59cd9TumPo5Kb0htUBkvbu84reVILZ9mn9mk2Hry4pICLPU38NYfKCJvbb8z2L6zvkPgoArRQ..&type=2&query=%E7%A7%91%E7%A0%94%E6%8A%80%E5%B7%A7 Origin %E7%83%AD%E8%A7%A3%E5%AE%9E%E9%AA%8C XRD %E7%BA%A2%E5%A4%96 TEM XPS %E8%A1%A8%E5%BE%81&token=0DF9468E6B85474B313663C5D09313F9311CEAF26A19A639","source_tag":"【微信公众号】","source":"weixin.qq.com","category":"科研技巧","tags":["科研技巧"],"id":13},{"title":"长安大学李宇亮ACS Catalysis: CdS-SH/TiO2异质结光催化剂,量子点和能带匹配显著提高选择性裂解C-O键效率","body":"XRD、FT-IR和XPS表征说明,4次循环后的部分失活可归因于表面... Origin/3D绘图等科学可视化汇总4. 理论化学基础知识汇总5. 催化...","url":"https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSyRNbfxne4563PVltnYbJ4JuscOoOpxUDFqXa8Fplpd9pZ7UJdkB2KozbSxKf4qrWG-nytB-f_MuRS3a3XGOitBXdM8eEdtHnKiQFORwtLlcNcHMNGfNRRtFhpA4J3kmH2uDQnbo2mMALpw3ROqtEHj5pPrNKlhQ0JJbGCUI3t9J6SumvPHJjaKJtAz0AXDHqFYGmyxUGQOCnWHRVGT51rBFH6In5Ei3zg..&type=2&query=%E7%A7%91%E7%A0%94%E6%8A%80%E5%B7%A7 Origin %E7%83%AD%E8%A7%A3%E5%AE%9E%E9%AA%8C XRD %E7%BA%A2%E5%A4%96 TEM XPS %E8%A1%A8%E5%BE%81&token=0DF9468E6B85474B313663C5D09313F9311CEAF26A19A639","source_tag":"【微信公众号】","source":"weixin.qq.com","category":"科研技巧","tags":["科研技巧"],"id":14}]},{"date":"2026-05-25","news":[{"title":"Micro-mechanism of enhancing the re-ignition characteristics of pre-oxidation-pyrolysis coal","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139715","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":1},{"title":"Oriented conversion of cellulose into levoglucosan by vacuum pyrolysis coupled with rapid quenching of volatiles","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139615","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":2},{"title":"Fluorescence characteristics of common solid fuels pre- and post-pyrolysis","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139520","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":3},{"title":"Resolving rock eval limitations in overmature source rocks using high temperature pyrolysis","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139644","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":4},{"title":"Pyrolysis-induced evolution of aromatic fringe: study from Raman and HRTEM","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139858","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":5},{"title":"Hydrogen-rich producer gas from air- and steam-blown co-gasification of waste polypropylene pyrolysis oil and cashew nut shell in a two-stage downdraft gasifier","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139763","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":6},{"title":"Stepwise removal and controlled reintroduction of alkali and alkaline earth metals in biomass: mechanisms governing bio-oil composition in fast pyrolysis","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139666","source_tag":"【Fuel】","source":"doi.org","category":"生物质热解","tags":["生物质热解"],"id":7},{"title":"Microwave-driven oil-shale pyrolysis: Mutual optimisation of waveguide and sample aspect ratios","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139834","source_tag":"【Fuel】","source":"doi.org","category":"生物质热解","tags":["生物质热解"],"id":8},{"title":"Sustainable valorization of lignocellulosic biomass for integrated biofuel and biomaterials production within the circular economy framework: Recent advances in pretreatment processes — A comprehensive review","body":"点击查看详情。","url":"https://doi.org/10.1016/j.biombioe.2026.109534","source_tag":"【Biomass and Bio】","source":"doi.org","category":"科研圈","tags":["科研圈"],"id":9},{"title":"State-of-the-art review on sediment microbial fuel cells: evolution, innovations, challenges, scalability, and policy implications for sustainable development","body":"点击查看详情。","url":"https://doi.org/10.1016/j.wen.2025.12.005","source_tag":"【Water-Energy Ne】","source":"doi.org","category":"科研圈","tags":["科研圈"],"id":10},{"title":"Mapping the intellectual landscape of policy uncertainty and asset connectedness: A bibliometric and topic modelling review of energy and green finance literature","body":"点击查看详情。","url":"https://doi.org/10.1016/j.sbr.2026.100174","source_tag":"【Strategic Busin】","source":"doi.org","category":"科研圈","tags":["科研圈"],"id":11},{"title":"24种最常用材料表征知识全覆盖:SEM、XPS、TEM、STM、XRD、Raman、GPC、BET、AFM等!","body":"搞定XRD应用、Rietveld精修、Origin作图,玩转Jade!1、表征方... 可做定性定量表征手段.傅里叶一红外光谱仪全名为Fourier ...","url":"https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgS--XAn_Qla1mmTju_E2JOjai96deDsDDzFqXa8Fplpd9YgYskgq6oT1xkXtgWJAMxZXaj8OHpJ6ZO9UnrAcT__ikhvey5aVvnzyvCCUqXkLgAemka3A5X-3H0suvz4pRjDx_6CIaqSRdeFR_ZOy_bty7M19d3uaJW7dSuwhgxoHh5vydJBzjpxUMAei3Wd_8ItAa-i0UgwoikofSWlBIxoH6zvkPgoArRQ..&type=2&query=%E7%A7%91%E7%A0%94%E6%8A%80%E5%B7%A7 Origin %E7%83%AD%E8%A7%A3%E5%AE%9E%E9%AA%8C XRD %E7%BA%A2%E5%A4%96 TEM XPS %E8%A1%A8%E5%BE%81&token=E965EE50B33CD5F5E1E4B07DB7A7D461E24BE6C36A13C7FC","source_tag":"【微信公众号】","source":"weixin.qq.com","category":"科研技巧","tags":["科研技巧"],"id":12},{"title":"全固态电池中的原位表征:SEM、TEM、 XRD、XPS、XANES、Raman、NMR等","body":"(原位X射线衍射 (XRD)、原位X射线光电子能谱 (XPS)、... 原位TEM作为一种强大的原位表征技术,依然可以通过极高的空间...","url":"https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgS--XAn_Qla1mmTju_E2JOjai96deDsDDzFqXa8Fplpd92bdY58XuYcQFruFtmgTL61-10w-qaZJHLaT-3gjTwmhgKhuerGTvMd7TBBXXEreZUfQrphBUh96xsc8_WIDmxfcOzY4tHqPaYtIrbD_JIemYPXDIXiIeufU11THX7PqIX03VeeDBEF-3_-W-ccJNBzlyQ10xziqOt9XHkmKAeM7vzHZXxeLdyg..&type=2&query=%E7%A7%91%E7%A0%94%E6%8A%80%E5%B7%A7 Origin %E7%83%AD%E8%A7%A3%E5%AE%9E%E9%AA%8C XRD %E7%BA%A2%E5%A4%96 TEM XPS %E8%A1%A8%E5%BE%81&token=E965EE50B33CD5F5E1E4B07DB7A7D461E24BE6C36A13C7FC","source_tag":"【微信公众号】","source":"weixin.qq.com","category":"科研技巧","tags":["科研技巧"],"id":13},{"title":"XRD、SEM、TEM、BET、XPS如何协同应用?","body":"XRD、SEM、TEM、BET、XPS 如何协同应用?表征技术协同应用在实际研究中,这五种技术通常不是孤立使用,而是形成“XRD定...","url":"https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgS--XAn_Qla1mmTju_E2JOjai96deDsDDzFqXa8Fplpd9zBVm631zmg-iEBvxmXxKExRn63Smdyd9Bxgaw1etMT1oUP_sIhzD51zpV3wWtD24d5C8g1CykKx42BpaUbgM9-9tCoJKm5Nz5tCB6UmZnGKyRHbsJZ9n3qLtYZ29TACa5RmULrRhUcsRbnzpmex0OA6rIZ-KcIajvmJ-juDrgpYO8fIRwtipOg..&type=2&query=%E7%A7%91%E7%A0%94%E6%8A%80%E5%B7%A7 Origin %E7%83%AD%E8%A7%A3%E5%AE%9E%E9%AA%8C XRD %E7%BA%A2%E5%A4%96 TEM XPS %E8%A1%A8%E5%BE%81&token=E965EE50B33CD5F5E1E4B07DB7A7D461E24BE6C36A13C7FC","source_tag":"【微信公众号】","source":"weixin.qq.com","category":"科研技巧","tags":["科研技巧"],"id":14}]},{"date":"2026-05-18","news":[{"title":"Micro-mechanism of enhancing the re-ignition characteristics of pre-oxidation-pyrolysis coal","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139715","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":1},{"title":"Oriented conversion of cellulose into levoglucosan by vacuum pyrolysis coupled with rapid quenching of volatiles","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139615","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":2},{"title":"Fluorescence characteristics of common solid fuels pre- and post-pyrolysis","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139520","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":3},{"title":"Resolving rock eval limitations in overmature source rocks using high temperature pyrolysis","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139644","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":4},{"title":"Pyrolysis-induced evolution of aromatic fringe: study from Raman and HRTEM","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139858","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":5},{"title":"Hydrogen-rich producer gas from air- and steam-blown co-gasification of waste polypropylene pyrolysis oil and cashew nut shell in a two-stage downdraft gasifier","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139763","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":6},{"title":"Stepwise removal and controlled reintroduction of alkali and alkaline earth metals in biomass: mechanisms governing bio-oil composition in fast pyrolysis","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139666","source_tag":"【Fuel】","source":"doi.org","category":"生物质热解","tags":["生物质热解"],"id":7},{"title":"Microwave-driven oil-shale pyrolysis: Mutual optimisation of waveguide and sample aspect ratios","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139834","source_tag":"【Fuel】","source":"doi.org","category":"生物质热解","tags":["生物质热解"],"id":8},{"title":"State-of-the-art review on sediment microbial fuel cells: evolution, innovations, challenges, scalability, and policy implications for sustainable development","body":"点击查看详情。","url":"https://doi.org/10.1016/j.wen.2025.12.005","source_tag":"【Water-Energy Ne】","source":"doi.org","category":"科研圈","tags":["科研圈"],"id":9},{"title":"Advanced photocatalytic materials for micro/nanoplastic degradation: A comprehensive review","body":"点击查看详情。","url":"https://doi.org/10.1016/j.esi.2026.02.001","source_tag":"【Environmental S】","source":"doi.org","category":"科研圈","tags":["科研圈"],"id":10},{"title":"Microplastics in Brazilian aquatic ecosystems and seafood: An updated review","body":"点击查看详情。","url":"https://doi.org/10.1016/j.esi.2026.02.003","source_tag":"【Environmental S】","source":"doi.org","category":"科研圈","tags":["科研圈"],"id":11},{"title":"24种最常用材料表征知识全覆盖:SEM、XPS、TEM、STM、XRD、Raman、GPC、BET、AFM等!","body":"搞定XRD应用、Rietveld精修、Origin作图,玩转Jade!1、表征方... 可做定性定量表征手段.傅里叶一红外光谱仪全名为Fourier ...","url":"https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSxWqTuIv-Rl258ht9X5zYyzTNF9-D1V4f1qXa8Fplpd9UqpcSHyygftfB6XyagbzNWYAfG_MB_lbDPQ4_bojqmXO_hea2QIoUONmYVPzs_Nai5wWL-4gFpGiB9BS8IEeG4_pLVceFaZG0ZQTo5KbHJqAu7FNROHlIVrOXr1dwuZo5kjoQNDjgY2uV8bhG_olYmLdNGCa4YaBSi7RthBC5PzYl_Q5RRZQjg..&type=2&query=%E7%A7%91%E7%A0%94%E6%8A%80%E5%B7%A7 Origin %E7%83%AD%E8%A7%A3%E5%AE%9E%E9%AA%8C XRD %E7%BA%A2%E5%A4%96 TEM XPS %E8%A1%A8%E5%BE%81&token=B42AE62CE8E657F6BCBDE9B3DD8D703BBC85792B6A0A8B1D","source_tag":"【微信公众号】","source":"weixin.qq.com","category":"科研技巧","tags":["科研技巧"],"id":12},{"title":"上海大学王亮课题组ACS Nano:酰胺共价键异质结增强太阳光驱动的高效CO2还原","body":"样品的(a)XRD和(b)Raman光谱;样品的(c)XPS全谱... 仪器表征基础知识汇总2. SCI论文写作专题汇总3. Origin/3D绘图等...","url":"https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSxWqTuIv-Rl258ht9X5zYyzTNF9-D1V4f1qXa8Fplpd9A1jhVWxhg4_Onr6UXve2roiBV50tB7ZYHrpvkYt0QdKW8PSivMPay1VXeFxXW1-xqV6qNcvlRHIJmyq8DTYtJ9uhk-4bSM46bHSQoC_hvWKJhM9iC7Xdu8pxSkaNVLfdY1FKcY3SC58XAazQ5XXRdsboeY_3ODsM0Nx5Twc95SBFkDr8IT4KYw..&type=2&query=%E7%A7%91%E7%A0%94%E6%8A%80%E5%B7%A7 Origin %E7%83%AD%E8%A7%A3%E5%AE%9E%E9%AA%8C XRD %E7%BA%A2%E5%A4%96 TEM XPS %E8%A1%A8%E5%BE%81&token=B42AE62CE8E657F6BCBDE9B3DD8D703BBC85792B6A0A8B1D","source_tag":"【微信公众号】","source":"weixin.qq.com","category":"科研技巧","tags":["科研技巧"],"id":13},{"title":"长安大学李宇亮ACS Catalysis: CdS-SH/TiO2异质结光催化剂,量子点和能带匹配显著提高选择性裂解C-O键效率","body":"XRD、FT-IR和XPS表征说明,4次循环后的部分失活可归因于表面... Origin/3D绘图等科学可视化汇总4. 理论化学基础知识汇总5. 催化...","url":"https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgSxWqTuIv-Rl258ht9X5zYyzTNF9-D1V4f1qXa8Fplpd9A1jhVWxhg4_Onr6UXve2roiBV50tB7ZYHrpvkYt0QdKW8PSivMPay3-TYPFgxRWiAEPCA8sMa15tGdWzVpykc_EMkm-6uu9IvKkNoYHn4viTP90LLPVFMQ8Gke3Q0IPfTIVv7UC_y9U5d8jTZl6A1wh6PnFx6WBdzae5cDY9bDRflztgI7RZ1g..&type=2&query=%E7%A7%91%E7%A0%94%E6%8A%80%E5%B7%A7 Origin %E7%83%AD%E8%A7%A3%E5%AE%9E%E9%AA%8C XRD %E7%BA%A2%E5%A4%96 TEM XPS %E8%A1%A8%E5%BE%81&token=B42AE62CE8E657F6BCBDE9B3DD8D703BBC85792B6A0A8B1D","source_tag":"【微信公众号】","source":"weixin.qq.com","category":"科研技巧","tags":["科研技巧"],"id":14}]},{"date":"2026-05-11","news":[{"title":"Micro-mechanism of enhancing the re-ignition characteristics of pre-oxidation-pyrolysis coal","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139715","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":1},{"title":"Oriented conversion of cellulose into levoglucosan by vacuum pyrolysis coupled with rapid quenching of volatiles","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139615","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":2},{"title":"Resolving rock eval limitations in overmature source rocks using high temperature pyrolysis","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139644","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":3},{"title":"Hydrogen-rich producer gas from air- and steam-blown co-gasification of waste polypropylene pyrolysis oil and cashew nut shell in a two-stage downdraft gasifier","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139763","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":4},{"title":"Stepwise removal and controlled reintroduction of alkali and alkaline earth metals in biomass: mechanisms governing bio-oil composition in fast pyrolysis","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139666","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":5},{"title":"Innovative design and validation of high-performance indirect slow pyrolysis plants via CFD and experimental approaches","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139722","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":6},{"title":"Study on fluidized reductive agglomeration of pulverized coal. Part Ⅰ: Variations in organics during pyrolysis","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139761","source_tag":"【Fuel】","source":"doi.org","category":"生物质热解","tags":["生物质热解"],"id":7},{"title":"K2CO3-modified bone char for catalytic pyrolysis of carbon-hydrogen solid wastes: Gas production characteristics and enhancement mechanisms","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139616","source_tag":"【Fuel】","source":"doi.org","category":"生物质热解","tags":["生物质热解"],"id":8},{"title":"新知灼见丨华中农业大学姚丁丁副教授:基于LaFeO₃的废塑料分级热解–化学链气化制富氢合成气及机理","body":"基于LaFeO3的废塑料分级热解–化学链气化制富氢合成气及机理[J]... 气化850 ℃时合成气产率143 mmol/g、碳转化率82%、CO选择性...","url":"https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgS-p15H9vbfqux58yotQrA7H2mTejB_pAFVqXa8Fplpd9K6-bYWa0bQC4raDtzPTGNFUXupibdoltjnqMb30vvdXYbbWOkNLInbAy3Oj5RDLaRl9szOCbucfXtdKl8pQtPPGU6plM_TvswjnT9rpMk-HrG9Q19bywLQ6eDFUu1mRRchdLM9X_0z66wKPTzqK5JTyuGjwZWF3O_U1dXluytpQGX_iHL9MadA..&type=2&query=%E5%82%AC%E5%8C%96%E7%83%AD%E8%A7%A3 %E5%A1%91%E6%96%99 %E6%B0%94%E5%8C%96 %E5%8C%96%E5%AD%A6%E9%93%BE%E6%B0%94%E5%8C%96 %E5%AF%8C%E6%B0%A2%E5%90%88%E6%88%90%E6%B0%94 %E5%9B%BA%E5%BA%9F%E8%B5%84%E6%BA%90%E5%8C%96 %E5%BE%AE%E6%B3%A2%E7%83%AD%E8%A7%A3 %E4%BA%A7%E7%8E%87 %E4%B8%89%E6%80%81%E4%BA%A7%E7%89%A9&token=7CDF41428C2D2174787F29FA0DB6D6C979D834E16A014ECF","source_tag":"【微信公众号】","source":"weixin.qq.com","category":"催化热解","tags":["催化热解"],"id":9},{"title":"探索推动“能源+X”变革,固废生物质资源利用亟需技术创新突破","body":"实现气液固产率调控;通过原料预处理、源头调配、以及气化控制... 主要是工业有机固废(油泥、废轮胎,合成浆等)的热解气化,...","url":"https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgS-p15H9vbfqux58yotQrA7H2mTejB_pAFVqXa8Fplpd9B_Jd8c5PSq405drJBFTEWutPdaB3SZ2g0qk188G9rxtczL8PCzgZlJyo5vRlEandNfXTO3oUlSCcZ_wSfgrbO5aJGSz37eYUKN6E7Uw12BUnLEgPi6RuK4eWDAPs8dzXKdvigtw7E6mJ8EKdw3v7LpdNEI0OtpJG97BrY-zsBwd5LU3lqtPw9g..&type=2&query=%E5%82%AC%E5%8C%96%E7%83%AD%E8%A7%A3 %E5%A1%91%E6%96%99 %E6%B0%94%E5%8C%96 %E5%8C%96%E5%AD%A6%E9%93%BE%E6%B0%94%E5%8C%96 %E5%AF%8C%E6%B0%A2%E5%90%88%E6%88%90%E6%B0%94 %E5%9B%BA%E5%BA%9F%E8%B5%84%E6%BA%90%E5%8C%96 %E5%BE%AE%E6%B3%A2%E7%83%AD%E8%A7%A3 %E4%BA%A7%E7%8E%87 %E4%B8%89%E6%80%81%E4%BA%A7%E7%89%A9&token=7CDF41428C2D2174787F29FA0DB6D6C979D834E16A014ECF","source_tag":"【微信公众号】","source":"weixin.qq.com","category":"催化热解","tags":["催化热解"],"id":10},{"title":"最新Science,高温稳定单原子催化剂!","body":"这种从氧化物到分子的迁移将导致分子筛酸性位被毒化(Angew. ... 该类催化剂为设计开发兼具高活性,高选择性和高稳定性的单原子...","url":"https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgS-p15H9vbfquHuzRz1RnBb32mTejB_pAFVqXa8Fplpd9-5GuD2L46ypdF6fx7GKSPqJ_I1KlqWxCHA8Rp3asbmXdHp6HsvhkWVWVjltfCdJFSuoFVaYa7SWq8ehi12TbuwP3SezVJNiD5jrJbkp9HgYrRzoEI76OPr_k9cy0sWxXbr-MPHIhFe4QxiERvvr-fu02X93uZ4i_nCvDba8f9byrCDCayYmfpA..&type=2&query=%E5%8D%95%E5%8E%9F%E5%AD%90 %E7%83%AD%E8%A7%A3%E5%82%AC%E5%8C%96%E5%89%82 %E6%B0%A7%E5%8C%96%E7%89%A9 %E5%88%9B%E6%96%B0%E5%82%AC%E5%8C%96%E5%89%82 %E5%88%86%E5%AD%90%E7%AD%9B %E6%8A%97%E7%A7%AF%E7%A2%B3 %E5%BE%AA%E7%8E%AF %E7%A8%B3%E5%AE%9A&token=7CDF97C2F85854000D0B5D8F78CACB650DFC5DFC6A014EDF","source_tag":"【微信公众号】","source":"weixin.qq.com","category":"创新催化剂","tags":["创新催化剂"],"id":11},{"title":"【综述】Chem:甲烷转化中的分子筛催化剂—挑战与机遇","body":"都能进一步提升催化剂的抗烧结、抗积碳能力,推动该反应向工业... 构建沸石限域单原子催化体系,提出了“单原子限域单原子”的多...","url":"https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgS-p15H9vbfquHuzRz1RnBb32mTejB_pAFVqXa8Fplpd9RB1Rsv-rBe7LKK5HgeyPbRtuVUvnrGCptVvl3vGCEr5_R9o8Vi6Dhmb5JaEHiTSpB3k4kVyiMHZl8lgYeNAplTbn_vTbQRhKoD_xLrlx_k2Ny7uvBVW_P2mSuJ6f7LsBzVtiTf9apCrDmGzd_nMBJGDyGUgYWgjJNT4gIfoPYAvFcvUoAZZH7Q..&type=2&query=%E5%8D%95%E5%8E%9F%E5%AD%90 %E7%83%AD%E8%A7%A3%E5%82%AC%E5%8C%96%E5%89%82 %E6%B0%A7%E5%8C%96%E7%89%A9 %E5%88%9B%E6%96%B0%E5%82%AC%E5%8C%96%E5%89%82 %E5%88%86%E5%AD%90%E7%AD%9B %E6%8A%97%E7%A7%AF%E7%A2%B3 %E5%BE%AA%E7%8E%AF %E7%A8%B3%E5%AE%9A&token=7CDF97C2F85854000D0B5D8F78CACB650DFC5DFC6A014EDF","source_tag":"【微信公众号】","source":"weixin.qq.com","category":"创新催化剂","tags":["创新催化剂"],"id":12},{"title":"State-of-the-art review on sediment microbial fuel cells: evolution, innovations, challenges, scalability, and policy implications for sustainable development","body":"点击查看详情。","url":"https://doi.org/10.1016/j.wen.2025.12.005","source_tag":"【Water-Energy Ne】","source":"doi.org","category":"科研圈","tags":["科研圈"],"id":13},{"title":"Advanced photocatalytic materials for micro/nanoplastic degradation: A comprehensive review","body":"点击查看详情。","url":"https://doi.org/10.1016/j.esi.2026.02.001","source_tag":"【Environmental S】","source":"doi.org","category":"科研圈","tags":["科研圈"],"id":14},{"title":"Microplastics in Brazilian aquatic ecosystems and seafood: An updated review","body":"点击查看详情。","url":"https://doi.org/10.1016/j.esi.2026.02.003","source_tag":"【Environmental S】","source":"doi.org","category":"科研圈","tags":["科研圈"],"id":15},{"title":"24种最常用材料表征知识全覆盖:SEM、XPS、TEM、STM、XRD、Raman、GPC、BET、AFM等!","body":"搞定XRD应用、Rietveld精修、Origin作图,玩转Jade!1、表征方... 可做定性定量表征手段.傅里叶一红外光谱仪全名为Fourier ...","url":"https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgS-p15H9vbfquduiQ7W9X0p72mTejB_pAFVqXa8Fplpd9tGxeiFmVcoNHLDHN6rmpr9CNzAXwm4cklvj-poQXT-HOzu59SoDGtDL48Db_u0rv80Dyhs3bXcTV3BYSFRxbY4_Sebi5nN_eJNa9p8kF-LhpH-hzJHBd1S8rUPumo_vyL4J-GFSvoAZYA1jTxCwOc_tPpEHy3cFAhuVwThowjELs46dn8Efgxg..&type=2&query=%E7%A7%91%E7%A0%94%E6%8A%80%E5%B7%A7 Origin %E7%83%AD%E8%A7%A3%E5%AE%9E%E9%AA%8C XRD %E7%BA%A2%E5%A4%96 TEM XPS %E8%A1%A8%E5%BE%81&token=7CDFEBC6BC121F4A474E16C53EFC48EF488484166A014EEF","source_tag":"【微信公众号】","source":"weixin.qq.com","category":"科研技巧","tags":["科研技巧"],"id":16},{"title":"单原子+团簇,登上Nature!原位XPS+原位XRD,如何表征催化剂动态变化?","body":"原位表征交流QQ群:466628715以CO和H2O为原料的水煤气变换... 球差电镜、FIB-TEM;原位红外、原位XPS、原位XRD、原位...","url":"https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgS-p15H9vbfquduiQ7W9X0p72mTejB_pAFVqXa8Fplpd9eQXrTuV1pH6LNH10uVtccw7QvTXbhrgIVt2EMHOabmeiOCD1roBXvHqvXk_baP3Jl8nR8gAXV8yYjuEhdpSHwyc_MY4KNWHpl6rBcRoGs67TEE3m1sRp-yGUkX-bJJF6YG0eqwkVSfePmTyxVDxS05ESJmpfJL5Tr6qPueMTwZpFkDr8IT4KYw..&type=2&query=%E7%A7%91%E7%A0%94%E6%8A%80%E5%B7%A7 Origin %E7%83%AD%E8%A7%A3%E5%AE%9E%E9%AA%8C XRD %E7%BA%A2%E5%A4%96 TEM XPS %E8%A1%A8%E5%BE%81&token=7CDFEBC6BC121F4A474E16C53EFC48EF488484166A014EEF","source_tag":"【微信公众号】","source":"weixin.qq.com","category":"科研技巧","tags":["科研技巧"],"id":17},{"title":"顶刊动态 Nature子刊/AM/Nano Letters等纳米材料最新学术进展精选汇总【20160711期】","body":"尽管目前存在许多表征手段(例如透射电子显微镜、扫描显微镜、... XRF、SEM、XPS、AFM、TEM、ICP、PPMS、BET、拉曼、粒...","url":"https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6ft3wfAVofsP5Peu-UiA4DAPXiEMmoS-7LzhY32vU0q2VgrFeYQugDrTbyQV4P9nHRhWjnu5-I8ZRwRI4C0EHqzuuGT20vYkHaiT9ArKJPJG3n_qBdFqCO2ONakKHHBeGIwZaQOz4yTGoR-vyO0dtLTn0_7fw1qkVBzoiWH2Mtuk-QbGz74sbrAUwBoD8XX-LtpzIgC13j12Vr-zkr0Xbzvc4IfHpIrdrJyOXHmkTXhO2deSeqMF4c1aFEBrj8e3_kEt443SgvekdLbMi0LvRFdB5UEyvW2VNiZqwg0yoRFw.&type=2&query=%E7%A7%91%E7%A0%94%E6%8A%80%E5%B7%A7 Origin %E7%83%AD%E8%A7%A3%E5%AE%9E%E9%AA%8C XRD %E7%BA%A2%E5%A4%96 TEM XPS %E8%A1%A8%E5%BE%81&token=7CDFEBC6BC121F4A474E16C53EFC48EF488484166A014EEF","source_tag":"【微信公众号】","source":"weixin.qq.com","category":"科研技巧","tags":["科研技巧"],"id":18}]},{"date":"2026-05-04","news":[{"title":"Oriented conversion of cellulose into levoglucosan by vacuum pyrolysis coupled with rapid quenching of volatiles","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139615","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":1},{"title":"Resolving rock eval limitations in overmature source rocks using high temperature pyrolysis","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139644","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":2},{"title":"Stepwise removal and controlled reintroduction of alkali and alkaline earth metals in biomass: mechanisms governing bio-oil composition in fast pyrolysis","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139666","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":3},{"title":"K2CO3-modified bone char for catalytic pyrolysis of carbon-hydrogen solid wastes: Gas production characteristics and enhancement mechanisms","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139616","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":4},{"title":"Underground heating technologies for in-situ pyrolysis of tar-rich coal: A review of recent advances","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139602","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":5},{"title":"Effective control and mechanism of arsenic in the co-pyrolysis of four typical solid wastes with CaO modified vermiculite: experimental &amp; simulation study from bench-scale to pilot-scale experiments","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139609","source_tag":"【Fuel】","source":"doi.org","category":"塑料热解","tags":["塑料热解"],"id":6},{"title":"Catalytic pyrolysis of biomass over NiMo/Al2O3 monolithic catalyst for syngas","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139610","source_tag":"【Fuel】","source":"doi.org","category":"生物质热解","tags":["生物质热解"],"id":7},{"title":"A ReaxFF molecular dynamics approach to modeling cellulose pyrolysis","body":"点击查看详情。","url":"https://doi.org/10.1016/j.fuel.2026.139612","source_tag":"【Fuel】","source":"doi.org","category":"生物质热解","tags":["生物质热解"],"id":8},{"title":"新知灼见丨华中农业大学姚丁丁副教授:基于LaFeO₃的废塑料分级热解–化学链气化制富氢合成气及机理","body":"基于LaFeO3的废塑料分级热解–化学链气化制富氢合成气及机理[J]... 气化850 ℃时合成气产率143 mmol/g、碳转化率82%、CO选择性...","url":"https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgS_Pr8-16uGuLVbvOLmTq7tOehmI7On2D51qXa8Fplpd9wAQkKjP47gqkXi2Z0IKH86wZLv1JFoxlf0m6ImszhcXpvujuvw45T0EWulnI56bG4H4iVICzOP3B7gZgfKHdqfpRJpWIu4L0XmznVHkgyr4HPMD6_mVHxVJms2s3snLszDpA4mVtTYjvsX7PgUnXMKzmsfkWDAFCe79SSpUKuot535pjGOOjYg..&type=2&query=%E5%82%AC%E5%8C%96%E7%83%AD%E8%A7%A3 %E5%A1%91%E6%96%99 %E6%B0%94%E5%8C%96 %E5%8C%96%E5%AD%A6%E9%93%BE%E6%B0%94%E5%8C%96 %E5%AF%8C%E6%B0%A2%E5%90%88%E6%88%90%E6%B0%94 %E5%9B%BA%E5%BA%9F%E8%B5%84%E6%BA%90%E5%8C%96 %E5%BE%AE%E6%B3%A2%E7%83%AD%E8%A7%A3 %E4%BA%A7%E7%8E%87 %E4%B8%89%E6%80%81%E4%BA%A7%E7%89%A9&token=4AD07069E66D7ED6E2E4B21BA6D3D3D2E2131E4369F8621E","source_tag":"【微信公众号】","source":"weixin.qq.com","category":"催化热解","tags":["催化热解"],"id":9},{"title":"探索推动“能源+X”变革,固废生物质资源利用亟需技术创新突破","body":"实现气液固产率调控;通过原料预处理、源头调配、以及气化控制... 主要是工业有机固废(油泥、废轮胎,合成浆等)的热解气化,...","url":"https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgS_Pr8-16uGuLVbvOLmTq7tOehmI7On2D51qXa8Fplpd90oDzT1kotMFq0Fg01B5UnzsXjpyIuDKcfJJlkXRI5KD_CEyfCk4TMc3GtQFFzwYdVduyV9_llSsEwX3EMc8NFnJyQLxCubHQYWT77aGHg0YMXkfQDmQZ3uhJWxP2-z-ma5Z6N1iKf6OpwEPG0DeI0_y5KRMvTnpFVZojRAgJwc0YJSSFPgfogQ..&type=2&query=%E5%82%AC%E5%8C%96%E7%83%AD%E8%A7%A3 %E5%A1%91%E6%96%99 %E6%B0%94%E5%8C%96 %E5%8C%96%E5%AD%A6%E9%93%BE%E6%B0%94%E5%8C%96 %E5%AF%8C%E6%B0%A2%E5%90%88%E6%88%90%E6%B0%94 %E5%9B%BA%E5%BA%9F%E8%B5%84%E6%BA%90%E5%8C%96 %E5%BE%AE%E6%B3%A2%E7%83%AD%E8%A7%A3 %E4%BA%A7%E7%8E%87 %E4%B8%89%E6%80%81%E4%BA%A7%E7%89%A9&token=4AD07069E66D7ED6E2E4B21BA6D3D3D2E2131E4369F8621E","source_tag":"【微信公众号】","source":"weixin.qq.com","category":"催化热解","tags":["催化热解"],"id":10},{"title":"最新Science,高温稳定单原子催化剂!","body":"这种从氧化物到分子的迁移将导致分子筛酸性位被毒化(Angew. ... 该类催化剂为设计开发兼具高活性,高选择性和高稳定性的单原子...","url":"https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgS_Pr8-16uGuL57diyKLQObyehmI7On2D51qXa8Fplpd9dq9RmTe65Z55RYg731nfz-Ay0WB6vQ64uQDBvlg6F9LTH6TC-kjK03Lmckmkgx1qAgvPgLxHl-7tDM-D-SqiSnaQUNC66UNEan9aFOPPedHhb0sq1meEYeQWLg4zz-g5vS8nDdXb16B0N1Xt-5z5FP1hpCttIxwKD5UAv5GsrfJ5Nu7CnoSqqg..&type=2&query=%E5%8D%95%E5%8E%9F%E5%AD%90 %E7%83%AD%E8%A7%A3%E5%82%AC%E5%8C%96%E5%89%82 %E6%B0%A7%E5%8C%96%E7%89%A9 %E5%88%9B%E6%96%B0%E5%82%AC%E5%8C%96%E5%89%82 %E5%88%86%E5%AD%90%E7%AD%9B %E6%8A%97%E7%A7%AF%E7%A2%B3 %E5%BE%AA%E7%8E%AF %E7%A8%B3%E5%AE%9A&token=4AD0D0161094882C181148E25016511018D95BBE69F8622D","source_tag":"【微信公众号】","source":"weixin.qq.com","category":"创新催化剂","tags":["创新催化剂"],"id":11},{"title":"【综述】Chem:甲烷转化中的分子筛催化剂—挑战与机遇","body":"都能进一步提升催化剂的抗烧结、抗积碳能力,推动该反应向工业... 构建沸石限域单原子催化体系,提出了“单原子限域单原子”的多...","url":"https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgS_Pr8-16uGuL57diyKLQObyehmI7On2D51qXa8Fplpd9D5EhO4YFnoJ7UPfqE3DMwuzYI4dvbHfEj8vSJdXZlG5UsjSSpCy9krxvcd7AEaVi7Y18XJmYUC4E6uNmQ2a3NPXyMAk2ShFR0ZsaVnr02N9jIp7xjtT1U-C_2XQgOVqhMWEsNCHb6yqjUAiOqSfHnlqadY5XCOPxjnsQ2CIHaqWjotuuiAmOIg..&type=2&query=%E5%8D%95%E5%8E%9F%E5%AD%90 %E7%83%AD%E8%A7%A3%E5%82%AC%E5%8C%96%E5%89%82 %E6%B0%A7%E5%8C%96%E7%89%A9 %E5%88%9B%E6%96%B0%E5%82%AC%E5%8C%96%E5%89%82 %E5%88%86%E5%AD%90%E7%AD%9B %E6%8A%97%E7%A7%AF%E7%A2%B3 %E5%BE%AA%E7%8E%AF %E7%A8%B3%E5%AE%9A&token=4AD0D0161094882C181148E25016511018D95BBE69F8622D","source_tag":"【微信公众号】","source":"weixin.qq.com","category":"创新催化剂","tags":["创新催化剂"],"id":12},{"title":"State-of-the-art review on sediment microbial fuel cells: evolution, innovations, challenges, scalability, and policy implications for sustainable development","body":"点击查看详情。","url":"https://doi.org/10.1016/j.wen.2025.12.005","source_tag":"【Water-Energy Ne】","source":"doi.org","category":"科研圈","tags":["科研圈"],"id":13},{"title":"Advanced photocatalytic materials for micro/nanoplastic degradation: A comprehensive review","body":"点击查看详情。","url":"https://doi.org/10.1016/j.esi.2026.02.001","source_tag":"【Environmental S】","source":"doi.org","category":"科研圈","tags":["科研圈"],"id":14},{"title":"Microplastics in Brazilian aquatic ecosystems and seafood: An updated review","body":"点击查看详情。","url":"https://doi.org/10.1016/j.esi.2026.02.003","source_tag":"【Environmental S】","source":"doi.org","category":"科研圈","tags":["科研圈"],"id":15},{"title":"24种最常用材料表征知识全覆盖:SEM、XPS、TEM、STM、XRD、Raman、GPC、BET、AFM等!","body":"搞定XRD应用、Rietveld精修、Origin作图,玩转Jade!1、表征方... 可做定性定量表征手段.傅里叶一红外光谱仪全名为Fourier ...","url":"https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgS_Pr8-16uGuLCqaVtC1FnDuehmI7On2D51qXa8Fplpd9-uCOmhrYFKmvgFtR6nq_Z1Wwt0lexqgyXJysGMhfZQXNLa10WioCAvvFIhygB7XlJq5hhdWHEWDALUc0lBctKMmuIg1m1K4dC46LELoQl6LVrmSy7upx9U7_Tlm_j8EP_Prz65tOYfjLmlkPdtfnyEQoxTwikwE-IQdK74YdXQ9Q_LeJW-Rhtg..&type=2&query=%E7%A7%91%E7%A0%94%E6%8A%80%E5%B7%A7 Origin %E7%83%AD%E8%A7%A3%E5%AE%9E%E9%AA%8C XRD %E7%BA%A2%E5%A4%96 TEM XPS %E8%A1%A8%E5%BE%81&token=4AD12C7769E3F15A6F683E952680E3776F3749B269F8623B","source_tag":"【微信公众号】","source":"weixin.qq.com","category":"科研技巧","tags":["科研技巧"],"id":16},{"title":"上海大学王亮课题组ACS Nano:酰胺共价键异质结增强太阳光驱动的高效CO2还原","body":"样品的(a)XRD和(b)Raman光谱;样品的(c)XPS全谱... 仪器表征基础知识汇总2. SCI论文写作专题汇总3. Origin/3D绘图等...","url":"https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgS_Pr8-16uGuLCqaVtC1FnDuehmI7On2D51qXa8Fplpd9GdPWOOFRz6pnyAKzG1xC7FSs1cCqgKGsYBL2CslOjnpDTxVnGctDw-T3LiX82Fdux7o0ss3F8aMXoKAhz0MxvXLwduKcA1H_t3QwG_C6BwXZEVww9F4yf-osaYuNJzm1coZQaG4USTqs9_PX6CVbviFiAhrSv8butgJxb4qKIKAHpHkoPMgL3A..&type=2&query=%E7%A7%91%E7%A0%94%E6%8A%80%E5%B7%A7 Origin %E7%83%AD%E8%A7%A3%E5%AE%9E%E9%AA%8C XRD %E7%BA%A2%E5%A4%96 TEM XPS %E8%A1%A8%E5%BE%81&token=4AD12C7769E3F15A6F683E952680E3776F3749B269F8623B","source_tag":"【微信公众号】","source":"weixin.qq.com","category":"科研技巧","tags":["科研技巧"],"id":17},{"title":"长安大学李宇亮ACS Catalysis: CdS-SH/TiO2异质结光催化剂,量子点和能带匹配显著提高选择性裂解C-O键效率","body":"XRD、FT-IR和XPS表征说明,4次循环后的部分失活可归因于表面... Origin/3D绘图等科学可视化汇总4. 理论化学基础知识汇总5. 催化...","url":"https://weixin.sogou.com/link?url=dn9a_-gY295K0Rci_xozVXfdMkSQTLW6cwJThYulHEtVjXrGTiVgS_Pr8-16uGuLCqaVtC1FnDuehmI7On2D51qXa8Fplpd9GdPWOOFRz6pnyAKzG1xC7FSs1cCqgKGsYBL2CslOjnpDTxVnGctDw-UEzRhPEn55ySZPT8q9JT-7_v31NDEhmQH4FUUWJtgOsEJCl2hgmRBYEXfWSLcYkVeowuf8Xgg8WA5S8yZQiNstgcq5JHmVrreH5v4J0j6IKHks7V6Vn9UO8fIRwtipOg..&type=2&query=%E7%A7%91%E7%A0%94%E6%8A%80%E5%B7%A7 Origin %E7%83%AD%E8%A7%A3%E5%AE%9E%E9%AA%8C XRD %E7%BA%A2%E5%A4%96 TEM XPS %E8%A1%A8%E5%BE%81&token=4AD12C7769E3F15A6F683E952680E3776F3749B269F8623B","source_tag":"【微信公众号】","source":"weixin.qq.com","category":"科研技巧","tags":["科研技巧"],"id":18}]}]};
+</script>
+<!-- END_DATA_BLOCK -->
+
+<script>
+// ── Config ──────────────────────────────────────────────────────
+const CATEGORIES = ['全部','塑料热解','生物质热解','催化热解','创新催化剂','科研圈','科研技巧'];
+const CAT_ICONS  = {'全部':'🌐','塑料热解':'♻️','生物质热解':'🌿','催化热解':'⚗️','创新催化剂':'✨','科研圈':'🎓','科研技巧':'💡'};
+
+// ── State ────────────────────────────────────────────────────────
+let allNews      = [];
+let activeFilter = '全部';
+let currentDate  = '';
+let daysMap      = {};   // date -> news[]
+
+// ── Init ─────────────────────────────────────────────────────────
+function init() {
+  const data = EMBEDDED_DATA;
+  // Build daysMap
+  data.allDays.forEach(d => { daysMap[d.date] = d.news; });
+
+  // Determine which date to show: today's date OR latest available
+  const todayStr = todayDate();
+  currentDate = daysMap[todayStr] ? todayStr : data.currentDate;
+
+  allNews = daysMap[currentDate] || [];
+  document.getElementById('date-display').textContent = formatDate(currentDate);
+
+  renderStats(allNews);
+  renderFilters(allNews);
+  renderCards(allNews);
+  renderArchive();
+}
+
+function todayDate() {
+  const d = new Date();
+  const p = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
+}
+
+function formatDate(s) {
+  const [y,m,d] = s.split('-');
+  return `${y}年${m}月${d}日`;
+}
+
+// ── Render ───────────────────────────────────────────────────────
+function renderStats(news) {
+  const bar = document.getElementById('stats-bar');
+  const counts = {};
+  CATEGORIES.slice(1).forEach(c => counts[c]=0);
+  news.forEach(n => { if(counts[n.category]!==undefined) counts[n.category]++; });
+  bar.innerHTML = `
+    <div class="stat-item"><div class="stat-value">${news.length}</div><div class="stat-label">今日条目</div></div>
+    ${CATEGORIES.slice(1).map(c=>`<div class="stat-item"><div class="stat-value">${counts[c]}</div><div class="stat-label">${CAT_ICONS[c]} ${c}</div></div>`).join('')}
+  `;
+}
+
+function renderFilters(news) {
+  const counts = {'全部': news.length};
+  CATEGORIES.slice(1).forEach(c => counts[c]=news.filter(n=>n.category===c).length);
+  const bar = document.getElementById('filter-bar');
+  bar.innerHTML = CATEGORIES.map(c=>`
+    <button class="filter-btn ${activeFilter===c?'active':''}" data-cat="${c}">
+      ${CAT_ICONS[c]} ${c} <span class="count-badge">${counts[c]}</span>
+    </button>`).join('');
+  bar.querySelectorAll('.filter-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{ activeFilter=btn.dataset.cat; renderFilters(allNews); renderCards(allNews); });
+  });
+}
+
+function renderCards(news) {
+  const validNews = (news || []).filter(n => n && typeof n === 'object');
+  const filtered = activeFilter === '全部' ? validNews : validNews.filter(n => n?.category === activeFilter);
+  const container = document.getElementById('news-container');
+
+  if (!filtered.length) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><div>该分类暂无数据</div></div>`;
+    return;
+  }
+
+  container.innerHTML = `<div class="news-grid">${filtered.map(n => `
+    <div class="news-card" data-cat="${n?.category || ''}" onclick="openModal(${n?.id || 0})">
+      <div class="card-header">
+        <span class="cat-pill">${CAT_ICONS[n?.category] || ''} ${n?.category || ''}</span>
+        <span class="card-num">#${String(n?.id || 0).padStart(2, '0')}</span>
+      </div>
+      <div class="news-title">${n?.title || ''}</div>
+      <div class="news-summary">${n?.summary?.slice(0, 90) || ''}${n?.summary?.length > 90 ? '...' : ''}</div>
+      <div class="card-footer">
+        <div class="card-source">📄 ${n?.source || ''}</div>
+        <div class="card-tags">${(n?.tags || []).slice(0, 2).map(t => `<span class="tag">${t || ''}</span>`).join('')}</div>
+      </div>
+    </div>`).join('')}</div>`;
+}
+
+function renderArchive() {
+  const dates = Object.keys(daysMap).sort((a,b)=>b.localeCompare(a));
+  const grid = document.getElementById('archive-grid');
+  if(!dates.length){
+    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">📭</div><div>暂无往期数据</div></div>`;
+    return;
+  }
+  grid.innerHTML = dates.map(d=>`
+    <div class="archive-card ${d===currentDate?'active':''}" data-date="${d}" onclick="switchDate('${d}')">
+      <div class="archive-date">${formatDate(d)}</div>
+      <div class="archive-count">${daysMap[d].length} 条</div>
+    </div>`).join('');
+}
+
+function switchDate(date) {
+  currentDate = date;
+  allNews = daysMap[date] || [];
+  activeFilter = '全部';
+  document.getElementById('date-display').textContent = formatDate(date);
+  renderStats(allNews);
+  renderFilters(allNews);
+  renderCards(allNews);
+  document.querySelectorAll('.archive-card').forEach(c=>c.classList.toggle('active',c.dataset.date===date));
+}
+
+function openModal(id) {
+  const n = allNews.find(x=>x.id===id);
+  if(!n) return;
+  document.getElementById('modal-content').innerHTML=`
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-cat"><span class="cat-pill" style="font-size:12px;padding:4px 12px;background:rgba(91,141,239,.12);color:var(--accent)">${CAT_ICONS[n.category]} ${n.category}</span></div>
+    <div class="modal-title">${n.title}</div>
+    <div class="modal-summary">${n.summary}</div>
+    <div class="modal-meta">
+      <a class="modal-source-btn" href="${n.url}" target="_blank">🔗 查看原文</a>
+      ${n.tags.map(t=>`<span class="tag">${t}</span>`).join('')}
+    </div>`;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+
+document.getElementById('modal-overlay').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeModal(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+
+// ── Theme toggle ─────────────────────────────────────────────────
+(function() {
+  const root = document.documentElement;
+  const btn  = document.getElementById('theme-toggle');
+  const saved = localStorage.getItem('pyro-theme') || 'dark';
+  function applyTheme(theme) {
+    if (theme === 'light') {
+      root.setAttribute('data-theme', 'light');
+      btn.textContent = '☀️';
+    } else {
+      root.removeAttribute('data-theme');
+      btn.textContent = '🌙';
+    }
+    localStorage.setItem('pyro-theme', theme);
+  }
+  applyTheme(saved);
+  btn.addEventListener('click', () => {
+    const current = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    applyTheme(current);
+  });
+})();
+
+init();
+</script>
+</body>
+</html>

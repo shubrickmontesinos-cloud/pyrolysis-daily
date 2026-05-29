@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# 本地工具临时文件
+.cowork-temp/
+*.bak
+*.log
+gen_json.py
+
+# 内嵌 Python 运行时（本地用，不需上传）
+python/
+
+# 编辑器
+.vscode/
+.idea/
+*.swp

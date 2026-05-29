@@ -1,0 +1,6 @@
+{
+  "name": "热解日报每日更新",
+  "schedule": { "type": "cron", "expression": "30 7 * * *" },
+  "prompt": "请执行热解日报每日数据更新任务：\n\n步骤1：使用 web-search skill 搜索以下领域最新研究（每领域2个查询词，各取8条）：\n- 塑料热解：\"plastic pyrolysis catalyst 2026\" 和 \"废塑料热解 最新研究\"\n- 生物质热解：\"biomass pyrolysis bio-oil 2026\" 和 \"生物质热解 最新进展\"\n- 催化热解：\"catalytic co-pyrolysis biomass plastic 2026\" 和 \"共热解 催化剂\"\n- 创新催化剂：\"novel catalyst pyrolysis selectivity 2026\" 和 \"热解催化剂 新型\"\n- 科研圈：\"pyrolysis research news 2026\" 和 \"热解 科研圈 最新动态\"\n\n步骤2：每个领域各整理4条，共20条新闻，每条包含：标题（保持原文或翻译为中文）、150字左右中文摘要、来源名称、原文URL、3-4个标签关键词。类别字段 category 必须为以下之一：塑料热解/生物质热解/催化热解/创新催化剂/科研圈。\n\n步骤3：获取今日日期，将20条新闻写入 C:\\Users\\zhangzy40\\lobsterai\\project\\pyrolysis-daily\\data\\[YYYY-MM-DD].json，格式如下：\n{\"date\":\"YYYY-MM-DD\",\"generated_at\":\"YYYY-MM-DDTHH:MM:SS\",\"news\":[{\"id\":1,\"category\":\"塑料热解\",\"title\":\"标题\",\"summary\":\"摘要\",\"source\":\"来源\",\"url\":\"https://...\",\"tags\":[\"标签1\",\"标签2\"]}]}\n\n步骤4：确认写入成功，输出20条新闻的标题列表。",
+  "workingDirectory": "C:\\Users\\zhangzy40\\lobsterai\\project\\pyrolysis-daily"
+}
