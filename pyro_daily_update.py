@@ -8,6 +8,7 @@ pyro_daily_update.py  v3.2 (Freshness Optimized)
 
 import html
 import json
+import os
 import re
 import sys
 import time
@@ -154,13 +155,19 @@ SCOPUS_START_YEAR = 2024
 # 采集任务清单
 # ──────────────────────────────────────────
 CROSSREF_TASKS = [
-    ("plastic pyrolysis catalytic co-pyrolysis sygas hydrogen carbon-nanotube zeolite microwave plasma ex-situ in-situ series connection", "塑料热解", 10),
-    ("pyrolysis biomass biochar bio-oil lignin", "生物质热解", 10),
-    ("pyrolysis review progress recent journal", "科研圈", 10),
-    # 科研圈优化：新增「最新+热解领域」强相关关键词
-    ("2025 2026 pyrolysis review progress journal latest research hot topics", "科研圈", 15),
-    ("热解 2025 2026 最新研究 顶刊 科研动态 学术会议 基金申报", "科研圈", 15),
-    ("科研圈 硕博 论文发表 SCI 影响因子 基金申请 2025", "科研圈", 15),
+    # 塑料热解：拆成多个窄关键词，每次能拿到不同子集
+    ("plastic waste pyrolysis catalyst hydrogen syngas", "塑料热解", 8),
+    ("pyrolysis plastic co-pyrolysis biomass zeolite carbon nanotube", "塑料热解", 8),
+    ("catalytic pyrolysis polyethylene polypropylene polystyrene PET", "塑料热解", 8),
+    ("waste plastic thermal decomposition oil fuel char", "塑料热解", 8),
+    ("microwave plasma pyrolysis plastic hydrogen production", "塑料热解", 8),
+    # 生物质热解
+    ("biomass pyrolysis biochar bio-oil lignin cellulose", "生物质热解", 8),
+    ("catalytic biomass pyrolysis fast pyrolysis tar cracking", "生物质热解", 8),
+    # 科研圈：综述+最新动态
+    ("pyrolysis review progress 2026 2025 latest research", "科研圈", 8),
+    ("thermal conversion waste valorization review energy fuels", "科研圈", 8),
+    ("hydrogen production from plastic waste review catalyst", "科研圈", 8),
 ]
 
 # Scopus 采集任务（强化塑料热解采集数量，确保至少5条）
@@ -216,10 +223,10 @@ def http_get(url: str, params: dict = None, headers: dict = None, retry: int = 3
 
 def load_history_identifiers() -> Tuple[Set[str], Set[str]]:
     seen_titles, seen_urls = set(), set()
-    # 🔥 核心修改：只扫描近7天的文件，不再加载全部历史（根治去重拦截新内容）
-    all_files = sorted(DATA_DIR.glob("*.json"), reverse=True)[:7]
+    # 只看最近2次的数据做去重，避免历史数据过度拦截新内容
+    all_files = sorted(DATA_DIR.glob("*.json"), reverse=True)[:2]
     
-    for json_file in DATA_DIR.glob("*.json"):
+    for json_file in all_files:
         try:
             data = json.loads(json_file.read_text(encoding="utf-8"))
             for item in data.get("news", []):
@@ -252,10 +259,10 @@ def fetch_crossref(query: str, max_results: int = 50) -> List[Dict]:
         params={
             "query.title": query,
             # 强制过滤2022及之前：只保留2023-01-01之后的内容
-            "filter": f"from-pub-date:2023-01-01,type:journal-article",
-            "rows": max_results * 50,
-            "sort": "published",
-            "order": "desc",  # 强制按最新发表排序
+            "filter": f"from-pub-date:2024-06-01,type:journal-article",
+            "rows": max_results * 3,
+            "sort": "created",
+            "order": "desc",  # 按入库时间排序，保证每次有新内容
         },
         headers=API_HEADERS
     )
