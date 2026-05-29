@@ -679,9 +679,12 @@ def main():
     log.info("========== 更新任务圆满完成 ==========")
 
 def run_inject():
-    res = subprocess.run([sys.executable, str(SCRIPT_DIR / "inject_daily_data.py")], capture_output=True, text=True)
+    env = os.environ.copy()
+    env["PYTHONIOENCODING"] = "utf-8"
+    env["PYTHONLEGACYWINDOWSSTDIO"] = "utf-8"
+    res = subprocess.run([sys.executable, str(SCRIPT_DIR / "inject_daily_data.py")], capture_output=True, text=True, encoding="utf-8", errors="replace", env=env)
     if res.returncode == 0: log.info(res.stdout.strip())
-    else: log.error(res.stderr)
+    else: log.error(res.stderr or f"inject failed with code {res.returncode}")
 
 if __name__ == "__main__":
     main()
