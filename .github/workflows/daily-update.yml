@@ -1,10 +1,8 @@
 name: Daily Pyrolysis Update
 
 on:
-  # 定时触发已禁用，改用本地定时任务（Windows任务计划程序）
-  # 如需恢复自动运行，取消下面的注释即可
-  # schedule:
-  #   - cron: '0 0 * * 1'
+  schedule:
+     - cron: '0 0 * * 1'
   workflow_dispatch:
     inputs:
       reason:
